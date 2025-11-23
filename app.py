@@ -62,7 +62,6 @@ def login():
 
     if request.method == 'POST':
         # In a real app, you would verify credentials here.
-        # For this demo, we accept any login or check against a hardcoded admin.
         username = request.form.get('username')
         password = request.form.get('password')
         
@@ -89,7 +88,6 @@ def register():
         random_digits = str(random.randint(1000, 9999))
         generated_user_id = f"{first_name}{random_digits}"
         
-        # In a real app, save this to a database!
         # Here, we pass it to the login page to show the user.
         success_msg = f"Account Created! Your User ID is: {generated_user_id}"
         
@@ -104,6 +102,7 @@ def dashboard():
 @app.route('/chart_of_accounts', methods=['GET', 'POST'])
 def chart_of_accounts():
     if request.method == 'POST':
+        # Manual Add Account Logic
         new_account = {
             'code': request.form.get('code'),
             'name': request.form.get('name'),
@@ -114,7 +113,32 @@ def chart_of_accounts():
             session['chart_of_accounts'].append(new_account)
             session['chart_of_accounts'].sort(key=lambda x: x['code'])
             session.modified = True
-    return render_template('chart_of_accounts.html', accounts=session['chart_of_accounts'])
+    
+    # --- CALCULATE BALANCES FOR COA DISPLAY ---
+    accounts = session.get('chart_of_accounts', [])
+    journals = session.get('journal_entries', [])
+    
+    # Initialize dictionary with 0.0 for all accounts
+    balances = {acc['name']: 0.0 for acc in accounts}
+    
+    for entry in journals:
+        name = entry['account_name']
+        debit = entry.get('debit', 0.0)
+        credit = entry.get('credit', 0.0)
+        
+        # Find account type to apply Normal Balance rule
+        acct_type = next((a['type'] for a in accounts if a['name'] == name), 'Expense') 
+        
+        if name in balances:
+            if acct_type in ['Asset', 'Expense']:
+                balances[name] += (debit - credit)
+            else:
+                balances[name] += (credit - debit)
+        else:
+            # Fallback for old/missing accounts - treat as Expense for calculation purposes
+            balances[name] = (debit - credit) if acct_type in ['Asset', 'Expense'] else (credit - debit)
+
+    return render_template('chart_of_accounts.html', accounts=accounts, balances=balances)
 
 @app.route('/journal_entry/<username>', methods=['GET', 'POST'])
 def journal_entry(username):
@@ -127,6 +151,47 @@ def journal_entry(username):
         is_adjusting = 'is_adjusting' in request.form
         transaction_id = len(session['journal_entries']) 
 
+        # --- AUTO-CREATE NEW ACCOUNTS LOGIC ---
+        # Create a set of existing names (lowercase) for easy checking
+        existing_account_names = {acc['name'].lower() for acc in session['chart_of_accounts']}
+        accounts_updated = False
+
+        for i in range(len(names)):
+            original_name = names[i].strip()
+            lower_name = original_name.lower()
+            
+            # If account does not exist in our list, create it
+            if original_name and lower_name not in existing_account_names:
+                
+                debit_val = float(debits[i]) if debits[i] else 0.0
+                
+                # --- TYPE INFERENCE LOGIC ---
+                # If user entered a Debit amount > 0 -> Assume 'Expense'
+                # Otherwise, assume 'Revenue'
+                inferred_type = 'Expense' if debit_val > 0 else 'Revenue'
+                
+                # Generate a random code (e.g., AUTO-9281)
+                new_code = f"AUTO-{random.randint(1000, 9999)}"
+                
+                new_account = {
+                    'code': new_code, 
+                    'name': original_name, 
+                    'type': inferred_type
+                }
+                
+                # Add to Chart of Accounts
+                session['chart_of_accounts'].append(new_account)
+                
+                # Update our local check set so we don't add it twice in the same transaction
+                existing_account_names.add(lower_name) 
+                accounts_updated = True
+        
+        if accounts_updated:
+            # Sort again by code so they appear neatly
+            session['chart_of_accounts'].sort(key=lambda x: x['code'])
+            session.modified = True
+
+        # --- SAVE JOURNAL ENTRIES ---
         for i in range(len(dates)):
             new_entry = {
                 'id': transaction_id, 
@@ -179,6 +244,11 @@ def generate_financials():
         acct_name = entry['account_name']
         debit = entry['debit']
         credit = entry['credit']
+        
+        if acct_name not in ledger:
+             # Handle dynamically added accounts that might not have been re-fetched into the function's scope
+             ledger[acct_name] = {'type': 'Expense', 'balance': 0.0, 'debit_total': 0.0, 'credit_total': 0.0}
+
         if acct_name in ledger:
             ledger[acct_name]['debit_total'] += debit
             ledger[acct_name]['credit_total'] += credit

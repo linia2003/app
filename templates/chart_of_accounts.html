@@ -6,63 +6,241 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Quicksand:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
+        /* --- CHIC MAUVE PALETTE --- */
+        :root {
+            --dark-indigo: #2c274d;   /* Page Background Base & Main Text */
+            --mauve-primary: #7d5a9d; /* Main Accent Color */
+            --mauve-light: #f5f3ff;   /* Very Light Lavender */
+            --mauve-hover: #e9d5ff;   /* Slightly darker lavender for hover */
+            --white: #ffffff;
+            --text-main: #2c274d;     /* UPDATED: Deep Indigo Text */
+            --text-muted: #6b7280;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes pulse-shadow {
+            0% { box-shadow: 0 0 0 0 rgba(125, 90, 157, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(125, 90, 157, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(125, 90, 157, 0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUpRow {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         body { 
             font-family: 'Poppins', sans-serif; 
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            /* Dark Gradient Background */
+            background: linear-gradient(135deg, var(--dark-indigo) 0%, #1e1b4b 100%);
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            padding: 120px 20px 40px 20px; /* Adjusted for nav */
+            padding: 120px 20px 40px 20px;
             min-height: 100vh;
+            color: var(--text-main); /* Updated Font Color */
         }
+
+        /* Main White Card */
         .container { 
             width: 100%; 
-            max-width: 900px; 
-            background: white; 
-            padding: 40px; 
-            border-radius: 20px; 
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4); 
-            border-top: 6px solid #6366f1;
+            max-width: 1000px; 
+            background: var(--white); 
+            padding: 50px; 
+            border-radius: 24px; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4); 
+            border-top: 6px solid var(--mauve-primary);
+            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); /* Smoother entrance */
         }
+
         h1 { 
             font-family: 'Quicksand', sans-serif;
-            color: #1e293b; 
+            color: var(--text-main); 
             text-align: center; 
-            margin-bottom: 30px;
-            font-size: 2.2rem;
+            margin-bottom: 35px;
+            font-size: 2.5rem;
             font-weight: 700;
+            letter-spacing: -1px;
         }
-        .form-row { display: flex; gap: 15px; justify-content: center; margin-bottom: 30px; }
+
+        /* --- FILTER BUTTONS --- */
+        .filter-bar {
+            margin-bottom: 40px; 
+            display: flex; 
+            gap: 12px; 
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background-color: var(--white);
+            color: var(--text-main);
+            border: 1px solid #e5e7eb;
+            padding: 10px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Springy transition */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--mauve-primary);
+            color: var(--mauve-primary);
+            transform: translateY(-3px); /* Lift up */
+            box-shadow: 0 5px 15px rgba(125, 90, 157, 0.15);
+        }
+
+        .filter-btn.active {
+            background-color: var(--mauve-primary); 
+            color: white;
+            border-color: var(--mauve-primary);
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(125, 90, 157, 0.3);
+        }
+
+        /* --- FORM STYLES --- */
+        .form-row { 
+            display: flex; 
+            gap: 15px; 
+            justify-content: center; 
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #f3f4f6;
+        }
         
         input, select { 
-            padding: 12px; 
-            border: 2px solid #e2e8f0; 
-            border-radius: 8px; 
+            padding: 14px 18px; 
+            border: 2px solid #f3f4f6; 
+            border-radius: 12px; 
             font-family: 'Poppins', sans-serif;
-        }
-        input:focus, select:focus { border-color: #6366f1; outline: none; }
-
-        button { 
-            background-color: #6366f1; 
-            color: white; 
-            border: none; 
-            padding: 12px 24px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            background: #f9fafb;
             transition: 0.3s;
         }
-        button:hover { background-color: #4f46e5; transform: translateY(-2px); }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 15px; border-bottom: 1px solid #e2e8f0; text-align: left; }
-        th { background-color: #1e293b; color: white; border-radius: 4px; }
-        tr:hover td { background-color: #f8fafc; }
+        input:focus, select:focus { 
+            border-color: var(--mauve-primary); 
+            background: white;
+            outline: none; 
+            box-shadow: 0 0 0 4px rgba(125, 90, 157, 0.1);
+        }
+
+        /* Add Account Button with Animation */
+        .btn-add { 
+            background-color: var(--mauve-primary); 
+            color: white; 
+            border: none; 
+            padding: 14px 30px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(125, 90, 157, 0.2);
+        }
+
+        .btn-add:hover { 
+            background-color: #6a4a84; 
+            transform: translateY(-2px) scale(1.02); /* Grow slightly */
+            box-shadow: 0 10px 20px rgba(125, 90, 157, 0.3);
+            animation: pulse-shadow 1.5s infinite;
+        }
+
+        /* --- TABLE STYLES --- */
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; /* Spacing between rows */ }
+        
+        th { 
+            background-color: var(--mauve-light); 
+            color: var(--text-main); 
+            padding: 15px 20px; 
+            text-align: left;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+        }
+        
+        th:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+        th:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+
+        /* Table Row Styling */
+        .account-row {
+            animation: fadeInUpRow 0.5s ease forwards;
+            opacity: 0; /* Start hidden for animation */
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Animation Delays for cascading effect */
+        .account-row:nth-child(1) { animation-delay: 0.1s; }
+        .account-row:nth-child(2) { animation-delay: 0.15s; }
+        .account-row:nth-child(3) { animation-delay: 0.2s; }
+        .account-row:nth-child(4) { animation-delay: 0.25s; }
+        .account-row:nth-child(5) { animation-delay: 0.3s; }
+        /* ... creates a nice waterfall load ... */
+
+        td { 
+            padding: 18px 20px; 
+            background: white;
+            border-top: 1px solid #f3f4f6;
+            border-bottom: 1px solid #f3f4f6;
+            color: var(--text-main); /* Deep Indigo Text */
+            font-size: 0.95rem;
+        }
+
+        td:first-child { border-left: 1px solid #f3f4f6; border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+        td:last-child { border-right: 1px solid #f3f4f6; border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+
+        /* Row Hover Effect */
+        .account-row:hover {
+            transform: scale(1.01);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            z-index: 1;
+            position: relative;
+        }
+        .account-row:hover td {
+            border-color: var(--mauve-light);
+            background-color: #faf9ff;
+        }
+
+        /* Type Badge */
+        .type-badge {
+            background: var(--mauve-light);
+            color: var(--mauve-primary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            border: 1px solid rgba(125, 90, 157, 0.1);
+        }
+
+        /* Balance Column */
+        .balance-cell {
+            font-family: 'Poppins', monospace;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        @media (max-width: 768px) {
+            .form-row { flex-direction: column; }
+            .container { padding: 20px; }
+        }
     </style>
 </head>
 <body>
     
-    <!-- ADDED: Navigation Bar -->
+    <!-- Navigation Bar -->
     <nav class="app-navbar">
         <div class="nav-brand">Accountoria</div>
         <div class="nav-links">
@@ -78,8 +256,19 @@
     <div class="container">
         <h1>Chart of Accounts</h1>
         
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <button type="button" class="filter-btn active" onclick="filterTable('all', this)">Show All</button>
+            <button type="button" class="filter-btn" onclick="filterTable('Asset', this)">Assets</button>
+            <button type="button" class="filter-btn" onclick="filterTable('Liability', this)">Liabilities</button>
+            <button type="button" class="filter-btn" onclick="filterTable('Equity', this)">Equity</button>
+            <button type="button" class="filter-btn" onclick="filterTable('Revenue', this)">Revenue</button>
+            <button type="button" class="filter-btn" onclick="filterTable('Expense', this)">Expenses</button>
+        </div>
+
+        <!-- Add Account Form -->
         <form method="POST" class="form-row">
-            <input type="number" name="code" placeholder="Code (e.g. 101)" required style="width: 120px;">
+            <input type="number" name="code" placeholder="Code (101)" required style="width: 140px;">
             <input type="text" name="name" placeholder="Account Name" required style="flex: 1;">
             <select name="type">
                 <option value="Asset">Asset</option>
@@ -88,27 +277,58 @@
                 <option value="Revenue">Revenue</option>
                 <option value="Expense">Expense</option>
             </select>
-            <button type="submit">Add Account</button>
+            <button type="submit" class="btn-add">Add Account</button>
         </form>
 
-        <table>
+        <!-- Accounts Table -->
+        <table id="coaTable">
             <thead>
                 <tr>
                     <th>Code</th>
                     <th>Account Name</th>
                     <th>Type</th>
+                    <th style="text-align: right;">Balance</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="coaBody">
                 {% for acc in accounts %}
-                <tr>
-                    <td><strong>{{ acc.code }}</strong></td>
-                    <td>{{ acc.name }}</td>
-                    <td><span style="background: #f1f5f9; padding: 4px 10px; border-radius: 10px; font-size: 0.85rem; color: #475569;">{{ acc.type }}</span></td>
+                <tr data-type="{{ acc.type }}" class="account-row">
+                    <td style="font-weight: 600; color: var(--mauve-primary);">{{ acc.code }}</td>
+                    <td style="font-weight: 500;">{{ acc.name }}</td>
+                    <td><span class="type-badge">{{ acc.type }}</span></td>
+                    
+                    <!-- Balance Display -->
+                    <td class="balance-cell" style="text-align: right;">
+                        {{ "%.2f"|format(balances.get(acc.name, 0.0)) }}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    <script>
+        function filterTable(type, btn) {
+            const rows = document.querySelectorAll('.account-row');
+            
+            rows.forEach(row => {
+                const rowType = row.getAttribute('data-type');
+                if (type === 'all' || rowType === type) {
+                    row.style.display = '';
+                    // Reset animation to re-trigger it
+                    row.style.animation = 'none';
+                    row.offsetHeight; /* trigger reflow */
+                    row.style.animation = 'fadeInUpRow 0.4s ease forwards';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            if (btn) {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+        }
+    </script>
 </body>
 </html>

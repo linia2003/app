@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Quicksand:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        /* --- THEME PALETTE (Preserved) --- */
+        /* --- THEME PALETTE --- */
         :root {
             --navy-deep: #0f172a;    
             --navy-card: #1e293b;    
@@ -31,7 +31,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* UPDATED: Padding for Navbar */
             padding: 110px 20px 40px 20px;
             color: var(--text-dark);
         }
@@ -117,7 +116,7 @@
         input:checked + .slider { background-color: var(--purple-vivid); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        /* --- ANIMATIONS (Shake & Jump) --- */
+        /* --- ANIMATIONS --- */
         @keyframes shake {
             0% { transform: translateX(0); }
             25% { transform: translateX(-5px); }
@@ -172,15 +171,17 @@
 
         table { width: 100%; border-collapse: collapse; }
 
+        /* Table Header - Light background, dark text */
         th {
-            background-color: var(--navy-card);
-            color: white;
+            background-color: #f5f3ff; /* Very pale purple/white */
+            color: #1e293b; /* Dark Navy Text */
             padding: 15px;
             text-align: left;
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
+            border-bottom: 2px solid #e2e8f0;
         }
 
         td {
@@ -205,15 +206,35 @@
             border-radius: 6px;
             font-family: 'Poppins', sans-serif;
             font-size: 0.9rem;
-            color: var(--text-dark);
-            background: #fff;
+            
+            /* Input color: Light Purple (Almost White) */
+            background-color: #f5f3ff !important; 
+            color: #0f172a !important;
+            
+            /* CRITICAL FIX: This forces the Dropdown List/Calendar to be WHITE with BLACK text */
+            color-scheme: light; 
+            
             transition: 0.2s;
+        }
+
+        /* Ensure Date Picker is also White */
+        input[type="date"] {
+            color-scheme: light;
+            color: #0f172a;
+            background-color: #f5f3ff;
+        }
+
+        /* Placeholder text color */
+        ::placeholder {
+            color: #64748b;
+            opacity: 1;
         }
 
         .input-cell:focus {
             outline: none;
             border-color: var(--purple-vivid);
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            background-color: #ffffff !important; 
         }
 
         /* --- ACTION BUTTONS --- */
@@ -267,7 +288,7 @@
 </head>
 <body>
 
-    <!-- ADDED: Navigation Bar -->
+    <!-- Navigation Bar -->
     <nav class="app-navbar">
         <div class="nav-brand">Accountoria</div>
         <div class="nav-links">
@@ -308,21 +329,28 @@
                 </div>
             </div>
 
+            <!-- Table Container (Updated structure for input/datalist) -->
             <div class="table-container">
                 <table id="journalTable">
                     <thead>
                         <tr>
-                            <th style="width: 16%;">Date</th>
-                            <th style="width: 30%;">Account</th>
-                            <th style="width: 24%;">Description</th>
-                            <th style="width: 13%;">Debit</th>
-                            <th style="width: 13%;">Credit</th>
-                            <th style="width: 4%;"></th>
+                            <th style="width: 15%;">Date</th>
+                            <th style="width: 35%;">Account Name</th> <th style="width: 25%;">Description</th>
+                            <th style="width: 10%;">Debit</th>
+                            <th style="width: 10%;">Credit</th>
+                            <th style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="journalEntries"></tbody>
                 </table>
             </div>
+
+            <!-- Datalist for Account Autocomplete -->
+            <datalist id="accountOptions">
+                {% for acc in accounts %}
+                    <option value="{{ acc.name }}">{{ acc.code }} - {{ acc.name }}</option>
+                {% endfor %}
+            </datalist>
 
             <div class="btn-row">
                 <button type="button" class="btn btn-add" onclick="addJournalEntry()">
@@ -338,28 +366,16 @@
     </div>
 
     <script>
-        const availableAccounts = [
-            {% for acc in accounts %}
-                { name: "{{ acc.name }}", code: "{{ acc.code }}" },
-            {% endfor %}
-        ];
-
         function addJournalEntry() {
             const tbody = document.getElementById("journalEntries");
             const row = document.createElement("tr");
             row.classList.add("entry-row");
-            
-            let options = '<option value="" disabled selected>Select Account...</option>';
-            availableAccounts.forEach(acc => {
-                options += `<option value="${acc.name}">${acc.code} - ${acc.name}</option>`;
-            });
 
             row.innerHTML = `
                 <td><input type="date" name="date[]" class="input-cell" required></td>
                 <td>
-                    <select name="account_name[]" class="input-cell" required>
-                        ${options}
-                    </select>
+                    <input type="text" name="account_name[]" list="accountOptions" 
+                           class="input-cell" placeholder="Select or Type New Account..." required>
                 </td>
                 <td><input type="text" name="particular[]" class="input-cell" placeholder="Details..." required></td>
                 <td><input type="number" name="debit[]" step="0.01" class="input-cell" placeholder="0.00" oninput="validate()"></td>
@@ -394,8 +410,7 @@
             const diff = Math.abs(totalDebit - totalCredit);
             
             status.classList.remove("status-invalid", "status-valid", "status-empty");
-            void status.offsetWidth; 
-
+            
             if (rows.length === 0) {
                 status.innerText = "Draft Mode";
                 status.classList.add("status-empty");
@@ -404,12 +419,10 @@
                 status.innerText = `Balanced ($${totalDebit.toFixed(2)})`;
                 status.classList.add("status-valid");
                 btn.disabled = false;
-                btn.innerText = "Post Entry";
             } else {
                 status.innerText = `UNBALANCED (Diff: $${diff.toFixed(2)})`;
                 status.classList.add("status-invalid");
                 btn.disabled = true;
-                btn.innerText = "Fix Balance";
             }
         }
 
