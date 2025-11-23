@@ -33,9 +33,9 @@
             min-height: 100vh;
             color: var(--text-dark);
             
-            /* LAYOUT FIX: Block display + Top Padding prevents cut-off */
             display: block; 
-            padding-top: 120px; 
+            /* UPDATED: Increased top padding for Navbar */
+            padding-top: 110px; 
             padding-bottom: 80px;
             padding-left: 20px;
             padding-right: 20px;
@@ -67,7 +67,6 @@
             font-size: 3rem;
             font-weight: 700;
             margin-bottom: 10px;
-            /* Gradient Shine Animation */
             background: linear-gradient(270deg, #ffffff, #a5b4fc, #6366f1, #ffffff);
             background-size: 300% auto;
             -webkit-background-clip: text;
@@ -81,12 +80,11 @@
         /* --- GRID LAYOUT --- */
         .report-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2 Equal Columns */
-            gap: 40px; /* More breathing room */
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 40px;
             align-items: start;
         }
         
-        /* Full width for Ledger */
         .full-width { grid-column: 1 / -1; }
 
         /* --- CARDS --- */
@@ -150,14 +148,14 @@
             background: var(--success-bg);
             color: var(--success-text);
             box-shadow: 0 0 15px rgba(22, 163, 74, 0.3);
-            animation: jump 0.6s ease-out; /* JUMP if Balanced */
+            animation: jump 0.6s ease-out;
         }
 
         .status-invalid {
             background: var(--danger-bg);
             color: var(--danger-text);
             box-shadow: 0 0 20px var(--danger-glow);
-            animation: shake 0.5s ease-in-out infinite; /* SHAKE if Unbalanced */
+            animation: shake 0.5s ease-in-out infinite;
         }
 
         /* --- TABLES --- */
@@ -193,7 +191,7 @@
         /* Column Alignments */
         .col-amount {
             text-align: right;
-            font-family: 'Poppins', monospace; /* Monospace for alignment */
+            font-family: 'Poppins', monospace; 
             font-weight: 500;
         }
 
@@ -223,14 +221,25 @@
             box-shadow: 0 0 30px rgba(255,255,255,0.2);
         }
 
-        /* Responsive Breakpoint */
         @media (max-width: 950px) {
             .report-grid { grid-template-columns: 1fr; }
-            body { padding-top: 80px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- ADDED: Navigation Bar -->
+    <nav class="app-navbar">
+        <div class="nav-brand">Accountoria</div>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}" class="nav-item">Dashboard</a>
+            <a href="{{ url_for('journal_entry', username=session.get('username')) }}" class="nav-item">Journal</a>
+            <a href="{{ url_for('view_journal', username=session.get('username')) }}" class="nav-item">History</a>
+            <a href="{{ url_for('chart_of_accounts') }}" class="nav-item">Accounts</a>
+            <a href="{{ url_for('financial_reports') }}" class="nav-item active">Reports</a>
+        </div>
+        <a href="{{ url_for('home') }}" class="nav-logout">Sign Out</a>
+    </nav>
 
     <div class="bg-shape shape-1"></div>
     <div class="bg-shape shape-2"></div>
@@ -338,10 +347,6 @@
                 </table>
             </div>
 
-        </div>
-
-        <div class="nav-area">
-            <a href="{{ url_for('dashboard') }}" class="back-btn">Return to Dashboard</a>
         </div>
 
     </div>

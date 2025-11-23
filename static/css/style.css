@@ -1,233 +1,307 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homepage - Accounting App</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        /* Reset some default styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+/* -------------------------------------------------------
+   EXISTING STYLES (Kept Original) 
+   ------------------------------------------------------- 
+*/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&family=Pacifico&display=swap');
 
-        /* Global Font */
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #2e1a47, #1d2740); /* Dark purple to navy gradient */
-            color: #fff; /* White text for contrast */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* Full viewport height */
-            margin: 0;
-        }
+/* Reset */
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* Homepage - Hero Section */
-        .homepage {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.7); /* Dark overlay for contrast */
-            padding: 50px 30px;
-            border-radius: 15px;
-            width: 80%;
-            max-width: 700px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
+/* Global Font */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #2e1a47, #1d2740); /* Dark purple to navy gradient */
+    color: #fff; /* White text for contrast */
+    min-height: 100vh;
+}
 
-        /* Welcome Text Styling */
-        .hero-header h1 {
-            font-size: 3.5rem;
-            font-family: 'Poppins', sans-serif;
-            color: #ffffff;
-            margin-bottom: 20px;
-            letter-spacing: 2px;
-        }
+/* Homepage - Hero Section */
+.homepage {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.7); /* Dark overlay for contrast */
+    padding: 50px 30px;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 700px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
 
-        /* App Name Styling (Handwritten font) */
-        .app-name {
-            font-family: 'Pacifico', cursive; /* Rounded, handwritten-style font */
-            font-size: 5rem; /* Larger size for visibility */
-            color: #b5a2d1; /* Light purple for the app name */
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-        }
+/* Welcome Text Styling */
+.hero-header h1 {
+    font-size: 3.5rem;
+    font-family: 'Poppins', sans-serif;
+    color: #ffffff;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
 
-        /* Description Text Styling */
-        .hero-header p {
-            font-size: 1.2rem;
-            color: #b0b0b0; /* Light grey description text */
-            margin-bottom: 30px;
-        }
+/* App Name Styling (Handwritten font) */
+.app-name {
+    font-family: 'Pacifico', cursive; /* Rounded, handwritten-style font */
+    font-size: 5rem; /* Larger size for visibility */
+    color: #b5a2d1; /* Light purple for the app name */
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
 
-        /* Navigation - Login Button */
-        nav {
-            display: flex;
-            justify-content: center;
-        }
+/* Description Text Styling */
+.hero-header p {
+    font-size: 1.2rem;
+    color: #b0b0b0; /* Light grey description text */
+    margin-bottom: 30px;
+}
 
-        .login-btn {
-            background: linear-gradient(45deg, #5e3a7b, #1e2a47); /* Dark purple to navy gradient */
-            color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-decoration: none;
-            text-transform: uppercase;
-            transition: transform 0.2s ease-in-out, background-color 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
+/* Navigation - Login Button */
+nav {
+    display: flex;
+    justify-content: center;
+}
 
-        .login-btn:hover {
-            background-color: #4d2a66; /* Darker purple on hover */
-            transform: scale(1.1);
-        }
+.login-btn {
+    background: linear-gradient(45deg, #5e3a7b, #1e2a47); /* Dark purple to navy gradient */
+    color: white;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: transform 0.2s ease-in-out, background-color 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
 
-        .login-btn:active {
-            transform: scale(1);
-        }
+.login-btn:hover {
+    background-color: #4d2a66; /* Darker purple on hover */
+    transform: scale(1.1);
+}
 
-        /* Add imported Google Fonts for Handwritten Style */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&family=Pacifico&display=swap');
+.login-btn:active {
+    transform: scale(1);
+}
 
-        /* Login Page Styles */
-        .login-container {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.7); /* Dark overlay for contrast */
-            padding: 50px 30px;
-            border-radius: 15px;
-            width: 80%;
-            max-width: 500px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
+/* Login Page Styles */
+.login-container {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.7); /* Dark overlay for contrast */
+    padding: 50px 30px;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
 
-        .login-title {
-            font-size: 2.5rem;
-            font-weight: bold; /* Bold headline */
-            color: #b5a2d1; /* Light purple for the headline */
-            margin-bottom: 30px;
-        }
+.login-title {
+    font-size: 2.5rem;
+    font-weight: bold; /* Bold headline */
+    color: #b5a2d1; /* Light purple for the headline */
+    margin-bottom: 30px;
+}
 
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-            width: 100%;
-        }
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+    width: 100%;
+}
 
-        label {
-            font-size: 1.1rem;
-            color: #ccc;
-            display: block;
-            margin-bottom: 5px;
-        }
+label {
+    font-size: 1.1rem;
+    color: #ccc;
+    display: block;
+    margin-bottom: 5px;
+}
 
-        input[type="text"],
-        input[type="password"],
-        input[type="email"],
-        input[type="date"] {
-            width: 100%;
-            padding: 10px;
-            font-size: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #333;
-            color: #fff;
-        }
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+}
 
-        input:focus {
-            border-color: #b5a2d1; /* Focus effect with light purple border */
-            outline: none;
-        }
+input:focus {
+    border-color: #b5a2d1; /* Focus effect with light purple border */
+    outline: none;
+}
 
-        button {
-            background: linear-gradient(45deg, #5e3a7b, #1e2a47); /* Dark purple to navy gradient */
-            color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-decoration: none;
-            text-transform: uppercase;
-            transition: transform 0.2s ease-in-out, background-color 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-        }
+button {
+    background: linear-gradient(45deg, #5e3a7b, #1e2a47); /* Dark purple to navy gradient */
+    color: white;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: transform 0.2s ease-in-out, background-color 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
 
-        button:hover {
-            background-color: #4d2a66; /* Darker purple on hover */
-            transform: scale(1.1);
-        }
+button:hover {
+    background-color: #4d2a66; /* Darker purple on hover */
+    transform: scale(1.1);
+}
 
-        button:active {
-            transform: scale(1);
-        }
+button:active {
+    transform: scale(1);
+}
 
-        /* Sidebar Styling */
-        .sidebar {
-            width: 250px;
-            background-color: #003366; /* Navy blue background */
-            padding: 20px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+/* Sidebar Styling */
+.sidebar {
+    width: 250px;
+    background-color: #003366; /* Navy blue background */
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            font-size: 1.2rem;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
+.sidebar a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
 
-        .sidebar a:hover {
-            background-color: #5e3a7b; /* Dark purple on hover */
-        }
+.sidebar a:hover {
+    background-color: #5e3a7b; /* Dark purple on hover */
+}
 
-        /* Buttons for interactions */
-        button {
-            padding: 12px 24px;
-            background-color: #003366; /* Navy button color */
-            color: white;
-            font-size: 1rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: transform 0.3s ease, background-color 0.3s ease;
-        }
+/* Buttons for interactions */
+button {
+    padding: 12px 24px;
+    background-color: #003366; /* Navy button color */
+    color: white;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
 
-        button:hover {
-            background-color: #5e3a7b; /* Dark purple on hover */
-            transform: scale(1.05); /* Slight pop effect */
-        }
-    </style>
-</head>
-<body>
-    <!-- Hero Section -->
-    <div class="homepage">
-        <header class="hero-header">
-            <h1>Welcome to</h1>
-            <h2 class="app-name">Accountoria</h2>
-            <p>Your financial control center in a futuristic way.</p>
-            <nav>
-                <a href="{{ url_for('login') }}" class="login-btn">Login</a>
-            </nav>
-        </header>
-    </div>
-</body>
-</html>
+button:hover {
+    background-color: #5e3a7b; /* Dark purple on hover */
+    transform: scale(1.05); /* Slight pop effect */
+}
+
+/* -------------------------------------------------------
+   NEW ADDITION: UNIVERSAL NAVIGATION BAR 
+   ------------------------------------------------------- 
+*/
+
+.app-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: rgba(15, 23, 42, 0.85); /* Deep Navy with opacity */
+    backdrop-filter: blur(12px); /* Glass effect */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    z-index: 9999;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.nav-brand {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: -0.5px;
+    background: linear-gradient(90deg, #fff, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: default;
+}
+
+.nav-links {
+    display: flex;
+    gap: 30px;
+}
+
+.nav-item {
+    color: #94a3b8; /* Muted text */
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 5px 0;
+}
+
+.nav-item:hover {
+    color: #fff;
+    text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}
+
+.nav-item.active {
+    color: #fff;
+}
+
+/* Underline animation */
+.nav-item::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #6366f1; /* Vivid Purple */
+    transition: width 0.3s ease;
+}
+
+.nav-item:hover::after, .nav-item.active::after {
+    width: 100%;
+}
+
+.nav-logout {
+    padding: 8px 24px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #cbd5e1;
+    text-decoration: none;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: 0.3s;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.nav-logout:hover {
+    background: #ef4444; /* Red for logout */
+    border-color: #ef4444;
+    color: white;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+}
+
+/* UTILITY CLASS to prevent content from hiding behind navbar */
+.with-nav-padding {
+    padding-top: 100px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .app-navbar { padding: 0 20px; }
+    .nav-links { display: none; } /* In a full app, you'd add a hamburger menu here */
+}

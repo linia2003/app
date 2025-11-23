@@ -27,7 +27,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 40px;
+            /* UPDATED Padding */
+            padding: 110px 40px 40px 40px;
             color: var(--text-dark);
         }
 
@@ -224,6 +225,19 @@
     </style>
 </head>
 <body>
+
+    <!-- ADDED: Navigation Bar -->
+    <nav class="app-navbar">
+        <div class="nav-brand">Accountoria</div>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}" class="nav-item">Dashboard</a>
+            <a href="{{ url_for('journal_entry', username=session.get('username')) }}" class="nav-item">Journal</a>
+            <a href="{{ url_for('view_journal', username=session.get('username')) }}" class="nav-item active">History</a>
+            <a href="{{ url_for('chart_of_accounts') }}" class="nav-item">Accounts</a>
+            <a href="{{ url_for('financial_reports') }}" class="nav-item">Reports</a>
+        </div>
+        <a href="{{ url_for('home') }}" class="nav-logout">Sign Out</a>
+    </nav>
 
     <div class="bg-shape shape-1"></div>
     <div class="bg-shape shape-2"></div>

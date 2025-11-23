@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Quicksand:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        /* --- THEME PALETTE --- */
+        /* --- THEME PALETTE (Preserved) --- */
         :root {
             --navy-deep: #0f172a;    
             --navy-card: #1e293b;    
@@ -31,7 +31,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 40px 20px;
+            /* UPDATED: Padding for Navbar */
+            padding: 110px 20px 40px 20px;
             color: var(--text-dark);
         }
 
@@ -40,6 +41,7 @@
             position: absolute;
             background: linear-gradient(45deg, #2e1a47, var(--purple-vivid));
             filter: blur(90px); opacity: 0.3; z-index: -1;
+            position: fixed;
         }
         .shape-1 { top: -10%; right: -10%; width: 600px; height: 600px; border-radius: 50%; }
         .shape-2 { bottom: -10%; left: -10%; width: 500px; height: 500px; border-radius: 50%; background: var(--purple-vivid); opacity: 0.2; }
@@ -116,7 +118,6 @@
         input:checked + .slider:before { transform: translateX(20px); }
 
         /* --- ANIMATIONS (Shake & Jump) --- */
-        
         @keyframes shake {
             0% { transform: translateX(0); }
             25% { transform: translateX(-5px); }
@@ -141,21 +142,19 @@
             letter-spacing: 0.5px;
             transition: 0.3s;
             border: 1px solid transparent;
-            display: inline-block; /* Required for transform animations */
+            display: inline-block;
         }
 
         .status-empty { background: #e2e8f0; color: #64748b; }
         
-        /* BALANCED STATE (Jump) */
         .status-valid { 
             background: #dcfce7; 
             color: #166534; 
             box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
             border-color: #166534;
-            animation: jump 0.6s ease-out; /* The Jump */
+            animation: jump 0.6s ease-out;
         }
 
-        /* UNBALANCED STATE (Shake) */
         .status-invalid { 
             background: var(--danger-bg); 
             color: var(--danger-text);
@@ -264,24 +263,22 @@
         }
         .btn-delete:hover { color: #dc2626; background: #fef2f2; }
 
-        .nav-links {
-            margin-top: 30px;
-            text-align: center;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 20px;
-        }
-        .nav-link {
-            text-decoration: none;
-            color: #64748b;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: 0.2s;
-        }
-        .nav-link:hover { color: var(--purple-vivid); }
-
     </style>
 </head>
 <body>
+
+    <!-- ADDED: Navigation Bar -->
+    <nav class="app-navbar">
+        <div class="nav-brand">Accountoria</div>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}" class="nav-item">Dashboard</a>
+            <a href="{{ url_for('journal_entry', username=username) }}" class="nav-item active">Journal</a>
+            <a href="{{ url_for('view_journal', username=username) }}" class="nav-item">History</a>
+            <a href="{{ url_for('chart_of_accounts') }}" class="nav-item">Accounts</a>
+            <a href="{{ url_for('financial_reports') }}" class="nav-item">Reports</a>
+        </div>
+        <a href="{{ url_for('home') }}" class="nav-logout">Sign Out</a>
+    </nav>
 
     <div class="bg-shape shape-1"></div>
     <div class="bg-shape shape-2"></div>
@@ -337,12 +334,6 @@
             </div>
 
         </form>
-
-        <div class="nav-links">
-            <a href="{{ url_for('view_journal', username=username) }}" class="nav-link">View History</a>
-            <span style="margin:0 10px; color:#cbd5e1;">|</span>
-            <a href="{{ url_for('dashboard') }}" class="nav-link">Return to Dashboard</a>
-        </div>
 
     </div>
 
@@ -402,22 +393,19 @@
             const status = document.getElementById("statusIndicator");
             const diff = Math.abs(totalDebit - totalCredit);
             
-            // Remove previous animation classes to trigger reflow
             status.classList.remove("status-invalid", "status-valid", "status-empty");
-            void status.offsetWidth; // Trigger reflow
+            void status.offsetWidth; 
 
             if (rows.length === 0) {
                 status.innerText = "Draft Mode";
                 status.classList.add("status-empty");
                 btn.disabled = true;
             } else if (diff < 0.01 && (totalDebit > 0)) {
-                // BALANCED -> Green + Jump
                 status.innerText = `Balanced ($${totalDebit.toFixed(2)})`;
                 status.classList.add("status-valid");
                 btn.disabled = false;
                 btn.innerText = "Post Entry";
             } else {
-                // UNBALANCED -> Red + Shake + Glow
                 status.innerText = `UNBALANCED (Diff: $${diff.toFixed(2)})`;
                 status.classList.add("status-invalid");
                 btn.disabled = true;
