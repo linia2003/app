@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Ledger - Accounting App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <h2 class="login-title">Create Ledger for {{ username }}</h2>
+
+        <form action="{{ url_for('create_ledger', username=username) }}" method="POST">
+            <div class="form-group">
+                <label for="ledger_name">Ledger Name</label>
+                <input type="text" id="ledger_name" name="ledger_name" required>
+            </div>
+
+            <button type="submit">Create Ledger</button>
+        </form>
+    </div>
+</body>
+</html>

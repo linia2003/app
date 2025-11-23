@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chart of Accounts</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f4f6f9; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { width: 80%; max-width: 800px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h1 { color: #2e1a47; text-align: center; }
+        .form-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 30px; }
+        input, select { padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        button { background-color: #5e3a7b; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; border: 1px solid #ccc; text-align: left; }
+        th { background-color: #2e1a47; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chart of Accounts</h1>
+        
+        <form method="POST" class="form-row">
+            <input type="number" name="code" placeholder="Code (e.g. 101)" required>
+            <input type="text" name="name" placeholder="Account Name" required>
+            <select name="type">
+                <option value="Asset">Asset</option>
+                <option value="Liability">Liability</option>
+                <option value="Equity">Equity</option>
+                <option value="Revenue">Revenue</option>
+                <option value="Expense">Expense</option>
+            </select>
+            <button type="submit">Add Account</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Account Name</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for acc in accounts %}
+                <tr>
+                    <td>{{ acc.code }}</td>
+                    <td>{{ acc.name }}</td>
+                    <td>{{ acc.type }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br>
+        <div style="text-align: center;">
+            <a href="{{ url_for('dashboard') }}" style="color: #5e3a7b; text-decoration: none;">Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

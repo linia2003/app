@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ledger - Accounting App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <h2 class="login-title">Ledger for {{ username }}</h2>
+
+        {% if entries %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Account Name</th>
+                        <th>Debit</th>
+                        <th>Credit</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in entries %}
+                    <tr>
+                        <td>{{ entry.date }}</td>
+                        <td>{{ entry.account_name }}</td>
+                        <td>{{ entry.debit }}</td>
+                        <td>{{ entry.credit }}</td>
+                        <td>{{ entry.amount }}</td>
+                        <td>
+                            <!-- Edit link -->
+                            <a href="{{ url_for('edit_journal_entry', username=username, entry_id=entry.id) }}">Edit</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No journal entries found.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

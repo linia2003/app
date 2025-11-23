@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ledger History - Accountoria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* --- THEME VARIABLES --- */
+        :root {
+            --navy-deep: #0f172a;
+            --navy-card: #1e293b;
+            --purple-vivid: #6366f1;
+            --purple-light: #818cf8;
+            --white: #ffffff;
+            --slate-light: #f1f5f9;
+            --text-dark: #334155;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--navy-deep);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            color: var(--text-dark);
+        }
+
+        /* --- BACKGROUND AMBIENCE --- */
+        .bg-shape {
+            position: absolute;
+            background: linear-gradient(45deg, #2e1a47, var(--purple-vivid));
+            filter: blur(90px); opacity: 0.3; z-index: -1;
+        }
+        .shape-1 { top: -10%; left: -10%; width: 600px; height: 600px; border-radius: 50%; }
+        .shape-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; border-radius: 50%; background: var(--purple-vivid); opacity: 0.2; }
+
+        /* --- MAIN CARD --- */
+        .history-wrapper {
+            width: 100%;
+            max-width: 1100px;
+            background: var(--white);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            border-top: 6px solid var(--purple-vivid);
+        }
+
+        /* --- HEADER SECTION --- */
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+            /* Gradient Shine Animation */
+            background: linear-gradient(270deg, #1e293b, #6366f1, #818cf8, #1e293b);
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 6s ease infinite;
+        }
+
+        @keyframes shine { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        /* --- TABLE STYLING --- */
+        .table-responsive {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        th {
+            background-color: var(--navy-card);
+            color: white;
+            padding: 18px;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        td {
+            padding: 16px 18px;
+            background: white;
+            border-bottom: 1px solid #f1f5f9;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+
+        /* Staggered Row Animation */
+        tbody tr {
+            opacity: 0;
+            animation: fadeUp 0.5s ease-out forwards;
+        }
+        /* Delays for cascade effect */
+        tbody tr:nth-child(1) { animation-delay: 0.1s; }
+        tbody tr:nth-child(2) { animation-delay: 0.2s; }
+        tbody tr:nth-child(3) { animation-delay: 0.3s; }
+        tbody tr:nth-child(4) { animation-delay: 0.4s; }
+        tbody tr:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        tbody tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        /* --- BADGES & AMOUNTS --- */
+        .amount-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-family: 'Poppins', monospace; /* Monospace for numbers alignment */
+            font-size: 0.9rem;
+        }
+        .debit { color: var(--navy-card); background: #f1f5f9; }
+        .credit { color: var(--purple-vivid); background: #eef2ff; }
+
+        /* --- ACTION BUTTONS --- */
+        .action-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-action {
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-edit {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--purple-vivid);
+        }
+        .btn-edit:hover {
+            background: var(--purple-vivid);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-delete {
+            background: transparent;
+            color: #94a3b8;
+            border: 1px solid #e2e8f0;
+        }
+        .btn-delete:hover {
+            border-color: var(--danger);
+            background: #fef2f2;
+            color: var(--danger);
+            transform: translateY(-2px);
+        }
+
+        /* --- FOOTER NAV --- */
+        .nav-area {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 30px;
+            background: var(--navy-deep);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2);
+        }
+
+        .btn-back:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(15, 23, 42, 0.3);
+            background: var(--purple-vivid);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            padding: 40px;
+            text-align: center;
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <div class="history-wrapper">
+        
+        <div class="header-section">
+            <h1 class="page-title">Ledger History</h1>
+            <p class="subtitle">Comprehensive archive of posted transactions.</p>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 12%;">Date</th>
+                        <th style="width: 25%;">Account</th>
+                        <th style="width: 25%;">Particulars</th>
+                        <th style="width: 12%; text-align: right;">Debit</th>
+                        <th style="width: 12%; text-align: right;">Credit</th>
+                        <th style="width: 14%; text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in entries %}
+                    <tr>
+                        <td style="color: #64748b; font-weight: 500;">{{ entry.date }}</td>
+                        <td style="font-weight: 600; color: var(--navy-card);">{{ entry.account_name }}</td>
+                        <td style="color: #64748b;">{{ entry.particular }}</td>
+                        
+                        <td style="text-align: right;">
+                            {% if entry.debit > 0 %}
+                                <span class="amount-badge debit">{{ "%.2f"|format(entry.debit) }}</span>
+                            {% else %}
+                                <span style="color:#cbd5e1;">-</span>
+                            {% endif %}
+                        </td>
+                        
+                        <td style="text-align: right;">
+                            {% if entry.credit > 0 %}
+                                <span class="amount-badge credit">{{ "%.2f"|format(entry.credit) }}</span>
+                            {% else %}
+                                <span style="color:#cbd5e1;">-</span>
+                            {% endif %}
+                        </td>
+                        
+                        <td>
+                            <div class="action-group">
+                                <a href="{{ url_for('edit_journal', id=loop.index0) }}" class="btn-action btn-edit">Edit</a>
+                                <form action="{{ url_for('delete_journal', index=loop.index0) }}" method="POST">
+                                    <button type="submit" class="btn-action btn-delete" onclick="return confirm('Confirm deletion of this record?');">Del</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            No records found. The ledger is currently empty.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="nav-area">
+            <a href="{{ url_for('journal_entry', username=username) }}" class="btn-back">
+                <span>&larr;</span> Record New Entry
+            </a>
+        </div>
+
+    </div>
+
+</body>
+</html>

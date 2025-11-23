@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Entry - Accountoria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* --- THEME VARIABLES --- */
+        :root {
+            --navy-deep: #020617;
+            --navy-card: #1e293b;
+            --purple-vivid: #6366f1;
+            --white: #ffffff;
+            --slate-light: #f8fafc;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--navy-deep);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: var(--text-dark);
+        }
+
+        /* --- BACKGROUND EFFECTS --- */
+        .bg-shape {
+            position: fixed;
+            background: linear-gradient(45deg, #4c1d95, var(--purple-vivid));
+            filter: blur(120px); opacity: 0.15; z-index: -1;
+        }
+        .shape-1 { top: -20%; right: -10%; width: 800px; height: 800px; border-radius: 50%; }
+        .shape-2 { bottom: -20%; left: -10%; width: 600px; height: 600px; border-radius: 50%; background: var(--purple-vivid); opacity: 0.1; }
+
+        /* --- MAIN WIDESCREEN CARD --- */
+        .edit-wrapper {
+            width: 100%;
+            max-width: 1100px; /* Widescreen width */
+            background: var(--white);
+            border-radius: 24px;
+            padding: 50px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
+            border-top: 6px solid var(--purple-vivid);
+            animation: expandIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes expandIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* --- HEADER --- */
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .page-title {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            background: linear-gradient(270deg, #1e293b, #6366f1, #1e293b);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 6s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+
+        .subtitle {
+            font-family: 'Poppins', monospace;
+            color: var(--purple-vivid);
+            font-size: 1rem;
+            font-weight: 600;
+            background: #eef2ff;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        /* --- 4-COLUMN GRID LAYOUT --- */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 Equal Columns */
+            gap: 30px; /* Spacious gaps */
+        }
+
+        /* Grid Spans for Responsive Layout */
+        .span-1 { grid-column: span 1; }
+        .span-2 { grid-column: span 2; }
+        .span-4 { grid-column: span 4; }
+
+        .input-group { display: flex; flex-direction: column; gap: 10px; }
+
+        label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* --- INPUT FIELDS --- */
+        input, select {
+            width: 100%;
+            padding: 16px;
+            background-color: #ffffff !important;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            color: var(--text-dark) !important;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--purple-vivid);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        /* --- TOGGLE SWITCH (Styled Box) --- */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            height: 58px; /* Matches input height */
+            padding: 0 16px;
+            background: var(--slate-light);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            justify-content: space-between;
+        }
+
+        .switch-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--navy-card);
+        }
+
+        .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1; border-radius: 34px; transition: .4s;
+        }
+        .slider:before {
+            position: absolute; content: "";
+            height: 20px; width: 20px; left: 3px; bottom: 3px;
+            background-color: white; border-radius: 50%; transition: .4s;
+        }
+        input:checked + .slider { background-color: var(--purple-vivid); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        /* --- ACTION BAR --- */
+        .action-bar {
+            grid-column: span 4; /* Takes full width at bottom */
+            margin-top: 40px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 30px;
+        }
+
+        .btn {
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--navy-card) 0%, var(--purple-vivid) 100%);
+            color: white;
+            min-width: 200px;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: var(--text-muted);
+        }
+        .btn-secondary:hover {
+            border-color: var(--text-muted);
+            color: var(--navy-card);
+            background: #f8fafc;
+        }
+
+        /* Responsive Breakpoint */
+        @media (max-width: 900px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .span-1, .span-2, .span-4 { grid-column: span 1; }
+            .header-section { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .action-bar { flex-direction: column-reverse; }
+            .btn { width: 100%; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <div class="edit-wrapper">
+        
+        <div class="header-section">
+            <div>
+                <h1 class="page-title">Edit Transaction</h1>
+                <p style="color:#64748b; font-size:0.95rem;">Modify entry details and amounts.</p>
+            </div>
+            <div class="subtitle">ID #{{ entry.id + 1 }}</div>
+        </div>
+
+        <form method="POST">
+            <div class="form-grid">
+                
+                <div class="input-group span-1">
+                    <label>Date</label>
+                    <input type="date" name="date" value="{{ entry.date }}" required>
+                </div>
+
+                <div class="input-group span-1">
+                    <label>Type</label>
+                    <div class="toggle-container">
+                        <span class="switch-label">Adjusting</span>
+                        <label class="switch">
+                            <input type="checkbox" name="is_adjusting" {% if entry.type == 'Adjusting' %}checked{% endif %}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="input-group span-2">
+                    <label>Target Account</label>
+                    <select name="account_name" required>
+                        {% for acc in accounts %}
+                        <option value="{{ acc.name }}" {% if acc.name == entry.account_name %}selected{% endif %}>
+                            {{ acc.code }} - {{ acc.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="input-group span-2">
+                    <label>Description / Particulars</label>
+                    <input type="text" name="particular" value="{{ entry.particular }}" placeholder="Transaction details..." required>
+                </div>
+
+                <div class="input-group span-1">
+                    <label>Debit</label>
+                    <input type="number" name="debit" step="0.01" value="{{ entry.debit }}" placeholder="0.00">
+                </div>
+
+                <div class="input-group span-1">
+                    <label>Credit</label>
+                    <input type="number" name="credit" step="0.01" value="{{ entry.credit }}" placeholder="0.00">
+                </div>
+
+                <div class="action-bar">
+                    <a href="{{ url_for('view_journal', username=session.get('username')) }}" class="btn btn-secondary">Discard Changes</a>
+                    <button type="submit" class="btn btn-primary">Save Update</button>
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+
+</body>
+</html>

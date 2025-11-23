@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - Accountoria</title>
+    <!-- Importing Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* --- CHIC COLOR PALETTE --- */
+        :root {
+            --purple-obsidian: #1a0b2e; /* Very dark, almost black purple */
+            --purple-royal: #2e1a47;    /* Rich main purple */
+            --purple-vibrant: #6c5ce7;  /* Bright accent for buttons/highlights */
+            --white: #ffffff;
+            --text-dark: #1a0b2e;
+            --text-grey: #636e72;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--purple-obsidian);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* --- MAIN CONTAINER (The Split Layout) --- */
+        .split-container {
+            display: flex;
+            width: 100%;
+            height: 100vh; /* Full screen for a cleaner, modern look */
+            background: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* --- LEFT PANEL: The Brand (Dark Purple) --- */
+        .brand-section {
+            flex: 1;
+            background: linear-gradient(135deg, var(--purple-obsidian) 0%, var(--purple-royal) 100%);
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 10%; /* Responsive padding */
+            position: relative;
+        }
+
+        /* Geometric Decoration */
+        .brand-section::after {
+            content: '';
+            position: absolute;
+            top: -10%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .brand-content {
+            z-index: 2;
+            animation: slideInLeft 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .brand-subtitle {
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            opacity: 0.7;
+            font-weight: 500;
+            border-left: 1px solid var(--purple-vibrant);
+            padding-left: 15px;
+        }
+
+        .brand-title {
+            font-size: 4.5rem; /* Large, bold typography */
+            line-height: 1.1;
+            font-weight: 700;
+            margin-bottom: 30px;
+            letter-spacing: -2px;
+            background: linear-gradient(to right, #fff, #dcd6f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-desc {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            font-weight: 300;
+            max-width: 500px;
+            opacity: 0.85;
+        }
+
+        /* --- RIGHT PANEL: The Interaction (White) --- */
+        .login-section {
+            flex: 0.8; /* Slightly smaller than brand section */
+            background: var(--white);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            text-align: center;
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        /* Status Pill */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 20px;
+            background: #f4f4f8;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-grey);
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .dot {
+            width: 8px; height: 8px;
+            background-color: var(--purple-vibrant);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--purple-vibrant);
+            animation: pulse 2s infinite;
+        }
+
+        /* Hero Button */
+        .cta-button {
+            display: block;
+            width: 100%;
+            padding: 20px 0;
+            background-color: var(--purple-royal);
+            color: var(--white);
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 0; /* Sharp corners = Modern/Chic */
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid transparent;
+        }
+
+        .cta-button:hover {
+            background-color: var(--white);
+            color: var(--purple-royal);
+            border-color: var(--purple-royal);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(46, 26, 71, 0.15);
+        }
+
+        .secondary-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: var(--text-grey);
+            font-size: 0.85rem;
+            text-decoration: none;
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .secondary-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: var(--purple-royal);
+            transition: width 0.3s;
+        }
+
+        .secondary-link:hover {
+            color: var(--purple-royal);
+        }
+        .secondary-link:hover::after {
+            width: 100%;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 900px) {
+            .split-container { flex-direction: column; }
+            .brand-section { padding: 60px 40px; }
+            .brand-title { font-size: 3rem; }
+            .login-section { flex: 1.5; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="split-container">
+        
+        <!-- Left Side: Brand Story -->
+        <div class="brand-section">
+            <div class="brand-content">
+                <div class="brand-subtitle">Financial Operating System</div>
+                <h1 class="brand-title">Accountoria</h1>
+                <p class="brand-desc">
+                    Experience the future of financial management. 
+                    Where precision meets elegance, providing clarity for your enterprise.
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Side: Action Area -->
+        <div class="login-section">
+            <div class="login-wrapper">
+                
+                <div class="status-badge">
+                    <div class="dot"></div>
+                    System Operational
+                </div>
+
+                <!-- Primary Action -->
+                <a href="{{ url_for('login') }}" class="cta-button">
+                    Access Dashboard
+                </a>
+
+                <!-- Secondary Action -->
+                <a href="{{ url_for('register') }}" class="secondary-link">
+                    Initialize New Account
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
