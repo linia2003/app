@@ -62,7 +62,6 @@
         /* HEADER SECTION (CONTROL CENTER) */
         .header-section {
             text-align: center;
-            /* CORRECTED: Set positive top margin to move it down */
             margin-top: 40px; 
             margin-bottom: 30px; 
             padding-bottom: 10px;
@@ -226,7 +225,7 @@
         
         /* Positioning the Modules around the center (Clockwise from top right) */
         .module-button:nth-child(2) { top: 30px; right: 30px; } /* JOURNAL */
-        .module-button:nth-child(3) { top: 30px; left: 30px; } /* HISTORY */
+        .module-button:nth-child(3) { top: 30px; left: 30px; } /* LEDGER (Formerly History) */
         .module-button:nth-child(4) { bottom: 30px; left: 30px; } /* ACCOUNTS */
         .module-button:nth-child(5) { bottom: 30px; right: 30px; } /* REPORTS */
 
@@ -270,7 +269,6 @@
 </head>
 <body class="with-nav-padding">
 
-    <!-- UNIVERSAL NAVIGATION BAR (FIXED TOP - Minimalist) -->
     <nav class="app-navbar">
         <div class="nav-brand">Accountoria</div>
         <a href="{{ url_for('home') }}" class="nav-logout">Sign Out</a>
@@ -278,24 +276,17 @@
 
     <div class="dashboard-container">
         
-        <!-- MAIN HEADLINE: CONTROL CENTER (Lower position, with line) -->
         <div class="header-section">
             <h2>CONTROL CENTER</h2>
         </div>
 
-        <!-- V1 CIRCULAR NAVIGATION BLOCK -->
         <div class="circular-nav-container">
             
-            <!-- Center Piece: Core Node (Natural Rounded Shape, Muted Fill) -->
             <div class="welcome-center">
-                <!-- Welcome Back (Bigger, Rounded Font) -->
                 <span class="welcome-text">Welcome Back,</span>
-                <!-- Username (Natural Script Font) -->
                 <span class="user-id">{{ username | upper }}</span>
             </div>
 
-            <!-- Module Buttons (Orbiting Nodes) -->
-            
             <a href="{{ url_for('journal_entry', username=username) }}" class="module-button" style="animation-delay: 0s;">
                 <span class="icon">&#9997;</span> 
                 JOURNAL
@@ -303,7 +294,7 @@
             
             <a href="{{ url_for('view_journal', username=username) }}" class="module-button" style="animation-delay: 1s;">
                 <span class="icon">&#128196;</span> 
-                HISTORY
+                LEDGER
             </a>
             
             <a href="{{ url_for('chart_of_accounts') }}" class="module-button" style="animation-delay: 2s;">
@@ -317,8 +308,6 @@
             </a>
 
         </div>
-        <!-- END CIRCULAR NAVIGATION BLOCK -->
-
-    </div>
+        </div>
 </body>
 </html>

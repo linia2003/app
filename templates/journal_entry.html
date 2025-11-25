@@ -4,58 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Journal Entry - Accountoria</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        /* --- THEME PALETTE --- */
+        /* --- PROFESSIONAL NAVY & PURPLE PALETTE --- */
         :root {
-            --navy-deep: #0f172a;    
-            --navy-card: #1e293b;    
-            --purple-vivid: #6366f1; 
-            --purple-muted: #818cf8; 
-            --white: #ffffff;
-            --slate-light: #f1f5f9;
-            --text-dark: #1e293b;
-            --danger-glow: rgba(220, 38, 38, 0.6);
-            --danger-bg: #fef2f2;
-            --danger-text: #dc2626;
-            --success: #10b981;
+            --page-bg: linear-gradient(135deg, #020617 0%, #2e1065 100%);
+            --card-bg: #ffffff;
+            --input-bg: #1e1b4b;       
+            --input-text: #ffffff;     
+            --input-border: #4c1d95;   
+            --text-dark: #0f172a;   
+            --text-muted: #64748b;  
+            --accent-purple: #7c3aed;
+            --success-bg: #dcfce7; --success-text: #14532d;
+            --danger-bg: #ffe4e6; --danger-text: #9f1239;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--navy-deep);
+            background: var(--page-bg);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 110px 20px 40px 20px;
-            color: var(--text-dark);
+            padding: 120px 20px 40px 20px;
         }
 
-        /* --- BACKGROUND EFFECTS --- */
-        .bg-shape {
-            position: absolute;
-            background: linear-gradient(45deg, #2e1a47, var(--purple-vivid));
-            filter: blur(90px); opacity: 0.3; z-index: -1;
+        /* --- BACKGROUND GLOW --- */
+        .bg-glow {
             position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.4;
         }
-        .shape-1 { top: -10%; right: -10%; width: 600px; height: 600px; border-radius: 50%; }
-        .shape-2 { bottom: -10%; left: -10%; width: 500px; height: 500px; border-radius: 50%; background: var(--purple-vivid); opacity: 0.2; }
+        .glow-1 { top: -10%; left: -10%; width: 600px; height: 600px; background: #4c1d95; }
+        .glow-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #1e293b; }
 
-        /* --- MAIN CONTAINER --- */
+        /* --- MAIN JOURNAL CARD --- */
         .journal-wrapper {
             width: 100%;
-            max-width: 1000px;
-            background: var(--white);
+            max-width: 1100px;
+            background: var(--card-bg);
             border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            padding: 50px 60px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-top: 8px solid var(--accent-purple);
             position: relative;
-            overflow: hidden;
-            border-top: 6px solid var(--purple-vivid);
         }
 
         /* --- HEADER --- */
@@ -63,119 +61,119 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #e2e8f0;
             padding-bottom: 20px;
-            border-bottom: 1px solid #e2e8f0;
         }
 
-        .page-title {
-            font-family: 'Quicksand', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 700;
+        .title-group h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--text-dark);
             margin-bottom: 5px;
-            background: linear-gradient(270deg, #1e293b, #6366f1, #1e293b);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shine 5s linear infinite;
+            letter-spacing: -1px;
         }
 
-        @keyframes shine { to { background-position: 200% center; } }
-
-        .subtitle { color: #64748b; font-size: 0.9rem; }
-
-        /* --- CONTROLS BAR --- */
-        .controls-bar {
+        /* Date Input Styling */
+        .date-group {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--slate-light);
-            padding: 15px 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
+            flex-direction: column;
+            gap: 5px;
         }
-
-        .toggle-group {
-            display: flex; align-items: center; gap: 10px;
-            font-size: 0.9rem; font-weight: 600; color: var(--navy-card);
-        }
-        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #cbd5e1; border-radius: 34px;
-            transition: .4s;
-        }
-        .slider:before {
-            position: absolute; content: "";
-            height: 18px; width: 18px; left: 3px; bottom: 3px;
-            background-color: white; border-radius: 50%;
-            transition: .4s;
-        }
-        input:checked + .slider { background-color: var(--purple-vivid); }
-        input:checked + .slider:before { transform: translateX(20px); }
-
-        /* --- ANIMATIONS --- */
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
-            100% { transform: translateX(0); }
-        }
-
-        @keyframes jump {
-            0% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
-            100% { transform: translateY(0); }
-        }
-
-        .status-badge {
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-size: 0.85rem;
+        .date-label {
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+        }
+        .main-date-input {
+            padding: 12px 15px;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            
+            /* FORCE COLORS */
+            background-color: var(--input-bg) !important;
+            color: var(--input-text) !important;
+            
+            font-weight: 500;
+            outline: none;
             transition: 0.3s;
-            border: 1px solid transparent;
-            display: inline-block;
+        }
+        
+        .main-date-input::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+        
+        .main-date-input:focus {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.2);
         }
 
-        .status-empty { background: #e2e8f0; color: #64748b; }
-        
+        /* --- STATUS BADGE (Animated) --- */
+        .status-badge {
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 240px;
+            text-align: center;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .status-empty { 
+            background: #f1f5f9; 
+            color: #64748b; 
+            border-color: #e2e8f0;
+        }
+
+        /* Animations */
+        @keyframes jump {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
         .status-valid { 
-            background: #dcfce7; 
-            color: #166534; 
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
-            border-color: #166534;
-            animation: jump 0.6s ease-out;
+            background: var(--success-bg); 
+            color: var(--success-text); 
+            border-color: #86efac;
+            animation: jump 0.5s ease-out;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.15);
         }
 
         .status-invalid { 
             background: var(--danger-bg); 
-            color: var(--danger-text);
-            box-shadow: 0 0 20px var(--danger-glow);
-            border-color: var(--danger-text);
+            color: var(--danger-text); 
+            border-color: #fda4af;
             animation: shake 0.4s ease-in-out;
+            box-shadow: 0 4px 12px rgba(225, 29, 72, 0.15);
         }
 
-        /* --- TABLE STYLING --- */
-        .table-container {
+        /* --- TABLE --- */
+        .table-wrapper {
+            border: 1px solid #e2e8f0;
             border-radius: 12px;
             overflow: hidden;
-            border: 1px solid #e2e8f0;
         }
 
         table { width: 100%; border-collapse: collapse; }
 
-        /* Table Header - Light background, dark text */
         th {
-            background-color: #f5f3ff; /* Very pale purple/white */
-            color: #1e293b; /* Dark Navy Text */
-            padding: 15px;
+            background: #f8fafc;
+            color: #1e1b4b;
+            padding: 18px 24px;
             text-align: left;
             font-size: 0.85rem;
             font-weight: 700;
@@ -185,178 +183,144 @@
         }
 
         td {
-            padding: 10px;
+            padding: 18px 24px;
             background: white;
             border-bottom: 1px solid #f1f5f9;
         }
 
-        .entry-row {
-            animation: slideIn 0.4s ease-out forwards;
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         /* --- INPUT FIELDS --- */
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
         .input-cell {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
+            padding: 16px 20px;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
             font-family: 'Poppins', sans-serif;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
             
-            /* Input color: Light Purple (Almost White) */
-            background-color: #f5f3ff !important; 
-            color: #0f172a !important;
+            /* FORCE COLORS ALWAYS */
+            background-color: var(--input-bg) !important;
+            color: var(--input-text) !important;
             
-            /* CRITICAL FIX: This forces the Dropdown List/Calendar to be WHITE with BLACK text */
-            color-scheme: light; 
-            
-            transition: 0.2s;
+            font-weight: 500;
+            transition: all 0.2s;
         }
 
-        /* Ensure Date Picker is also White */
-        input[type="date"] {
-            color-scheme: light;
-            color: #0f172a;
-            background-color: #f5f3ff;
-        }
-
-        /* Placeholder text color */
-        ::placeholder {
-            color: #64748b;
-            opacity: 1;
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important;
+            -webkit-text-fill-color: var(--input-text) !important;
         }
 
         .input-cell:focus {
             outline: none;
-            border-color: var(--purple-vivid);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-            background-color: #ffffff !important; 
+            border-color: var(--accent-purple);
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.25);
+            transform: translateY(-2px);
+            background-color: var(--input-bg) !important;
+            color: var(--input-text) !important;
+        }
+        
+        .input-cell::placeholder { 
+            color: #a5b4fc; 
+            opacity: 0.7;
         }
 
-        /* --- ACTION BUTTONS --- */
+        /* --- BUTTONS --- */
         .btn-row {
+            margin-top: 35px;
             display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
+            justify-content: flex-end;
         }
-
-        .btn {
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            border: none;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-add {
-            background: transparent;
-            border: 2px dashed var(--purple-vivid);
-            color: var(--purple-vivid);
-        }
-        .btn-add:hover { background: #eff6ff; transform: translateY(-2px); }
 
         .btn-post {
-            background: linear-gradient(135deg, var(--navy-deep), var(--purple-vivid));
+            background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 100%);
             color: white;
-            padding: 12px 40px;
-            opacity: 1;
-        }
-        .btn-post:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(100%); }
-        .btn-post:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
-
-        .btn-delete {
-            background: transparent;
-            color: #94a3b8;
-            font-size: 1.2rem;
-            padding: 5px;
-            border-radius: 50%;
-            cursor: pointer;
+            padding: 16px 60px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(30, 27, 75, 0.25);
         }
-        .btn-delete:hover { color: #dc2626; background: #fef2f2; }
+
+        .btn-post:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(76, 29, 149, 0.35);
+        }
+
+        .btn-post:disabled {
+            background: #cbd5e1;
+            color: #94a3b8;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
 
     </style>
 </head>
 <body>
 
-    <!-- Navigation Bar -->
     <nav class="app-navbar">
         <div class="nav-brand">Accountoria</div>
         <div class="nav-links">
             <a href="{{ url_for('dashboard') }}" class="nav-item">Dashboard</a>
             <a href="{{ url_for('journal_entry', username=username) }}" class="nav-item active">Journal</a>
-            <a href="{{ url_for('view_journal', username=username) }}" class="nav-item">History</a>
+            <a href="{{ url_for('view_journal', username=username) }}" class="nav-item">Ledger</a>
             <a href="{{ url_for('chart_of_accounts') }}" class="nav-item">Accounts</a>
             <a href="{{ url_for('financial_reports') }}" class="nav-item">Reports</a>
         </div>
         <a href="{{ url_for('home') }}" class="nav-logout">Sign Out</a>
     </nav>
 
-    <div class="bg-shape shape-1"></div>
-    <div class="bg-shape shape-2"></div>
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
 
     <div class="journal-wrapper">
         
-        <div class="header-section">
-            <div>
-                <h1 class="page-title">Journal Entry</h1>
-                <p class="subtitle">Record and manage financial transactions.</p>
-            </div>
-            <div id="statusIndicator" class="status-badge status-empty">
-                Draft Mode
-            </div>
-        </div>
-
-        <form action="{{ url_for('journal_entry', username=username) }}" method="POST">
+        <form id="journalForm" action="{{ url_for('journal_entry', username=username) }}" method="POST" onsubmit="syncDates()">
             
-            <div class="controls-bar">
-                <div class="toggle-group">
-                    <span>Standard</span>
-                    <label class="switch">
-                        <input type="checkbox" name="is_adjusting">
-                        <span class="slider"></span>
-                    </label>
-                    <span>Adjusting Entry</span>
+            <div class="header-section">
+                <div class="title-group">
+                    <h1>Journal Entry</h1>
+                    <div class="date-group">
+                        <label class="date-label">Transaction Date</label>
+                        <input type="date" id="globalDate" class="main-date-input" required>
+                    </div>
+                </div>
+                <div id="statusIndicator" class="status-badge status-empty">
+                    Draft Mode
                 </div>
             </div>
 
-            <!-- Table Container (Updated structure for input/datalist) -->
-            <div class="table-container">
+            <datalist id="available_accounts">
+                {% for acc in accounts %}
+                    <option value="{{ acc.name }}">{{ acc.code }} - {{ acc.name }}</option>
+                {% endfor %}
+            </datalist>
+
+            <div class="table-wrapper">
                 <table id="journalTable">
                     <thead>
                         <tr>
-                            <th style="width: 15%;">Date</th>
-                            <th style="width: 35%;">Account Name</th> <th style="width: 25%;">Description</th>
-                            <th style="width: 10%;">Debit</th>
-                            <th style="width: 10%;">Credit</th>
-                            <th style="width: 5%;"></th>
+                            <th style="width: 50%;">Account</th>
+                            <th style="width: 25%;">Debit</th>
+                            <th style="width: 25%;">Credit</th>
                         </tr>
                     </thead>
                     <tbody id="journalEntries"></tbody>
                 </table>
             </div>
 
-            <!-- Datalist for Account Autocomplete -->
-            <datalist id="accountOptions">
-                {% for acc in accounts %}
-                    <option value="{{ acc.name }}">{{ acc.code }} - {{ acc.name }}</option>
-                {% endfor %}
-            </datalist>
-
             <div class="btn-row">
-                <button type="button" class="btn btn-add" onclick="addJournalEntry()">
-                    <span>+</span> Add Transaction Line
-                </button>
-                <button type="submit" class="btn btn-post" id="submitBtn" disabled>
+                <button type="submit" class="btn-post" id="submitBtn" disabled>
                     Post Entry
                 </button>
             </div>
@@ -366,31 +330,23 @@
     </div>
 
     <script>
-        function addJournalEntry() {
+        // Set default date to today
+        document.getElementById('globalDate').valueAsDate = new Date();
+
+        function createRow() {
             const tbody = document.getElementById("journalEntries");
             const row = document.createElement("tr");
-            row.classList.add("entry-row");
-
+            
             row.innerHTML = `
-                <td><input type="date" name="date[]" class="input-cell" required></td>
                 <td>
-                    <input type="text" name="account_name[]" list="accountOptions" 
-                           class="input-cell" placeholder="Select or Type New Account..." required>
+                    <input type="text" name="account_name[]" list="available_accounts" class="input-cell" placeholder="Select or type account..." autocomplete="off" required>
+                    <input type="hidden" name="particular[]" value="N/A"> 
+                    <input type="hidden" name="date[]" class="row-date">
                 </td>
-                <td><input type="text" name="particular[]" class="input-cell" placeholder="Details..." required></td>
                 <td><input type="number" name="debit[]" step="0.01" class="input-cell" placeholder="0.00" oninput="validate()"></td>
                 <td><input type="number" name="credit[]" step="0.01" class="input-cell" placeholder="0.00" oninput="validate()"></td>
-                <td style="text-align:center;">
-                    <button type="button" class="btn-delete" onclick="removeRow(this)">×</button>
-                </td>
             `;
             tbody.appendChild(row);
-            validate();
-        }
-
-        function removeRow(btn) {
-            btn.closest('tr').remove();
-            validate();
         }
 
         function validate() {
@@ -409,24 +365,44 @@
             const status = document.getElementById("statusIndicator");
             const diff = Math.abs(totalDebit - totalCredit);
             
+            // Reflow for animation restart
             status.classList.remove("status-invalid", "status-valid", "status-empty");
-            
-            if (rows.length === 0) {
+            void status.offsetWidth; 
+
+            const hasValues = totalDebit > 0 || totalCredit > 0;
+
+            if (!hasValues) {
                 status.innerText = "Draft Mode";
                 status.classList.add("status-empty");
                 btn.disabled = true;
             } else if (diff < 0.01 && (totalDebit > 0)) {
+                // BALANCED -> JUMP
                 status.innerText = `Balanced ($${totalDebit.toFixed(2)})`;
                 status.classList.add("status-valid");
                 btn.disabled = false;
+                btn.innerText = "Post Entry";
             } else {
+                // UNBALANCED -> SHAKE
                 status.innerText = `UNBALANCED (Diff: $${diff.toFixed(2)})`;
                 status.classList.add("status-invalid");
                 btn.disabled = true;
+                btn.innerText = "Fix Balance";
             }
         }
 
-        window.onload = addJournalEntry;
+        function syncDates() {
+            const mainDate = document.getElementById('globalDate').value;
+            const hiddenDates = document.querySelectorAll('.row-date');
+            hiddenDates.forEach(input => {
+                input.value = mainDate;
+            });
+        }
+
+        // Initialize strictly with 2 rows
+        window.onload = function() {
+            createRow();
+            createRow();
+        };
     </script>
 </body>
 </html>

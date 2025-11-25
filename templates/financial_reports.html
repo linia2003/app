@@ -3,352 +3,355 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Intelligence - Accountoria</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <title>Financial Reports - Accountoria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        /* --- THEME VARIABLES --- */
+        /* --- CLASSY NAVY & PURPLE PALETTE --- */
         :root {
-            --navy-deep: #0f172a;
-            --navy-card: #1e293b;
-            --purple-vivid: #6366f1;
-            --purple-light: #818cf8;
-            --white: #ffffff;
-            --slate-light: #f1f5f9;
-            --text-dark: #334155;
+            /* Background: Deep Navy -> Royal Purple */
+            --page-bg: linear-gradient(135deg, #020617 0%, #2e1065 100%);
+            
+            /* Card: Pure White */
+            --card-bg: #ffffff;
+            
+            /* Typography */
+            --text-dark: #0f172a;   
+            --text-muted: #64748b;  
+            
+            /* Accents */
+            --accent-purple: #7c3aed;
+            --accent-navy: #1e1b4b;
             
             /* Status Colors */
-            --danger-bg: #fef2f2;
-            --danger-text: #dc2626;
-            --danger-glow: rgba(220, 38, 38, 0.6);
-            --success-bg: #dcfce7;
-            --success-text: #166534;
+            --success-text: #14532d;
+            --danger-text: #991b1b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--navy-deep);
+            background: var(--page-bg);
             min-height: 100vh;
-            color: var(--text-dark);
-            
-            display: block; 
-            /* UPDATED: Increased top padding for Navbar */
-            padding-top: 110px; 
-            padding-bottom: 80px;
-            padding-left: 20px;
-            padding-right: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 100px 20px 40px 20px;
         }
 
-        /* --- BACKGROUND EFFECTS --- */
-        .bg-shape {
-            position: absolute;
-            background: linear-gradient(45deg, #2e1a47, var(--purple-vivid));
-            filter: blur(90px); opacity: 0.3; z-index: -1;
-            position: fixed; /* Fixed so they don't scroll away */
+        /* --- AMBIENT GLOW --- */
+        .bg-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.4;
         }
-        .shape-1 { top: -10%; right: -10%; width: 600px; height: 600px; border-radius: 50%; }
-        .shape-2 { bottom: -10%; left: -10%; width: 500px; height: 500px; border-radius: 50%; background: var(--purple-vivid); opacity: 0.2; }
+        .glow-1 { top: -10%; left: -10%; width: 600px; height: 600px; background: #4c1d95; }
+        .glow-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #1e293b; }
 
         /* --- MAIN WRAPPER --- */
         .main-wrapper {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        /* --- HEADER --- */
-        .header-section {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        .page-title {
-            font-family: 'Quicksand', sans-serif;
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            background: linear-gradient(270deg, #ffffff, #a5b4fc, #6366f1, #ffffff);
-            background-size: 300% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shine 6s ease infinite;
-        }
-        @keyframes shine { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
-
-        .subtitle { color: #94a3b8; font-size: 1.1rem; letter-spacing: 0.5px; }
-
-        /* --- GRID LAYOUT --- */
-        .report-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 40px;
-            align-items: start;
-        }
-        
-        .full-width { grid-column: 1 / -1; }
-
-        /* --- CARDS --- */
-        .report-card {
-            background: var(--white);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            border-top: 6px solid var(--purple-vivid);
+            width: 100%;
+            max-width: 900px;
             display: flex;
             flex-direction: column;
-            transition: transform 0.3s ease;
-            position: relative;
+            align-items: center;
         }
-        .report-card:hover { transform: translateY(-5px); }
 
-        /* Card Headers */
+        /* --- HEADER & TOGGLE --- */
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+            width: 100%;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            color: #ffffff;
+            margin-bottom: 30px;
+            letter-spacing: -1px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        /* Classy Toggle Switch */
+        .report-selector {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 8px;
+            border-radius: 50px;
+            display: inline-flex;
+            gap: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .select-btn {
+            padding: 12px 35px;
+            border: none;
+            border-radius: 40px;
+            background: transparent;
+            color: #cbd5e1;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .select-btn:hover { color: white; }
+
+        .select-btn.active {
+            background: var(--accent-purple);
+            color: white;
+            box-shadow: 0 5px 15px rgba(124, 58, 237, 0.4);
+            transform: scale(1.05);
+        }
+
+        /* --- REPORT CARD --- */
+        .report-card {
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 50px 60px;
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+            border-top: 8px solid var(--accent-purple);
+            display: none; /* Hidden by default */
+            animation: fadeScale 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeScale {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--slate-light);
-        }
-        
-        h2 {
-            font-family: 'Quicksand', sans-serif;
-            font-size: 1.5rem;
-            color: var(--navy-card);
-            font-weight: 700;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
         }
 
-        /* --- ANIMATIONS (Shake & Jump) --- */
-        @keyframes shake {
+        .report-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        /* --- ANIMATED STATUS BADGES --- */
+        .status-badge {
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        /* Animation: Pulse Green (Balanced) */
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); transform: scale(1); }
+            70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); transform: scale(1.02); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); transform: scale(1); }
+        }
+
+        .status-valid { 
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: var(--success-text);
+            border: 1px solid #86efac;
+            animation: pulse-green 2.5s infinite;
+        }
+
+        /* Animation: Shake Red (Unbalanced) */
+        @keyframes shake-red {
             0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
+            25% { transform: translateX(-3px); }
+            50% { transform: translateX(3px); }
+            75% { transform: translateX(-3px); }
             100% { transform: translateX(0); }
         }
 
-        @keyframes jump {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0); }
-        }
-
-        /* --- STATUS BADGES --- */
-        .status-badge {
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: inline-block;
-        }
-
-        .status-valid {
-            background: var(--success-bg);
-            color: var(--success-text);
-            box-shadow: 0 0 15px rgba(22, 163, 74, 0.3);
-            animation: jump 0.6s ease-out;
-        }
-
-        .status-invalid {
-            background: var(--danger-bg);
+        .status-invalid { 
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
             color: var(--danger-text);
-            box-shadow: 0 0 20px var(--danger-glow);
-            animation: shake 0.5s ease-in-out infinite;
+            border: 1px solid #fca5a5;
+            animation: shake-red 0.5s ease-in-out infinite; /* Continuous warning shake */
         }
 
-        /* --- TABLES --- */
+        /* --- TABLE STYLES --- */
         table { width: 100%; border-collapse: collapse; }
         
-        th {
-            text-align: left;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            color: #64748b;
-            padding-bottom: 15px;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
         td {
-            padding: 14px 0;
-            border-bottom: 1px solid var(--slate-light);
-            font-size: 0.95rem;
+            padding: 20px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 1rem;
             color: var(--text-dark);
         }
 
-        /* Total Rows */
         .row-total td {
             font-weight: 700;
-            color: var(--purple-vivid);
-            font-size: 1.1rem;
+            color: var(--accent-purple);
+            font-size: 1.2rem;
             border-top: 2px dashed #cbd5e1;
-            padding-top: 20px;
+            padding-top: 25px;
             border-bottom: none;
         }
 
-        /* Column Alignments */
         .col-amount {
             text-align: right;
             font-family: 'Poppins', monospace; 
             font-weight: 500;
         }
 
-        .positive { color: var(--success-text); }
-        .negative { color: var(--danger-text); }
+        .positive { color: var(--success-text); font-weight: 600; }
+        .negative { color: var(--danger-text); font-weight: 600; }
 
-        /* --- NAVIGATION --- */
-        .nav-area { text-align: center; margin-top: 60px; }
-        .back-btn {
-            display: inline-block;
-            text-decoration: none;
-            color: white;
-            background: rgba(255,255,255,0.1);
-            padding: 16px 45px;
-            border-radius: 50px;
-            font-weight: 600;
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: 0.3s;
-            backdrop-filter: blur(5px);
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-        }
-        .back-btn:hover { 
-            background: var(--white); 
-            color: var(--purple-vivid); 
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(255,255,255,0.2);
+        .section-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #94a3b8;
+            padding-top: 25px;
         }
 
-        @media (max-width: 950px) {
-            .report-grid { grid-template-columns: 1fr; }
-        }
     </style>
 </head>
 <body>
 
-    <!-- ADDED: Navigation Bar -->
     <nav class="app-navbar">
         <div class="nav-brand">Accountoria</div>
         <div class="nav-links">
             <a href="{{ url_for('dashboard') }}" class="nav-item">Dashboard</a>
             <a href="{{ url_for('journal_entry', username=session.get('username')) }}" class="nav-item">Journal</a>
-            <a href="{{ url_for('view_journal', username=session.get('username')) }}" class="nav-item">History</a>
+            <a href="{{ url_for('view_journal', username=session.get('username')) }}" class="nav-item">Ledger</a>
             <a href="{{ url_for('chart_of_accounts') }}" class="nav-item">Accounts</a>
             <a href="{{ url_for('financial_reports') }}" class="nav-item active">Reports</a>
         </div>
         <a href="{{ url_for('home') }}" class="nav-logout">Sign Out</a>
     </nav>
 
-    <div class="bg-shape shape-1"></div>
-    <div class="bg-shape shape-2"></div>
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
 
     <div class="main-wrapper">
         
         <div class="header-section">
-            <h1 class="page-title">Financial Intelligence</h1>
-            <p class="subtitle">Real-time analytics and position statements</p>
+            <h1 class="page-title">Financial Reports</h1>
+            
+            <div class="report-selector">
+                <button class="select-btn active" onclick="showReport('income')">Income Statement</button>
+                <button class="select-btn" onclick="showReport('balance')">Balance Sheet</button>
+            </div>
         </div>
 
-        <div class="report-grid">
-            
-            <div class="report-card full-width">
-                <div class="card-header">
-                    <h2>General Ledger Summary</h2>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Account</th>
-                            <th>Type</th>
-                            <th class="col-amount">Dr Total</th>
-                            <th class="col-amount">Cr Total</th>
-                            <th class="col-amount">Net Balance</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for name, details in data.ledger.items() %}
-                        {% if details.debit_total > 0 or details.credit_total > 0 %}
-                        <tr>
-                            <td style="font-weight:600;">{{ name }}</td>
-                            <td><span style="font-size:0.75rem; background:#f1f5f9; padding:4px 10px; border-radius:6px; color:#64748b;">{{ details.type }}</span></td>
-                            <td class="col-amount" style="color:#94a3b8;">{{ "%.2f"|format(details.debit_total) }}</td>
-                            <td class="col-amount" style="color:#94a3b8;">{{ "%.2f"|format(details.credit_total) }}</td>
-                            <td class="col-amount" style="color:var(--text-dark); font-weight:700;">
-                                {{ "%.2f"|format(details.balance) }}
-                            </td>
-                        </tr>
-                        {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
+        <div id="report-income" class="report-card" style="display: block;">
+            <div class="card-header">
+                <h2 class="report-name">Income Statement</h2>
+                <span style="color:#64748b; font-size:0.9rem; font-style:italic;">For Current Period</span>
             </div>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Total Revenue</td>
+                        <td class="col-amount positive">+ {{ "%.2f"|format(data.income_statement.revenue) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Expenses</td>
+                        <td class="col-amount negative">- {{ "%.2f"|format(data.income_statement.expenses) }}</td>
+                    </tr>
+                    <tr class="row-total">
+                        <td>Net Income</td>
+                        <td class="col-amount">{{ "%.2f"|format(data.income_statement.net_income) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-            <div class="report-card">
-                <div class="card-header">
-                    <h2>Income Statement</h2>
-                </div>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>Total Revenue</td>
-                            <td class="col-amount positive">+ {{ "%.2f"|format(data.income_statement.revenue) }}</td>
-                        </tr>
-                        <tr>
-                            <td>Total Expenses</td>
-                            <td class="col-amount negative">- {{ "%.2f"|format(data.income_statement.expenses) }}</td>
-                        </tr>
-                        <tr class="row-total">
-                            <td>Net Income</td>
-                            <td class="col-amount">{{ "%.2f"|format(data.income_statement.net_income) }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div id="report-balance" class="report-card">
+            <div class="card-header">
+                <h2 class="report-name">Balance Sheet</h2>
+                
+                {% if data.balance_sheet.is_balanced %}
+                    <span class="status-badge status-valid">
+                        <span>&#10003;</span> Balanced
+                    </span>
+                {% else %}
+                    <span class="status-badge status-invalid">
+                        <span>&#9888;</span> Unbalanced
+                    </span>
+                {% endif %}
             </div>
-
-            <div class="report-card">
-                <div class="card-header">
-                    <h2>Balance Sheet</h2>
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="section-title" colspan="2">Assets</td>
+                    </tr>
+                    <tr>
+                        <td>Total Assets</td>
+                        <td class="col-amount" style="font-weight:700;">{{ "%.2f"|format(data.balance_sheet.assets) }}</td>
+                    </tr>
                     
-                    {% if data.balance_sheet.is_balanced %}
-                        <span class="status-badge status-valid">Balanced</span>
-                    {% else %}
-                        <span class="status-badge status-invalid">Unbalanced</span>
-                    {% endif %}
-
-                </div>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td style="font-weight:600;">Total Assets</td>
-                            <td class="col-amount" style="font-weight:700;">{{ "%.2f"|format(data.balance_sheet.assets) }}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" style="padding-top:20px; font-size:0.75rem; color:#94a3b8; font-weight:700; text-transform:uppercase;">Liabilities & Equity</td>
-                        </tr>
-                        <tr>
-                            <td>Liabilities</td>
-                            <td class="col-amount">{{ "%.2f"|format(data.balance_sheet.liabilities) }}</td>
-                        </tr>
-                        <tr>
-                            <td>Owner's Equity</td>
-                            <td class="col-amount">{{ "%.2f"|format(data.balance_sheet.equity) }}</td>
-                        </tr>
-                        <tr>
-                            <td>Retained Earnings</td>
-                            <td class="col-amount">{{ "%.2f"|format(data.income_statement.net_income) }}</td>
-                        </tr>
-                        <tr class="row-total">
-                            <td>Total L & E</td>
-                            <td class="col-amount">{{ "%.2f"|format(data.balance_sheet.total_eq_liab) }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
+                    <tr>
+                        <td class="section-title" colspan="2">Liabilities & Equity</td>
+                    </tr>
+                    <tr>
+                        <td>Liabilities</td>
+                        <td class="col-amount">{{ "%.2f"|format(data.balance_sheet.liabilities) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Owner's Equity</td>
+                        <td class="col-amount">{{ "%.2f"|format(data.balance_sheet.equity) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Retained Earnings</td>
+                        <td class="col-amount">{{ "%.2f"|format(data.income_statement.net_income) }}</td>
+                    </tr>
+                    
+                    <tr class="row-total">
+                        <td>Total L & E</td>
+                        <td class="col-amount">{{ "%.2f"|format(data.balance_sheet.total_eq_liab) }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
     </div>
+
+    <script>
+        function showReport(reportType) {
+            const incomeCard = document.getElementById('report-income');
+            const balanceCard = document.getElementById('report-balance');
+            const buttons = document.querySelectorAll('.select-btn');
+
+            // Hide Both
+            incomeCard.style.display = 'none';
+            balanceCard.style.display = 'none';
+            
+            // Trigger Reflow for Animation Reset
+            void incomeCard.offsetWidth; 
+            void balanceCard.offsetWidth;
+
+            // Show Selected
+            if (reportType === 'income') {
+                incomeCard.style.display = 'block';
+                buttons[0].classList.add('active');
+                buttons[1].classList.remove('active');
+            } else {
+                balanceCard.style.display = 'block';
+                buttons[0].classList.remove('active');
+                buttons[1].classList.add('active');
+            }
+        }
+    </script>
 </body>
 </html>

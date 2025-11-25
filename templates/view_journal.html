@@ -3,303 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ledger History - Accountoria</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <title>Ledger - Accountoria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        /* --- THEME VARIABLES --- */
+        /* --- PROFESSIONAL NAVY & PURPLE PALETTE --- */
         :root {
-            --navy-deep: #0f172a;
-            --navy-card: #1e293b;
-            --purple-vivid: #6366f1;
-            --purple-light: #818cf8;
-            --white: #ffffff;
-            --slate-light: #f1f5f9;
-            --text-dark: #334155;
+            --page-bg: linear-gradient(135deg, #020617 0%, #2e1065 100%);
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;   
+            --text-muted: #64748b;  
+            --accent-purple: #7c3aed;
+            --accent-navy: #1e1b4b;
+            
+            /* Search Box Colors */
+            --search-bg: #1e1b4b;
+            --search-text: #ffffff;
+            --search-border: #4c1d95;
+
+            --tag-debit-bg: #f1f5f9; --tag-debit-text: #0f172a;
+            --tag-credit-bg: #f5f3ff; --tag-credit-text: #7c3aed;
             --danger: #ef4444;
-            --success: #10b981;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--navy-deep);
+            background: var(--page-bg);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            /* UPDATED Padding */
-            padding: 110px 20px 40px 20px;
-            color: var(--text-dark);
+            padding: 120px 20px 40px 20px;
         }
 
-        /* --- BACKGROUND AMBIENCE --- */
-        .bg-shape {
-            position: absolute;
-            background: linear-gradient(45deg, #2e1a47, var(--purple-vivid));
-            filter: blur(90px); opacity: 0.3; z-index: -1;
+        /* --- BACKGROUND GLOW --- */
+        .bg-glow {
             position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.4;
         }
-        .shape-1 { top: -10%; left: -10%; width: 600px; height: 600px; border-radius: 50%; }
-        .shape-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; border-radius: 50%; background: var(--purple-vivid); opacity: 0.2; }
+        .glow-1 { top: -10%; left: -10%; width: 600px; height: 600px; background: #4c1d95; }
+        .glow-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #1e293b; }
 
         /* --- MAIN CARD --- */
         .history-wrapper {
             width: 100%;
             max-width: 1100px;
-            background: var(--white);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 50px 60px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-top: 8px solid #7c3aed;
             position: relative;
-            overflow: hidden;
-            border-top: 6px solid var(--purple-vivid);
         }
 
         /* --- HEADER SECTION --- */
         .header-section {
-            text-align: center;
             margin-bottom: 40px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
         .page-title {
-            font-family: 'Quicksand', sans-serif;
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin-bottom: 8px;
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: #0f172a;
+            margin-bottom: 5px;
             letter-spacing: -1px;
-            background: linear-gradient(270deg, #1e293b, #6366f1, #818cf8, #1e293b);
-            background-size: 300% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shine 6s ease infinite;
+            flex-shrink: 0;
         }
 
-        @keyframes shine { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+        /* --- HEADER CONTROLS --- */
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-        .subtitle {
-            color: #64748b;
+        /* SEARCH INPUT STYLING */
+        .search-input {
+            padding: 12px 20px;
+            border: 2px solid var(--search-border);
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
             font-size: 1rem;
-            font-weight: 400;
+            width: 280px;
+            outline: none;
+            transition: all 0.3s ease;
+            
+            /* Navy Box with White Text */
+            background-color: var(--search-bg);
+            color: var(--search-text);
+            caret-color: #ffffff; /* White Cursor */
+        }
+        
+        .search-input::placeholder {
+            color: #a5b4fc; /* Light Purple Placeholder */
+            opacity: 0.8;
+        }
+
+        /* Typing Animation (Pulse) */
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0px rgba(124, 58, 237, 0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(124, 58, 237, 0.1); }
+            100% { box-shadow: 0 0 0 0px rgba(124, 58, 237, 0.4); }
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-purple);
+            animation: pulseGlow 1.5s infinite; /* Pulse animation when typing/focused */
+        }
+
+        /* Toggle Box */
+        .toggle-box {
+            background: #f1f5f9;
+            padding: 5px;
+            border-radius: 12px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .toggle-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #64748b;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background: #ffffff;
+            color: #7c3aed;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
         /* --- TABLE STYLING --- */
         .table-responsive {
-            border-radius: 16px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         table { width: 100%; border-collapse: collapse; }
 
         th {
-            background-color: var(--navy-card);
-            color: white;
-            padding: 18px;
+            background-color: #f8fafc;
+            color: #1e1b4b;
+            padding: 20px 24px;
             text-align: left;
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
+            border-bottom: 2px solid #e2e8f0;
         }
 
         td {
-            padding: 16px 18px;
+            padding: 18px 24px;
             background: white;
             border-bottom: 1px solid #f1f5f9;
-            color: var(--text-dark);
+            color: #0f172a;
             font-size: 0.95rem;
-            transition: background 0.2s;
+            vertical-align: middle;
         }
 
-        /* Staggered Row Animation */
+        /* Row Animation */
         tbody tr {
             opacity: 0;
-            animation: fadeUp 0.5s ease-out forwards;
+            animation: fadeUp 0.4s ease-out forwards;
         }
-        tbody tr:nth-child(1) { animation-delay: 0.1s; }
-        tbody tr:nth-child(2) { animation-delay: 0.2s; }
-        tbody tr:nth-child(3) { animation-delay: 0.3s; }
-        tbody tr:nth-child(4) { animation-delay: 0.4s; }
-        tbody tr:nth-child(5) { animation-delay: 0.5s; }
-
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        tbody tr:hover td {
-            background-color: #f8fafc;
-        }
+        
+        tbody tr:nth-child(1) { animation-delay: 0.1s; }
+        tbody tr:nth-child(2) { animation-delay: 0.15s; }
 
         /* --- BADGES & AMOUNTS --- */
         .amount-badge {
             display: inline-block;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
             font-weight: 600;
             font-family: 'Poppins', monospace;
             font-size: 0.9rem;
         }
-        .debit { color: var(--navy-card); background: #f1f5f9; }
-        .credit { color: var(--purple-vivid); background: #eef2ff; }
+        .debit { color: #0f172a; background: #f1f5f9; border: 1px solid #e2e8f0; }
+        .credit { color: #7c3aed; background: #f5f3ff; border: 1px solid #ede9fe; }
 
         /* --- ACTION BUTTONS --- */
-        .action-group {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
+        .action-group { display: flex; gap: 10px; }
 
         .btn-action {
             padding: 8px 16px;
             border-radius: 8px;
             text-decoration: none;
-            font-size: 0.8rem;
-            font-weight: 600;
-            transition: all 0.3s;
-            border: 1px solid transparent;
+            font-size: 0.75rem;
+            font-weight: 700;
             text-transform: uppercase;
+            transition: all 0.2s;
+            border: 1px solid transparent;
             letter-spacing: 0.5px;
         }
 
-        .btn-edit {
-            background: rgba(99, 102, 241, 0.1);
-            color: var(--purple-vivid);
-        }
-        .btn-edit:hover {
-            background: var(--purple-vivid);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
+        .btn-edit { background: #fff; border: 1px solid #e2e8f0; color: #7c3aed; }
+        .btn-edit:hover { background: #7c3aed; color: white; }
 
-        .btn-delete {
-            background: transparent;
-            color: #94a3b8;
-            border: 1px solid #e2e8f0;
-        }
-        .btn-delete:hover {
-            border-color: var(--danger);
-            background: #fef2f2;
-            color: var(--danger);
-            transform: translateY(-2px);
-        }
+        .btn-delete { background: transparent; color: #94a3b8; cursor: pointer; }
+        .btn-delete:hover { background: #fef2f2; color: #ef4444; }
 
         /* --- FOOTER NAV --- */
         .nav-area {
             margin-top: 40px;
             display: flex;
-            justify-content: center;
+            justify-content: flex-end;
         }
 
         .btn-back {
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            padding: 14px 30px;
-            background: var(--navy-deep);
+            padding: 14px 35px;
+            background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 100%);
             color: white;
             text-decoration: none;
-            border-radius: 50px;
+            border-radius: 10px;
             font-weight: 600;
             font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2);
+            box-shadow: 0 10px 20px rgba(30, 27, 75, 0.25);
         }
 
         .btn-back:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(15, 23, 42, 0.3);
-            background: var(--purple-vivid);
+            box-shadow: 0 15px 30px rgba(76, 29, 149, 0.35);
         }
         
-        .empty-state {
-            padding: 40px;
-            text-align: center;
-            color: #94a3b8;
-            font-style: italic;
-        }
+        .empty-state { padding: 50px; text-align: center; color: #94a3b8; font-style: italic; font-size: 1rem; }
+
+        /* SUMMARY TABLE SPECIFIC */
+        .col-amount { text-align: right; font-family: 'Poppins', monospace; font-weight: 600; }
+        .balance-positive { color: #166534; font-weight: 700; }
+        .balance-negative { color: #dc2626; font-weight: 700; }
 
     </style>
 </head>
 <body>
 
-    <!-- ADDED: Navigation Bar -->
     <nav class="app-navbar">
         <div class="nav-brand">Accountoria</div>
         <div class="nav-links">
             <a href="{{ url_for('dashboard') }}" class="nav-item">Dashboard</a>
             <a href="{{ url_for('journal_entry', username=username) }}" class="nav-item">Journal</a>
-            <a href="{{ url_for('view_journal', username=username) }}" class="nav-item active">History</a>
+            <a href="{{ url_for('view_journal', username=username) }}" class="nav-item active">Ledger</a>
             <a href="{{ url_for('chart_of_accounts') }}" class="nav-item">Accounts</a>
             <a href="{{ url_for('financial_reports') }}" class="nav-item">Reports</a>
         </div>
         <a href="{{ url_for('home') }}" class="nav-logout">Sign Out</a>
     </nav>
 
-    <div class="bg-shape shape-1"></div>
-    <div class="bg-shape shape-2"></div>
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
 
     <div class="history-wrapper">
         
         <div class="header-section">
-            <h1 class="page-title">Ledger History</h1>
-            <p class="subtitle">Comprehensive archive of posted transactions.</p>
+            <h1 class="page-title">Ledger</h1>
+            
+            <div class="header-controls">
+                <input type="text" id="ledgerSearch" class="search-input" placeholder="Search Account..." onkeyup="filterLedger()">
+
+                <div class="toggle-box">
+                    <button class="toggle-btn active" onclick="switchView('detailed')">Detailed</button>
+                    <button class="toggle-btn" onclick="switchView('summary')">Summary</button>
+                </div>
+            </div>
         </div>
 
-        <div class="table-responsive">
+        <div id="view-detailed" class="table-responsive">
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 12%;">Date</th>
-                        <th style="width: 25%;">Account</th>
-                        <th style="width: 25%;">Particulars</th>
-                        <th style="width: 12%; text-align: right;">Debit</th>
-                        <th style="width: 12%; text-align: right;">Credit</th>
-                        <th style="width: 14%; text-align: center;">Actions</th>
+                        <th style="width: 15%;">Date</th>
+                        <th style="width: 35%;">Account</th>
+                        <th style="width: 15%;">Debit</th>
+                        <th style="width: 15%;">Credit</th>
+                        <th style="width: 20%;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for entry in entries %}
+                    {% for entry in entries|sort(attribute='date') %}
                     <tr>
-                        <td style="color: #64748b; font-weight: 500;">{{ entry.date }}</td>
-                        <td style="font-weight: 600; color: var(--navy-card);">{{ entry.account_name }}</td>
-                        <td style="color: #64748b;">{{ entry.particular }}</td>
-                        
-                        <td style="text-align: right;">
+                        <td style="font-weight: 600; color: #475569;">{{ entry.date }}</td>
+                        <td style="font-weight: 700; color: #0f172a; font-size: 1rem;">{{ entry.account_name }}</td>
+                        <td>
                             {% if entry.debit > 0 %}
                                 <span class="amount-badge debit">{{ "%.2f"|format(entry.debit) }}</span>
-                            {% else %}
-                                <span style="color:#cbd5e1;">-</span>
-                            {% endif %}
+                            {% else %}<span style="color:#cbd5e1;">-</span>{% endif %}
                         </td>
-                        
-                        <td style="text-align: right;">
+                        <td>
                             {% if entry.credit > 0 %}
                                 <span class="amount-badge credit">{{ "%.2f"|format(entry.credit) }}</span>
-                            {% else %}
-                                <span style="color:#cbd5e1;">-</span>
-                            {% endif %}
+                            {% else %}<span style="color:#cbd5e1;">-</span>{% endif %}
                         </td>
-                        
                         <td>
                             <div class="action-group">
-                                <a href="{{ url_for('edit_journal', id=loop.index0) }}" class="btn-action btn-edit">Edit</a>
-                                <form action="{{ url_for('delete_journal', index=loop.index0) }}" method="POST">
-                                    <button type="submit" class="btn-action btn-delete" onclick="return confirm('Confirm deletion of this record?');">Del</button>
+                                <a href="{{ url_for('edit_journal', id=entry.id) }}" class="btn-action btn-edit">Edit</a>
+                                <form action="{{ url_for('delete_journal', index=entry.id) }}" method="POST">
+                                    <button type="submit" class="btn-action btn-delete" onclick="return confirm('Confirm deletion?');">Delete</button>
                                 </form>
                             </div>
                         </td>
                     </tr>
                     {% else %}
+                    <tr><td colspan="5" class="empty-state">No records found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div id="view-summary" class="table-responsive" style="display: none;">
+            <table>
+                <thead>
                     <tr>
-                        <td colspan="6" class="empty-state">
-                            No records found. The ledger is currently empty.
+                        <th style="width: 40%;">Account Name</th>
+                        <th style="width: 15%;">Type</th>
+                        <th style="width: 15%; text-align: right;">Total Debit</th>
+                        <th style="width: 15%; text-align: right;">Total Credit</th>
+                        <th style="width: 15%; text-align: right;">Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for name, details in summary.items() %}
+                    {% if details.debit > 0 or details.credit > 0 %}
+                    <tr>
+                        <td style="font-weight: 700; color: #0f172a;">{{ name }}</td>
+                        <td><span style="font-size:0.8rem; background:#f1f5f9; padding:4px 10px; border-radius:6px;">{{ details.type }}</span></td>
+                        <td class="col-amount" style="color: #64748b;">{{ "%.2f"|format(details.debit) }}</td>
+                        <td class="col-amount" style="color: #64748b;">{{ "%.2f"|format(details.credit) }}</td>
+                        <td class="col-amount {% if details.balance >= 0 %}balance-positive{% else %}balance-negative{% endif %}">
+                            {{ "%.2f"|format(details.balance) }}
                         </td>
                     </tr>
+                    {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
@@ -307,11 +371,64 @@
 
         <div class="nav-area">
             <a href="{{ url_for('journal_entry', username=username) }}" class="btn-back">
-                <span>&larr;</span> Record New Entry
+                Record New Entry
             </a>
         </div>
 
     </div>
 
+    <script>
+        function switchView(viewName) {
+            const detailedView = document.getElementById('view-detailed');
+            const summaryView = document.getElementById('view-summary');
+            const buttons = document.querySelectorAll('.toggle-btn');
+
+            if (viewName === 'detailed') {
+                detailedView.style.display = 'block';
+                summaryView.style.display = 'none';
+                buttons[0].classList.add('active');
+                buttons[1].classList.remove('active');
+            } else {
+                detailedView.style.display = 'none';
+                summaryView.style.display = 'block';
+                buttons[0].classList.remove('active');
+                buttons[1].classList.add('active');
+            }
+            filterLedger(); 
+        }
+
+        function filterLedger() {
+            const input = document.getElementById('ledgerSearch');
+            const filter = input.value.toUpperCase();
+            
+            // Filter Detailed Transactions
+            const detailedRows = document.querySelectorAll('#view-detailed tbody tr');
+            detailedRows.forEach(row => {
+                const cols = row.getElementsByTagName("td");
+                if (cols.length > 1) { 
+                    const accountName = cols[1].textContent || cols[1].innerText;
+                    if (accountName.toUpperCase().indexOf(filter) > -1) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                }
+            });
+
+            // Filter Summary Table
+            const summaryRows = document.querySelectorAll('#view-summary tbody tr');
+            summaryRows.forEach(row => {
+                const cols = row.getElementsByTagName("td");
+                if (cols.length > 0) {
+                    const accountName = cols[0].textContent || cols[0].innerText;
+                    if (accountName.toUpperCase().indexOf(filter) > -1) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                }
+            });
+        }
+    </script>
 </body>
 </html>
