@@ -326,8 +326,11 @@
                         </td>
                         <td>
                             <div class="action-group">
-                                <a href="{{ url_for('edit_journal', id=entry.id) }}" class="btn-action btn-edit">Edit</a>
-                                <form action="{{ url_for('delete_journal', index=entry.id) }}" method="POST">
+                                {# FIX: Pass the loop.index0 (list position) to edit the specific line #}
+                                <a href="{{ url_for('edit_journal', index=loop.index0) }}" class="btn-action btn-edit">Edit</a>
+                                
+                                {# Keep entry.id (transaction ID) for deleting all related lines of a transaction #}
+                                <form action="{{ url_for('delete_journal', id=entry.id) }}" method="POST">
                                     <button type="submit" class="btn-action btn-delete" onclick="return confirm('Confirm deletion?');">Delete</button>
                                 </form>
                             </div>

@@ -213,6 +213,16 @@
         @media (max-width: 950px) {
             .report-grid { grid-template-columns: 1fr; }
         }
+        
+        /* Added for Balance Sheet deduction style */
+        .deduction-row td {
+             padding-left: 30px; 
+             font-style: italic;
+             color: var(--text-muted-dark);
+        }
+        .negative-amount {
+             color: var(--danger);
+        }
     </style>
 </head>
 <body>
@@ -306,14 +316,25 @@
                     <table>
                         <tbody>
                             <tr><td colspan="2" class="section-header">ASSETS</td></tr>
+                            
                             {% for name, details in data.ledger.items() %}
-                            {% if details.type == 'Asset' and details.balance != 0 %}
+                            {% if details.type == 'Asset' and details.balance != 0 and name != 'Accumulated Depreciation' %}
                             <tr>
                                 <td class="sub-account">{{ name }}</td>
                                 <td class="col-amount">{{ "%.2f"|format(details.balance) }}</td>
                             </tr>
                             {% endif %}
                             {% endfor %}
+                            
+                            {# ADD ACCUMULATED DEPRECIATION AS A DEDUCTION #}
+                            {% set accum_dep_balance = data.ledger.get('Accumulated Depreciation', {'balance': 0.0}).balance %}
+                            {% if accum_dep_balance != 0 %}
+                            <tr class="deduction-row">
+                                <td class="sub-account">Less: Accumulated Depreciation</td>
+                                <td class="col-amount negative-amount">- {{ "%.2f"|format(accum_dep_balance) }}</td>
+                            </tr>
+                            {% endif %}
+                            
                             <tr class="row-total">
                                 <td style="font-weight:600; color:var(--text-dark);">Total Assets</td>
                                 <td class="col-amount" style="font-weight:700; color:var(--purple-vivid);">{{ "%.2f"|format(data.balance_sheet.assets) }}</td>
@@ -330,14 +351,24 @@
                             {% endif %}
                             {% endfor %}
 
+                            {# Display Equity accounts directly (Capital, Owner Capital, etc.) #}
                             {% for name, details in data.ledger.items() %}
-                            {% if details.type == 'Equity' and details.balance != 0 %}
+                            {% if details.type == 'Equity' and details.balance != 0 and name != 'Drawings' %}
                             <tr>
                                 <td class="sub-account">{{ name }}</td>
                                 <td class="col-amount">{{ "%.2f"|format(details.balance) }}</td>
                             </tr>
                             {% endif %}
                             {% endfor %}
+
+                            {# Display Drawings as a deduction #}
+                            {% set drawings_balance = data.ledger.get('Drawings', {'balance': 0.0}).balance %}
+                            {% if drawings_balance != 0 %}
+                            <tr class="deduction-row">
+                                <td class="sub-account">Less: Drawings</td>
+                                <td class="col-amount negative-amount">- {{ "%.2f"|format(drawings_balance) }}</td>
+                            </tr>
+                            {% endif %}
 
                             <tr>
                                 <td class="sub-account">Retained Earnings (Net Income)</td>
