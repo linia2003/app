@@ -3,227 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Reports - Accountoria</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <title>Financial Intelligence - Accountoria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Quicksand:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        /* --- CLASSY NAVY & PURPLE PALETTE --- */
+        /* --- THEME VARIABLES (Refined for White Card Contrast) --- */
         :root {
-            /* Background: Deep Navy -> Royal Purple */
-            --page-bg: linear-gradient(135deg, #020617 0%, #2e1065 100%);
+            --bg-obsidian: #0f131f;      /* Main Body Background */
+            --panel-dark: #1e2532;       /* Report Control Bar Background */
+            --purple-vivid: #6366f1;     /* Main Accent Color (Indigo) */
+            --purple-accent: #818cf8;    /* Lighter accent */
+            --white: #ffffff;
+            --text-dark: #334155;        /* Dark text for use on white backgrounds */
+            --text-muted-dark: #64748b;  /* Muted dark text */
+            --text-primary-light: #f1f5f9; /* Near white for dark areas */
+            --text-muted-light: #94a3b8;   /* Muted gray for dark areas */
+            --border-subtle: #e2e8f0;    /* Light border for white cards */
             
-            /* Card: Pure White */
-            --card-bg: #ffffff;
-            
-            /* Typography */
-            --text-dark: #0f172a;   
-            --text-muted: #64748b;  
-            
-            /* Accents */
-            --accent-purple: #7c3aed;
-            --accent-navy: #1e1b4b;
-            
-            /* Status Colors */
-            --success-text: #14532d;
-            --danger-text: #991b1b;
+            /* Status Colors (Standard colors work well on white) */
+            --success: #10b981;
+            --danger: #ef4444;
+            --success-bg-light: #dcfce7;
+            --danger-bg-light: #fee2e2;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: var(--page-bg);
+            background-color: var(--bg-obsidian);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 100px 20px 40px 20px;
+            color: var(--text-primary-light); /* Main body text is light */
+            
+            display: block; 
+            padding-top: 110px; 
+            padding-bottom: 80px;
+            padding-left: 20px;
+            padding-right: 20px;
         }
 
-        /* --- AMBIENT GLOW --- */
-        .bg-glow {
+        /* --- BACKGROUND EFFECTS (Simplified) --- */
+        .bg-shape {
+            position: absolute;
+            background: linear-gradient(45deg, #1e1b4b, var(--purple-vivid));
+            filter: blur(100px); opacity: 0.2; z-index: -1;
             position: fixed;
-            border-radius: 50%;
-            filter: blur(100px);
-            z-index: -1;
-            opacity: 0.4;
         }
-        .glow-1 { top: -10%; left: -10%; width: 600px; height: 600px; background: #4c1d95; }
-        .glow-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #1e293b; }
+        .shape-1 { top: -10%; right: -10%; width: 600px; height: 600px; border-radius: 50%; }
+        .shape-2 { bottom: -10%; left: -10%; width: 500px; height: 500px; border-radius: 50%; background: var(--purple-vivid); opacity: 0.1; }
 
         /* --- MAIN WRAPPER --- */
         .main-wrapper {
-            width: 100%;
-            max-width: 900px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* --- REPORT CONTROL BAR (Dark Panel for contrast) --- */
+        .report-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            background: var(--panel-dark); 
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        
+        .report-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-muted-light);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        
+        .report-btn:hover {
+            color: var(--white);
+        }
+        
+        .report-btn.active {
+            background: var(--purple-vivid);
+            color: var(--white);
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* --- CARDS (White Theme) --- */
+        .report-card {
+            background: var(--white); 
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            border-top: 4px solid var(--purple-vivid);
+            color: var(--text-dark); /* Default card text is DARK */
             display: flex;
             flex-direction: column;
-            align-items: center;
+            transition: transform 0.3s ease;
+            position: relative;
         }
+        .report-card:hover { transform: translateY(-3px); }
 
-        /* --- HEADER & TOGGLE --- */
-        .header-section {
-            text-align: center;
-            margin-bottom: 40px;
-            width: 100%;
-        }
-
-        .page-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.5rem;
-            color: #ffffff;
-            margin-bottom: 30px;
-            letter-spacing: -1px;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        /* Classy Toggle Switch */
-        .report-selector {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 8px;
-            border-radius: 50px;
-            display: inline-flex;
-            gap: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-
-        .select-btn {
-            padding: 12px 35px;
-            border: none;
-            border-radius: 40px;
-            background: transparent;
-            color: #cbd5e1;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.4s ease;
-        }
-
-        .select-btn:hover { color: white; }
-
-        .select-btn.active {
-            background: var(--accent-purple);
-            color: white;
-            box-shadow: 0 5px 15px rgba(124, 58, 237, 0.4);
-            transform: scale(1.05);
-        }
-
-        /* --- REPORT CARD --- */
-        .report-card {
-            width: 100%;
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 50px 60px;
-            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
-            border-top: 8px solid var(--accent-purple);
-            display: none; /* Hidden by default */
-            animation: fadeScale 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes fadeScale {
-            from { opacity: 0; transform: scale(0.95) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
+        /* Card Headers */
         .card-header {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between; 
             align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-subtle); 
         }
-
-        .report-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-            color: var(--text-dark);
-            margin: 0;
-        }
-
-        /* --- ANIMATED STATUS BADGES --- */
-        .status-badge {
-            padding: 10px 25px;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-
-        /* Animation: Pulse Green (Balanced) */
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); transform: scale(1); }
-            70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); transform: scale(1.02); }
-            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); transform: scale(1); }
-        }
-
-        .status-valid { 
-            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-            color: var(--success-text);
-            border: 1px solid #86efac;
-            animation: pulse-green 2.5s infinite;
-        }
-
-        /* Animation: Shake Red (Unbalanced) */
-        @keyframes shake-red {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-3px); }
-            50% { transform: translateX(3px); }
-            75% { transform: translateX(-3px); }
-            100% { transform: translateX(0); }
-        }
-
-        .status-invalid { 
-            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-            color: var(--danger-text);
-            border: 1px solid #fca5a5;
-            animation: shake-red 0.5s ease-in-out infinite; /* Continuous warning shake */
-        }
-
-        /* --- TABLE STYLES --- */
-        table { width: 100%; border-collapse: collapse; }
         
-        td {
-            padding: 20px 0;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 1rem;
+        h2 {
+            font-family: 'Quicksand', sans-serif; /* Rounded Font for Headlines */
+            font-size: 1.6rem;
             color: var(--text-dark);
+            font-weight: 700;
+        }
+        
+        /* --- STATUS BADGES (Rounded Bold Text & Animation) --- */
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
+        .status-badge {
+            font-family: 'Quicksand', sans-serif; /* Rounded Font for Status */
+            padding: 8px 18px; 
+            border-radius: 20px; 
+            font-size: 0.85rem;
+            font-weight: 700; /* Bold */
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            animation: popIn 0.5s ease-out;
+        }
+
+        .status-valid {
+            background: var(--success-bg-light);
+            color: var(--success);
+        }
+        .status-invalid {
+            background: var(--danger-bg-light);
+            color: var(--danger);
+        }
+
+        /* --- TABLES (Dark text on White background) --- */
+        table { width: 100%; border-collapse: collapse; }
+
+        td {
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-subtle); 
+            font-size: 0.95rem;
+            color: var(--text-dark); /* Dark text on white */
+        }
+        
+        /* Section Headers */
+        .section-header { 
+            color: var(--text-muted-dark) !important; 
+            background: #f1f5f9; /* Light background for separation */
+            padding: 8px !important;
+            padding-left: 10px !important;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-subtle) !important;
+        }
+        
+        /* Sub-account details */
+        .sub-account {
+             color: var(--text-muted-dark) !important; /* Muted dark text */
+             font-weight: 400;
+        }
+
+        /* Total Rows */
         .row-total td {
             font-weight: 700;
-            color: var(--accent-purple);
-            font-size: 1.2rem;
-            border-top: 2px dashed #cbd5e1;
-            padding-top: 25px;
-            border-bottom: none;
+            color: var(--purple-vivid);
+            font-size: 1.1rem;
+            border-top: 2px solid var(--border-subtle);
+            border-bottom: 4px double var(--purple-vivid);
+            padding-top: 20px;
+        }
+        
+        /* Net Income Row */
+        .net-income-row td {
+            border-top: 2px solid var(--border-subtle) !important;
+        }
+        .net-income-row .col-amount {
+            color: var(--purple-vivid);
         }
 
+
+        /* Column Alignments */
         .col-amount {
             text-align: right;
             font-family: 'Poppins', monospace; 
             font-weight: 500;
         }
 
-        .positive { color: var(--success-text); font-weight: 600; }
-        .negative { color: var(--danger-text); font-weight: 600; }
+        /* Expense/Revenue Coloring on Income Statement */
+        .positive { color: var(--success); background: var(--success-bg-light); padding: 4px 8px; border-radius: 4px; font-weight: 600;}
+        .negative { color: var(--danger); background: var(--danger-bg-light); padding: 4px 8px; border-radius: 4px; font-weight: 600;}
 
-        .section-title {
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #94a3b8;
-            padding-top: 25px;
+        @media (max-width: 950px) {
+            .report-grid { grid-template-columns: 1fr; }
         }
-
     </style>
 </head>
 <body>
@@ -233,124 +222,161 @@
         <div class="nav-links">
             <a href="{{ url_for('dashboard') }}" class="nav-item">Dashboard</a>
             <a href="{{ url_for('journal_entry', username=session.get('username')) }}" class="nav-item">Journal</a>
-            <a href="{{ url_for('view_journal', username=session.get('username')) }}" class="nav-item">Ledger</a>
+            <a href="{{ url_for('view_journal', username=session.get('username')) }}" class="nav-item">History</a>
             <a href="{{ url_for('chart_of_accounts') }}" class="nav-item">Accounts</a>
             <a href="{{ url_for('financial_reports') }}" class="nav-item active">Reports</a>
         </div>
         <a href="{{ url_for('home') }}" class="nav-logout">Sign Out</a>
     </nav>
 
-    <div class="bg-glow glow-1"></div>
-    <div class="bg-glow glow-2"></div>
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
 
     <div class="main-wrapper">
         
-        <div class="header-section">
-            <h1 class="page-title">Financial Reports</h1>
+        <div class="report-controls">
+            <button id="show-income-btn" class="report-btn active" onclick="showReport('income-card', 'show-income-btn')">Income Statement</button>
+            <button id="show-balance-btn" class="report-btn" onclick="showReport('balance-card', 'show-balance-btn')">Balance Sheet</button>
+        </div>
+
+        <div class="report-grid">
             
-            <div class="report-selector">
-                <button class="select-btn active" onclick="showReport('income')">Income Statement</button>
-                <button class="select-btn" onclick="showReport('balance')">Balance Sheet</button>
-            </div>
-        </div>
-
-        <div id="report-income" class="report-card" style="display: block;">
-            <div class="card-header">
-                <h2 class="report-name">Income Statement</h2>
-                <span style="color:#64748b; font-size:0.9rem; font-style:italic;">For Current Period</span>
-            </div>
-            <table>
-                <tbody>
-                    <tr>
-                        <td>Total Revenue</td>
-                        <td class="col-amount positive">+ {{ "%.2f"|format(data.income_statement.revenue) }}</td>
-                    </tr>
-                    <tr>
-                        <td>Total Expenses</td>
-                        <td class="col-amount negative">- {{ "%.2f"|format(data.income_statement.expenses) }}</td>
-                    </tr>
-                    <tr class="row-total">
-                        <td>Net Income</td>
-                        <td class="col-amount">{{ "%.2f"|format(data.income_statement.net_income) }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div id="report-balance" class="report-card">
-            <div class="card-header">
-                <h2 class="report-name">Balance Sheet</h2>
+            <div id="reports-container" class="full-width">
                 
-                {% if data.balance_sheet.is_balanced %}
-                    <span class="status-badge status-valid">
-                        <span>&#10003;</span> Balanced
-                    </span>
-                {% else %}
-                    <span class="status-badge status-invalid">
-                        <span>&#9888;</span> Unbalanced
-                    </span>
-                {% endif %}
-            </div>
-            <table>
-                <tbody>
-                    <tr>
-                        <td class="section-title" colspan="2">Assets</td>
-                    </tr>
-                    <tr>
-                        <td>Total Assets</td>
-                        <td class="col-amount" style="font-weight:700;">{{ "%.2f"|format(data.balance_sheet.assets) }}</td>
-                    </tr>
+                <div class="report-card" id="income-card">
+                    <div class="card-header">
+                        <h2>Income Statement</h2>
+                    </div>
                     
-                    <tr>
-                        <td class="section-title" colspan="2">Liabilities & Equity</td>
-                    </tr>
-                    <tr>
-                        <td>Liabilities</td>
-                        <td class="col-amount">{{ "%.2f"|format(data.balance_sheet.liabilities) }}</td>
-                    </tr>
-                    <tr>
-                        <td>Owner's Equity</td>
-                        <td class="col-amount">{{ "%.2f"|format(data.balance_sheet.equity) }}</td>
-                    </tr>
-                    <tr>
-                        <td>Retained Earnings</td>
-                        <td class="col-amount">{{ "%.2f"|format(data.income_statement.net_income) }}</td>
-                    </tr>
-                    
-                    <tr class="row-total">
-                        <td>Total L & E</td>
-                        <td class="col-amount">{{ "%.2f"|format(data.balance_sheet.total_eq_liab) }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                    <table>
+                        <tbody>
+                            <tr><td colspan="2" class="section-header">REVENUE</td></tr>
+                            {% for name, details in data.ledger.items() %}
+                            {% if details.type == 'Revenue' and details.balance != 0 %}
+                            <tr>
+                                <td class="sub-account">{{ name }}</td>
+                                <td class="col-amount">
+                                    <span class="positive">+ {{ "%.2f"|format(details.balance) }}</span>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                            
+                            <tr class="row-total">
+                                <td style="font-weight:600; color:var(--text-dark);">Total Revenue</td>
+                                <td class="col-amount" style="color:var(--text-dark);">+ {{ "%.2f"|format(data.income_statement.revenue) }}</td>
+                            </tr>
+                            
+                            <tr><td colspan="2" class="section-header">EXPENSES</td></tr>
+                            {% for name, details in data.ledger.items() %}
+                            {% if details.type == 'Expense' and details.balance != 0 %}
+                            <tr>
+                                <td class="sub-account">{{ name }}</td>
+                                <td class="col-amount">
+                                    <span class="negative">- {{ "%.2f"|format(details.balance) }}</span>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                            
+                            <tr class="row-total">
+                                <td>Total Expenses</td>
+                                <td class="col-amount" style="color:var(--text-dark);">- {{ "%.2f"|format(data.income_statement.expenses) }}</td>
+                            </tr>
+                            
+                            <tr class="row-total net-income-row">
+                                <td style="font-weight:700; color:var(--text-dark);">NET INCOME</td>
+                                <td class="col-amount" style="font-weight:700; color:var(--purple-vivid);">{{ "%.2f"|format(data.income_statement.net_income) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="report-card" id="balance-card" style="display:none;">
+                    <div class="card-header">
+                        <h2>Balance Sheet</h2>
+                        
+                        {% if data.balance_sheet.is_balanced %}
+                            <span class="status-badge status-valid">Balanced</span>
+                        {% else %}
+                            <span class="status-badge status-invalid">Unbalanced</span>
+                        {% endif %}
+
+                    </div>
+                    <table>
+                        <tbody>
+                            <tr><td colspan="2" class="section-header">ASSETS</td></tr>
+                            {% for name, details in data.ledger.items() %}
+                            {% if details.type == 'Asset' and details.balance != 0 %}
+                            <tr>
+                                <td class="sub-account">{{ name }}</td>
+                                <td class="col-amount">{{ "%.2f"|format(details.balance) }}</td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                            <tr class="row-total">
+                                <td style="font-weight:600; color:var(--text-dark);">Total Assets</td>
+                                <td class="col-amount" style="font-weight:700; color:var(--purple-vivid);">{{ "%.2f"|format(data.balance_sheet.assets) }}</td>
+                            </tr>
+
+                            <tr><td colspan="2" class="section-header">LIABILITIES & EQUITY</td></tr>
+                            
+                            {% for name, details in data.ledger.items() %}
+                            {% if details.type == 'Liability' and details.balance != 0 %}
+                            <tr>
+                                <td class="sub-account">{{ name }}</td>
+                                <td class="col-amount">{{ "%.2f"|format(details.balance) }}</td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% for name, details in data.ledger.items() %}
+                            {% if details.type == 'Equity' and details.balance != 0 %}
+                            <tr>
+                                <td class="sub-account">{{ name }}</td>
+                                <td class="col-amount">{{ "%.2f"|format(details.balance) }}</td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+
+                            <tr>
+                                <td class="sub-account">Retained Earnings (Net Income)</td>
+                                <td class="col-amount">{{ "%.2f"|format(data.income_statement.net_income) }}</td>
+                            </tr>
+
+                            <tr class="row-total">
+                                <td style="color:var(--text-dark);">Total L & E</td>
+                                <td class="col-amount" style="font-weight:700; color:var(--purple-vivid);">{{ "%.2f"|format(data.balance_sheet.total_eq_liab) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> </div>
 
     </div>
-
+    
     <script>
-        function showReport(reportType) {
-            const incomeCard = document.getElementById('report-income');
-            const balanceCard = document.getElementById('report-balance');
-            const buttons = document.querySelectorAll('.select-btn');
+        // Function to toggle report visibility
+        function showReport(reportIdToShow, buttonIdToActivate) {
+            // Hide all report cards
+            document.getElementById('income-card').style.display = 'none';
+            document.getElementById('balance-card').style.display = 'none';
 
-            // Hide Both
-            incomeCard.style.display = 'none';
-            balanceCard.style.display = 'none';
+            // Deactivate all report buttons
+            document.getElementById('show-income-btn').classList.remove('active');
+            document.getElementById('show-balance-btn').classList.remove('active');
+
+            // Show the selected report card
+            document.getElementById(reportIdToShow).style.display = 'flex';
             
-            // Trigger Reflow for Animation Reset
-            void incomeCard.offsetWidth; 
-            void balanceCard.offsetWidth;
-
-            // Show Selected
-            if (reportType === 'income') {
-                incomeCard.style.display = 'block';
-                buttons[0].classList.add('active');
-                buttons[1].classList.remove('active');
-            } else {
-                balanceCard.style.display = 'block';
-                buttons[0].classList.remove('active');
-                buttons[1].classList.add('active');
-            }
+            // Activate the selected button
+            document.getElementById(buttonIdToActivate).classList.add('active');
+        }
+        
+        // Initial state load
+        window.onload = function() {
+            // Ensure Income Statement is shown and its button is active on load
+            showReport('income-card', 'show-income-btn');
         }
     </script>
 </body>

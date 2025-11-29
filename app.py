@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import datetime
 import random
 
@@ -35,38 +35,84 @@ def initialize_session():
     if 'chart_of_accounts' not in session:
         session['chart_of_accounts'] = []
 
-# --- HELPER: ACTIVATES AN ACCOUNT IF USED ---
+# --- HELPER: ACTIVATES AND CREATES ACCOUNT IF NOT FOUND ---
 def activate_account(account_name):
     """
-    Checks if account is in user's list. If not:
-    1. Checks System Defaults (to get correct code/type).
-    2. Or creates a new generic one.
-    3. Adds to user's list.
+    Checks if account is in user's active list or system defaults. 
+    If not found, it creates a new generic "Custom" account and adds it to the user's list.
     """
     current_accounts = session.get('chart_of_accounts', [])
     
-    # 1. Check if already active
+    # Check if already active
     if any(acc['name'].lower() == account_name.lower() for acc in current_accounts):
         return
 
-    # 2. Check System Defaults
+    # Check System Defaults (to avoid re-creating a default with code '000')
     found_default = next((acc for acc in SYSTEM_DEFAULT_ACCOUNTS if acc['name'].lower() == account_name.lower()), None)
     
     if found_default:
-        # Copy from system defaults
+        # If it's a system default but not in the user's active list, add it.
         current_accounts.append(found_default)
     else:
-        # Create new custom account
+        # Create new custom account only if the name is non-empty and not just a space
         if account_name.strip():
-            new_acc = {'code': '000', 'name': account_name, 'type': 'General'}
-            current_accounts.append(new_acc)
+            # Check for existing custom account with the same name (case-insensitive) before creating a new one
+            if not any(acc['name'].lower() == account_name.lower() for acc in current_accounts):
+                # Simple code '000' for custom accounts
+                new_acc = {'code': '000', 'name': account_name, 'type': 'Custom'}
+                current_accounts.append(new_acc)
     
-    # Save and Sort
+    # Save and Sort (sorting by code ensures consistency)
     current_accounts.sort(key=lambda x: x['code'])
     session['chart_of_accounts'] = current_accounts
     session.modified = True
+    
+# NEW HELPER: For preparing dropdown data
+def get_all_dropdown_accounts():
+    active_accounts = session.get('chart_of_accounts', [])
+    merged_dict = {acc['name']: acc for acc in SYSTEM_DEFAULT_ACCOUNTS} 
+    merged_dict.update({acc['name']: acc for acc in active_accounts}) 
+    return sorted(merged_dict.values(), key=lambda x: x['code'])
 
-# --- ROUTES ---
+# --- NEW ROUTE FOR ACCOUNT CREATION (Called by JavaScript) ---
+@app.route('/create_new_account', methods=['POST'])
+def create_new_account_from_journal():
+    """Handles creation of a new account initiated from the Journal Entry screen."""
+    # Ensure request data is JSON
+    data = request.get_json()
+    
+    code = data.get('new_code')
+    name = data.get('new_name')
+    acc_type = data.get('new_type')
+
+    if code and name and acc_type:
+        new_account = {
+            'code': code,
+            'name': name,
+            'type': acc_type
+        }
+        
+        # Validation checks
+        all_accounts = get_all_dropdown_accounts()
+        existing_codes = {acc['code'] for acc in all_accounts}
+        existing_names = {acc['name'].lower() for acc in all_accounts}
+
+        if code in existing_codes:
+            return jsonify({'status': 'error', 'message': f'Account code {code} already exists.'}), 400
+        
+        if name.lower() in existing_names:
+            return jsonify({'status': 'error', 'message': f'Account name "{name}" already exists.'}), 400
+        
+        # Add to the active chart of accounts
+        session['chart_of_accounts'].append(new_account)
+        session['chart_of_accounts'].sort(key=lambda x: x['code'])
+        session.modified = True
+        
+        return jsonify({'status': 'success', 'account': new_account})
+    
+    return jsonify({'status': 'error', 'message': 'Missing required fields.'}), 400
+
+# --- REST OF ROUTES (Unchanged) ---
 
 @app.route('/')
 def home():
@@ -151,7 +197,7 @@ def journal_entry(username):
         transaction_id = len(session['journal_entries']) 
 
         for i in range(len(dates)):
-            # Activate the account so it shows up in Chart of Accounts
+            # Activate the account, which also creates it if it doesn't exist
             activate_account(names[i])
 
             new_entry = {
@@ -168,14 +214,8 @@ def journal_entry(username):
         session.modified = True
         return redirect(url_for('view_journal', username=username))
     
-    # Prepare Dropdown Options: Merge Active + System Defaults (removing duplicates)
-    active_accounts = session.get('chart_of_accounts', [])
-    # Create a dictionary to deduplicate by name
-    merged_dict = {acc['name']: acc for acc in SYSTEM_DEFAULT_ACCOUNTS} 
-    merged_dict.update({acc['name']: acc for acc in active_accounts}) # Active overrides default
-    
-    # Sort for the dropdown
-    all_options = sorted(merged_dict.values(), key=lambda x: x['code'])
+    # Use the new helper for rendering the dropdown
+    all_options = get_all_dropdown_accounts()
 
     return render_template('journal_entry.html', username=username, accounts=all_options)
 

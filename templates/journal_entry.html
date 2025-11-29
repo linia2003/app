@@ -11,11 +11,11 @@
         :root {
             --page-bg: linear-gradient(135deg, #020617 0%, #2e1065 100%);
             --card-bg: #ffffff;
-            --input-bg: #1e1b4b;       
-            --input-text: #ffffff;     
-            --input-border: #4c1d95;   
-            --text-dark: #0f172a;   
-            --text-muted: #64748b;  
+            --input-bg: #1e1b4b; 	
+            --input-text: #ffffff; 	
+            --input-border: #4c1d95; 
+            --text-dark: #0f172a; 	
+            --text-muted: #64748b; 	
             --accent-purple: #7c3aed;
             --success-bg: #dcfce7; --success-text: #14532d;
             --danger-bg: #ffe4e6; --danger-text: #9f1239;
@@ -65,6 +65,13 @@
             border-bottom: 2px solid #e2e8f0;
             padding-bottom: 20px;
         }
+        
+        /* PULSE ANIMATION FOR H1 */
+        @keyframes pulseText {
+            0% { opacity: 0.9; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.01); }
+            100% { opacity: 0.9; transform: scale(1); }
+        }
 
         .title-group h1 {
             font-family: 'Playfair Display', serif;
@@ -72,6 +79,7 @@
             color: var(--text-dark);
             margin-bottom: 5px;
             letter-spacing: -1px;
+            animation: pulseText 3s ease-in-out infinite;
         }
 
         /* Date Input Styling */
@@ -186,11 +194,60 @@
             padding: 18px 24px;
             background: white;
             border-bottom: 1px solid #f1f5f9;
+            /* Ensure inner content is vertically aligned */
+            vertical-align: middle; 
+        }
+        
+        .delete-cell {
+            padding-left: 0;
+            padding-right: 0;
+            width: 40px;
+            text-align: center;
+        }
+
+        .btn-delete {
+            background: transparent;
+            color: #94a3b8;
+            font-size: 1.2rem;
+            padding: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+        }
+        .btn-delete:hover { 
+            color: var(--danger-text); 
+            background: var(--danger-bg); 
         }
 
         /* --- INPUT FIELDS --- */
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
+        
+        /* Adjusted for new dropdown layout */
+        .account-input-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .new-account-btn-small {
+            background: var(--accent-purple);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            line-height: 1;
+            flex-shrink: 0;
+            transition: 0.2s;
+            height: 52px; /* Match input height */
+            margin-left: 5px;
+        }
+        .new-account-btn-small:hover {
+             background: #4c1d95;
+        }
+
 
         .input-cell {
             width: 100%;
@@ -200,7 +257,7 @@
             font-family: 'Poppins', sans-serif;
             font-size: 1.1rem;
             
-            /* FORCE COLORS ALWAYS */
+            /* Enhanced Text Visibility */
             background-color: var(--input-bg) !important;
             color: var(--input-text) !important;
             
@@ -208,33 +265,54 @@
             transition: all 0.2s;
         }
 
+        /* CRITICAL FIX: Ensure text is visible even when autofilled/focused */
+        .input-cell,
         input:-webkit-autofill,
         input:-webkit-autofill:hover, 
         input:-webkit-autofill:focus, 
         input:-webkit-autofill:active {
             -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important;
             -webkit-text-fill-color: var(--input-text) !important;
+            box-shadow: 0 0 0 30px var(--input-bg) inset !important; /* Non-webkit browsers */
+            color: var(--input-text) !important;
         }
 
         .input-cell:focus {
             outline: none;
             border-color: var(--accent-purple);
             box-shadow: 0 4px 15px rgba(124, 58, 237, 0.25);
-            transform: translateY(-2px);
-            background-color: var(--input-bg) !important;
+            /* Removed translateY(-2px) to prevent layout shifts during input */
+            background-color: var(--input-bg) !important; 
             color: var(--input-text) !important;
         }
         
+        /* Enhanced Placeholder Visibility */
         .input-cell::placeholder { 
             color: #a5b4fc; 
-            opacity: 0.7;
+            opacity: 1; /* Ensure placeholder is fully visible */
         }
 
         /* --- BUTTONS --- */
         .btn-row {
             margin-top: 35px;
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-add {
+            background: transparent;
+            border: 2px dashed var(--accent-purple);
+            color: var(--accent-purple);
+            padding: 12px 24px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-add:hover {
+            background: #f1f5f9;
         }
 
         .btn-post {
@@ -263,7 +341,83 @@
             cursor: not-allowed;
             box-shadow: none;
         }
-
+        
+        /* Modal Style (Hidden by default) */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .modal-content h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+        .modal-form-group {
+            margin-bottom: 15px;
+        }
+        .modal-form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+        /* Fix text color inside white modal inputs */
+        .modal-form-group input, .modal-form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            color: var(--text-dark); /* Ensure text is dark on white background */
+            background-color: var(--white) !important; /* Ensure background is white */
+        }
+        /* End fix */
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-primary-modal {
+             background: var(--accent-purple);
+             color: white;
+             border: none;
+        }
+        .btn-secondary-modal {
+             background: #f1f5f9;
+             color: var(--text-muted);
+             border: 1px solid #e2e8f0;
+        }
+        
+        /* New row fade-in animation */
+        @keyframes rowFadeIn {
+             from { opacity: 0; transform: translateY(5px); }
+             to { opacity: 1; transform: translateY(0); }
+        }
+        #journalEntries tr {
+             animation: rowFadeIn 0.3s ease-out;
+        }
     </style>
 </head>
 <body>
@@ -300,26 +454,28 @@
                 </div>
             </div>
 
-            <datalist id="available_accounts">
-                {% for acc in accounts %}
-                    <option value="{{ acc.name }}">{{ acc.code }} - {{ acc.name }}</option>
-                {% endfor %}
-            </datalist>
+            <datalist id="available_accounts_list">
+                </datalist>
 
             <div class="table-wrapper">
                 <table id="journalTable">
                     <thead>
                         <tr>
-                            <th style="width: 50%;">Account</th>
+                            <th style="width: 50%;">Account & Particulars</th>
                             <th style="width: 25%;">Debit</th>
                             <th style="width: 25%;">Credit</th>
+                            <th style="width: 4%;"></th>
                         </tr>
                     </thead>
-                    <tbody id="journalEntries"></tbody>
+                    <tbody id="journalEntries">
+                        </tbody>
                 </table>
             </div>
 
             <div class="btn-row">
+                <button type="button" class="btn-add" onclick="addJournalEntry()">
+                    + Add Transaction Line
+                </button>
                 <button type="submit" class="btn-post" id="submitBtn" disabled>
                     Post Entry
                 </button>
@@ -328,35 +484,203 @@
         </form>
 
     </div>
+    
+    <div id="newAccountModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Create New Account</h3>
+            <div id="modal-error" style="color:var(--danger-text); margin-bottom:15px; font-size:0.9rem;"></div>
+            
+            <div class="modal-form-group">
+                <label for="new_code">Account Code (e.g. 101)</label>
+                <input type="text" id="new_code" required maxlength="5">
+            </div>
+            <div class="modal-form-group">
+                <label for="new_name">Account Name</label>
+                <input type="text" id="new_name" required>
+            </div>
+            <div class="modal-form-group">
+                <label for="new_type">Account Type</label>
+                <select id="new_type" required>
+                    <option value="Asset">Asset</option>
+                    <option value="Liability">Liability</option>
+                    <option value="Equity">Equity</option>
+                    <option value="Revenue">Revenue</option>
+                    <option value="Expense">Expense</option>
+                    <option value="Custom">Custom (Uncategorized)</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn btn-secondary-modal" onclick="hideNewAccountModal()">Cancel</button>
+                <button type="button" class="modal-btn btn-primary-modal" onclick="submitNewAccount()">Create & Select</button>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         // Set default date to today
         document.getElementById('globalDate').valueAsDate = new Date();
+        
+        // Data from Flask context
+        let availableAccounts = [
+            {% for acc in accounts %}
+                { name: "{{ acc.name }}", code: "{{ acc.code }}" },
+            {% endfor %}
+        ];
 
-        function createRow() {
+        // --- ACCOUNT CREATION LOGIC ---
+
+        function showNewAccountModal() {
+            document.getElementById('newAccountModal').style.display = 'flex';
+            document.getElementById('modal-error').innerText = '';
+            document.getElementById('new_code').value = '';
+            document.getElementById('new_name').value = '';
+        }
+
+        function hideNewAccountModal() {
+            document.getElementById('newAccountModal').style.display = 'none';
+        }
+
+        async function submitNewAccount() {
+            const code = document.getElementById('new_code').value.trim();
+            const name = document.getElementById('new_name').value.trim();
+            const type = document.getElementById('new_type').value;
+            const errorDiv = document.getElementById('modal-error');
+            
+            errorDiv.innerText = '';
+
+            if (!code || !name) {
+                errorDiv.innerText = 'Code and Name are required.';
+                return;
+            }
+
+            // --- AJAX CALL TO SERVER (Corrected Endpoint) ---
+            try {
+                // CORRECTED: Use 'create_new_account_from_journal' endpoint
+                const response = await fetch('{{ url_for("create_new_account_from_journal") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ new_code: code, new_name: name, new_type: type }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.status === 'success') {
+                    // 1. Add new account to local list
+                    availableAccounts.push(result.account);
+                    // 2. Re-sort local list by code (important for consistency)
+                    availableAccounts.sort((a, b) => a.code.localeCompare(b.code)); 
+                    
+                    // 3. Update Dropdown list
+                    populateDatalist();
+
+                    // 4. Hide Modal
+                    hideNewAccountModal();
+
+                    // 5. Select the newly created account in the last row added
+                    const lastAccountInputs = document.querySelectorAll('input[name="account_name[]"]');
+                    if (lastAccountInputs.length > 0) {
+                        const lastInput = lastAccountInputs[lastAccountInputs.length - 1];
+                        lastInput.value = name; // Select by Name
+                        lastInput.focus();
+                        validate();
+                    }
+                } else {
+                    errorDiv.innerText = result.message || 'An unknown error occurred.';
+                }
+            } catch (e) {
+                errorDiv.innerText = 'Failed to connect to the server.';
+                console.error("Fetch error:", e);
+            }
+        }
+
+
+        // Function to populate the datalist for user input flexibility
+        function populateDatalist() {
+            const datalist = document.getElementById("available_accounts_list");
+            datalist.innerHTML = ''; // Clear existing options
+            availableAccounts.forEach(acc => {
+                const option = document.createElement('option');
+                option.value = acc.name;
+                option.textContent = `${acc.code} - ${acc.name}`; // Display Code - Name
+                datalist.appendChild(option);
+            });
+        }
+        populateDatalist();
+
+        // --- JOURNAL ENTRY ROW LOGIC ---
+
+        function addJournalEntry() {
             const tbody = document.getElementById("journalEntries");
             const row = document.createElement("tr");
             
             row.innerHTML = `
                 <td>
-                    <input type="text" name="account_name[]" list="available_accounts" class="input-cell" placeholder="Select or type account..." autocomplete="off" required>
-                    <input type="hidden" name="particular[]" value="N/A"> 
+                    <div class="account-input-group" style="margin-bottom: 8px;">
+                        <input type="text" name="account_name[]" list="available_accounts_list" class="input-cell" placeholder="Select account..." autocomplete="off" required>
+                        <button type="button" class="new-account-btn-small" onclick="showNewAccountModal()">+</button>
+                    </div>
+                    <input type="text" name="particular[]" class="input-cell" style="font-size: 0.95rem; padding: 10px 15px;" placeholder="Add transaction details/reference (optional)">
                     <input type="hidden" name="date[]" class="row-date">
                 </td>
-                <td><input type="number" name="debit[]" step="0.01" class="input-cell" placeholder="0.00" oninput="validate()"></td>
-                <td><input type="number" name="credit[]" step="0.01" class="input-cell" placeholder="0.00" oninput="validate()"></td>
+                <td><input type="number" name="debit[]" step="0.01" class="input-cell" placeholder="0.00" oninput="enforceSingleEntry(this); validate();"></td>
+                <td><input type="number" name="credit[]" step="0.01" class="input-cell" placeholder="0.00" oninput="enforceSingleEntry(this); validate();"></td>
+                <td class="delete-cell">
+                    <button type="button" class="btn-delete" onclick="removeRow(this)">×</button>
+                </td>
             `;
             tbody.appendChild(row);
+            syncDates();
+            validate();
+        }
+
+        function removeRow(btn) {
+            btn.closest('tr').remove();
+            validate();
+        }
+
+        // Ensures a value is only in Debit OR Credit for a single row
+        function enforceSingleEntry(inputElement) {
+            const row = inputElement.closest('tr');
+            const debitInput = row.querySelector('input[name="debit[]"]');
+            const creditInput = row.querySelector('input[name="credit[]"]');
+
+            const d_val = parseFloat(debitInput.value) || 0;
+            const c_val = parseFloat(creditInput.value) || 0;
+
+            if (inputElement === debitInput && d_val > 0) {
+                creditInput.value = '';
+            } else if (inputElement === creditInput && c_val > 0) {
+                debitInput.value = '';
+            }
         }
 
         function validate() {
             let totalDebit = 0;
             let totalCredit = 0;
+            let hasInvalidEntry = false;
+            let hasEmptyAccount = false;
             const rows = document.querySelectorAll('#journalEntries tr');
             
             rows.forEach(row => {
-                const d = parseFloat(row.querySelector('input[name="debit[]"]').value) || 0;
-                const c = parseFloat(row.querySelector('input[name="credit[]"]').value) || 0;
+                const debitInput = row.querySelector('input[name="debit[]"]');
+                const creditInput = row.querySelector('input[name="credit[]"]');
+                const accountInput = row.querySelector('input[name="account_name[]"]');
+
+                // Check for empty account name
+                if (!accountInput.value.trim()) {
+                    hasEmptyAccount = true;
+                }
+
+                const d = parseFloat(debitInput.value) || 0;
+                const c = parseFloat(creditInput.value) || 0;
+                
+                if (d > 0 && c > 0) {
+                    hasInvalidEntry = true;
+                }
+
                 totalDebit += d;
                 totalCredit += c;
             });
@@ -365,24 +689,29 @@
             const status = document.getElementById("statusIndicator");
             const diff = Math.abs(totalDebit - totalCredit);
             
-            // Reflow for animation restart
             status.classList.remove("status-invalid", "status-valid", "status-empty");
             void status.offsetWidth; 
 
-            const hasValues = totalDebit > 0 || totalCredit > 0;
-
-            if (!hasValues) {
+            if (rows.length === 0) {
                 status.innerText = "Draft Mode";
                 status.classList.add("status-empty");
                 btn.disabled = true;
+            } else if (hasInvalidEntry) {
+                 status.innerText = "Error: Single Line Cannot Be Both Dr/Cr";
+                 status.classList.add("status-invalid");
+                 btn.disabled = true;
+                 btn.innerText = "Fix Entry";
+            } else if (hasEmptyAccount) {
+                 status.innerText = "Error: Account Name Required";
+                 status.classList.add("status-invalid");
+                 btn.disabled = true;
+                 btn.innerText = "Fix Entry";
             } else if (diff < 0.01 && (totalDebit > 0)) {
-                // BALANCED -> JUMP
                 status.innerText = `Balanced ($${totalDebit.toFixed(2)})`;
                 status.classList.add("status-valid");
                 btn.disabled = false;
                 btn.innerText = "Post Entry";
             } else {
-                // UNBALANCED -> SHAKE
                 status.innerText = `UNBALANCED (Diff: $${diff.toFixed(2)})`;
                 status.classList.add("status-invalid");
                 btn.disabled = true;
@@ -398,10 +727,10 @@
             });
         }
 
-        // Initialize strictly with 2 rows
+        // Initialize with one starting row
         window.onload = function() {
-            createRow();
-            createRow();
+            addJournalEntry();
+            syncDates();
         };
     </script>
 </body>

@@ -12,18 +12,19 @@
             --card-bg: #ffffff;
             
             /* INPUTS */
-            --input-bg: #1e1b4b;       
+            --input-bg: #1e1b4b;      
             --input-text: #ffffff;     
-            --input-border: #4c1d95;   
+            --input-border: #4c1d95;  
             
             /* Typography */
-            --text-dark: #0f172a;   
+            --text-dark: #0f172a;  
             --text-muted: #64748b;  
             
             /* Accents */
             --accent-purple: #7c3aed;
             --accent-navy: #1e1b4b;
             --row-hover: #f5f3ff;
+            --success-text: #16a34a; /* Added for balance-positive color */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -216,6 +217,34 @@
             font-size: 1.1rem;
         }
 
+        /* Balance Column Styling */
+        .balance-col { 
+            text-align: right; 
+            font-weight: 600; 
+            font-family: monospace; 
+        }
+        
+        .balance-label { 
+            display: inline-block;
+            min-width: 80px; 
+            text-align: center; 
+            font-size: 0.85rem; 
+            font-weight: 700; 
+            background: #eef2ff; /* Light purple background */
+            color: var(--accent-purple);
+            padding: 4px 8px; 
+            border-radius: 4px; 
+        }
+
+        .balance-positive {
+            color: var(--success-text);
+            font-weight: 700;
+        }
+        .balance-neutral {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
         /* Responsive */
         @media (max-width: 900px) {
             .add-form { grid-template-columns: 1fr 1fr; }
@@ -269,6 +298,7 @@
                 <option value="Equity">Equity</option>
                 <option value="Revenue">Revenue</option>
                 <option value="Expense">Expense</option>
+                <option value="Custom">Custom</option>
             </select>
             <button type="submit" class="btn-add">Add Account</button>
         </form>
@@ -280,7 +310,7 @@
                         <th style="width: 15%;">Code</th>
                         <th style="width: 45%;">Account Name</th>
                         <th style="width: 20%;">Type</th>
-                        <th style="width: 20%; text-align: right;">Current Balance</th>
+                        <th class="balance-col" style="width: 20%;">Current Balance</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -288,18 +318,16 @@
                     {% for acc in accounts %}
                         {% set bal = balances.get(acc.name, 0.0) %}
                         
-                        {% if bal != 0 %}
+                        {% if bal != 0 or acc.type == 'Custom' or acc.code == '000' %}
                             {% set ns.found = true %}
                             <tr class="account-row" data-type="{{ acc.type }}">
                                 <td style="font-weight: 700; color: var(--accent-purple);">{{ acc.code }}</td>
                                 <td style="font-weight: 600;">{{ acc.name }}</td>
                                 <td><span class="type-badge">{{ acc.type }}</span></td>
-                                <td style="text-align: right; font-family: 'Poppins', monospace;">
-                                    {% if bal > 0 %}
-                                        <span class="balance-positive">{{ "%.2f"|format(bal) }}</span>
-                                    {% else %}
-                                        <span class="balance-neutral">{{ "%.2f"|format(bal) }}</span>
-                                    {% endif %}
+                                <td class="balance-col">
+                                    <span class="balance-label {% if bal > 0 %}balance-positive{% elif bal == 0 %}balance-neutral{% endif %}">
+                                        {{ "%.2f"|format(bal) }}
+                                    </span>
                                 </td>
                             </tr>
                         {% endif %}
@@ -307,7 +335,7 @@
 
                     <tr id="emptyState" style="{% if ns.found %}display:none;{% endif %}">
                         <td colspan="4" class="empty-state">
-                            No active accounts found. Accounts will appear once they have some balance.
+                            No active accounts found. Accounts will appear once they have been used in a journal entry.
                         </td>
                     </tr>
                 </tbody>
@@ -339,10 +367,13 @@
 
             // 3. Handle Empty State Visibility
             const emptyState = document.getElementById('emptyState');
-            // If there are active accounts overall, but 0 match the filter, we don't usually show the 'empty state' text unless desired.
-            // The current logic shows the empty text if NO accounts exist at all (ns.found=false).
-            // If you want a specific "No assets found" message, JS logic would need expansion.
-            // For now, keeping it simple.
+            if (document.querySelectorAll('.account-row').length > 0) {
+                 // Only hide the empty state if there is data overall
+                emptyState.style.display = (visibleCount > 0) ? 'none' : 'none';
+            } else {
+                 // If no data exists at all, make sure the empty state is visible (this is handled by Jinja on load, but here for filtering)
+                 emptyState.style.display = (visibleCount === 0 && category === 'all') ? '' : 'none';
+            }
         }
     </script>
 </body>
