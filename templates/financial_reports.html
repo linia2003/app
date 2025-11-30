@@ -232,7 +232,7 @@
         <div class="nav-links">
             <a href="{{ url_for('dashboard') }}" class="nav-item">Dashboard</a>
             <a href="{{ url_for('journal_entry', username=session.get('username')) }}" class="nav-item">Journal</a>
-            <a href="{{ url_for('view_journal', username=session.get('username')) }}" class="nav-item">History</a>
+            <a href="{{ url_for('view_journal', username=session.get('username')) }}" class="nav-item">Ledger</a>
             <a href="{{ url_for('chart_of_accounts') }}" class="nav-item">Accounts</a>
             <a href="{{ url_for('financial_reports') }}" class="nav-item active">Reports</a>
         </div>
@@ -376,7 +376,7 @@
                             </tr>
 
                             <tr class="row-total">
-                                <td style="color:var(--text-dark);">Total L & E</td>
+                                <td style="color:var(--text-dark);">Total Liabilities & Equity</td>
                                 <td class="col-amount" style="font-weight:700; color:var(--purple-vivid);">{{ "%.2f"|format(data.balance_sheet.total_eq_liab) }}</td>
                             </tr>
                         </tbody>
