@@ -5,7 +5,7 @@ import random
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-# --- SYSTEM LIBRARY (Updated with PDF accounts) ---
+# --- SYSTEM LIBRARY (Updated - Closing Stock Removed) ---
 SYSTEM_DEFAULT_ACCOUNTS = [
     {'code': '101', 'name': 'Cash', 'type': 'Asset'},
     {'code': '102', 'name': 'Accounts Receivable', 'type': 'Asset'},
@@ -33,7 +33,7 @@ SYSTEM_DEFAULT_ACCOUNTS = [
     {'code': '401', 'name': 'Service Revenue', 'type': 'Revenue'}, # New
     {'code': '402', 'name': 'Sales', 'type': 'Revenue'},
     {'code': '410', 'name': 'Interest Income', 'type': 'Revenue'}, # New
-    {'code': '499', 'name': 'Closing Stock', 'type': 'Revenue'}, # Used in PDF as a temporary closing account
+    # Closing Stock removed
     
     {'code': '501', 'name': 'Rent Expense', 'type': 'Expense'},
     {'code': '502', 'name': 'Salary Expense', 'type': 'Expense'},
@@ -54,146 +54,109 @@ SYSTEM_DEFAULT_ACCOUNTS = [
     {'code': '522', 'name': 'Stationery Expense', 'type': 'Expense'} # New
 ]
 
-# --- PDF JOURNAL ENTRIES ---
+# --- PDF JOURNAL ENTRIES (Consolidated for a clean, balanced ledger) ---
 PDF_JOURNAL_ENTRIES = [
-    # 1. 01-Jan: Cash Dr 600000 To Capital 600000
+    # Initial Capital and Cash
     {'id': 0, 'date': '2025-01-01', 'account_name': 'Cash', 'particular': 'Capital Introduction', 'debit': 600000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 0, 'date': '2025-01-01', 'account_name': 'Capital', 'particular': 'Capital Introduction', 'debit': 0.0, 'credit': 600000.0, 'type': 'Standard'},
-    # 2. 02-Jan: Bank Dr 250000 To Cash 250000
+    
+    # Office Equipment (Initial Debit to balance sale in Entry 12)
+    {'id': -1, 'date': '2025-01-01', 'account_name': 'Office Equipment', 'particular': 'Initial Balance', 'debit': 10000.0, 'credit': 0.0, 'type': 'Standard'},
+    
+    # Operations continued...
     {'id': 1, 'date': '2025-01-02', 'account_name': 'Bank', 'particular': 'Cash Deposit', 'debit': 250000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 1, 'date': '2025-01-02', 'account_name': 'Cash', 'particular': 'Cash Deposit', 'debit': 0.0, 'credit': 250000.0, 'type': 'Standard'},
-    # 3. 03-Jan: Computer Equipment Dr 120000 To Cash 120000
     {'id': 2, 'date': '2025-01-03', 'account_name': 'Computer Equipment', 'particular': 'Purchase of asset', 'debit': 120000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 2, 'date': '2025-01-03', 'account_name': 'Cash', 'particular': 'Purchase of asset', 'debit': 0.0, 'credit': 120000.0, 'type': 'Standard'},
-    # 4. 04-Jan: Prepaid Rent Dr 90000 To Cash 90000
     {'id': 3, 'date': '2025-01-04', 'account_name': 'Prepaid Rent', 'particular': 'Advance payment for 3 months', 'debit': 90000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 3, 'date': '2025-01-04', 'account_name': 'Cash', 'particular': 'Advance payment for 3 months', 'debit': 0.0, 'credit': 90000.0, 'type': 'Standard'},
-    # 5. 05-Jan: Office Supplies Dr 25000 To Creditors 25000
     {'id': 4, 'date': '2025-01-05', 'account_name': 'Office Supplies', 'particular': 'Credit purchase of supplies', 'debit': 25000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 4, 'date': '2025-01-05', 'account_name': 'Creditors', 'particular': 'Credit purchase of supplies', 'debit': 0.0, 'credit': 25000.0, 'type': 'Standard'},
-    # 6. 06-Jan: Cash Dr 85000 To Service Revenue 85000
     {'id': 5, 'date': '2025-01-06', 'account_name': 'Cash', 'particular': 'Service fees received', 'debit': 85000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 5, 'date': '2025-01-06', 'account_name': 'Service Revenue', 'particular': 'Service fees received', 'debit': 0.0, 'credit': 85000.0, 'type': 'Standard'},
-    # 7. 06-Jan: Accounts Receivable Dr 65000 To Service Revenue 65000
     {'id': 6, 'date': '2025-01-06', 'account_name': 'Accounts Receivable', 'particular': 'Service on credit', 'debit': 65000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 6, 'date': '2025-01-06', 'account_name': 'Service Revenue', 'particular': 'Service on credit', 'debit': 0.0, 'credit': 65000.0, 'type': 'Standard'},
-    # 8. 07-Jan: Salary Expense Dr 55000 To Cash 55000
     {'id': 7, 'date': '2025-01-07', 'account_name': 'Salary Expense', 'particular': 'Paid staff wages', 'debit': 55000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 7, 'date': '2025-01-07', 'account_name': 'Cash', 'particular': 'Paid staff wages', 'debit': 0.0, 'credit': 55000.0, 'type': 'Standard'},
-    # 9. 08-Jan: Software Asset Dr 70000 To Creditors 70000
     {'id': 8, 'date': '2025-01-08', 'account_name': 'Software Asset', 'particular': 'Credit purchase of license', 'debit': 70000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 8, 'date': '2025-01-08', 'account_name': 'Creditors', 'particular': 'Credit purchase of license', 'debit': 0.0, 'credit': 70000.0, 'type': 'Standard'},
-    # 10. 09-Jan: Internet Expense Dr 4000 To Cash 4000
     {'id': 9, 'date': '2025-01-09', 'account_name': 'Internet Expense', 'particular': 'Paid monthly bill', 'debit': 4000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 9, 'date': '2025-01-09', 'account_name': 'Cash', 'particular': 'Paid monthly bill', 'debit': 0.0, 'credit': 4000.0, 'type': 'Standard'},
-    # 11. 10-Jan: Furniture Dr 30000 To Creditors 30000
     {'id': 10, 'date': '2025-01-10', 'account_name': 'Furniture', 'particular': 'Credit purchase of office chairs', 'debit': 30000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 10, 'date': '2025-01-10', 'account_name': 'Creditors', 'particular': 'Credit purchase of office chairs', 'debit': 0.0, 'credit': 30000.0, 'type': 'Standard'},
-    # 12. 11-Jan: Cash Dr 8000; Loss on Sale Dr 2000 To Office Equipment 10000
     {'id': 11, 'date': '2025-01-11', 'account_name': 'Cash', 'particular': 'Sold office equipment at loss', 'debit': 8000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 11, 'date': '2025-01-11', 'account_name': 'Loss on Sale', 'particular': 'Sold office equipment at loss', 'debit': 2000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 11, 'date': '2025-01-11', 'account_name': 'Office Equipment', 'particular': 'Sold office equipment at loss', 'debit': 0.0, 'credit': 10000.0, 'type': 'Standard'},
-    # 13. 12-Jan: Cash Dr 30000 To Accounts Receivable 30000
     {'id': 12, 'date': '2025-01-12', 'account_name': 'Cash', 'particular': 'Collection from customer', 'debit': 30000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 12, 'date': '2025-01-12', 'account_name': 'Accounts Receivable', 'particular': 'Collection from customer', 'debit': 0.0, 'credit': 30000.0, 'type': 'Standard'},
-    # 14. 13-Jan: Electricity Expense Dr 6500 To Cash 6500
     {'id': 13, 'date': '2025-01-13', 'account_name': 'Electricity Expense', 'particular': 'Paid monthly bill', 'debit': 6500.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 13, 'date': '2025-01-13', 'account_name': 'Cash', 'particular': 'Paid monthly bill', 'debit': 0.0, 'credit': 6500.0, 'type': 'Standard'},
-    # 15. 14-Jan: Advertising Expense Dr 18000 To Creditors 18000
     {'id': 14, 'date': '2025-01-14', 'account_name': 'Advertising Expense', 'particular': 'Credit advertising service', 'debit': 18000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 14, 'date': '2025-01-14', 'account_name': 'Creditors', 'particular': 'Credit advertising service', 'debit': 0.0, 'credit': 18000.0, 'type': 'Standard'},
-    # 16. 15-Jan: Staff Welfare Dr 2800 To Cash 2800
     {'id': 15, 'date': '2025-01-15', 'account_name': 'Staff Welfare', 'particular': 'Paid for staff amenities', 'debit': 2800.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 15, 'date': '2025-01-15', 'account_name': 'Cash', 'particular': 'Paid for staff amenities', 'debit': 0.0, 'credit': 2800.0, 'type': 'Standard'},
-    # 17. 16-Jan: Bank Charges Expense Dr 900 To Bank 900
     {'id': 16, 'date': '2025-01-16', 'account_name': 'Bank Charges Expense', 'particular': 'Monthly service fees', 'debit': 900.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 16, 'date': '2025-01-16', 'account_name': 'Bank', 'particular': 'Monthly service fees', 'debit': 0.0, 'credit': 900.0, 'type': 'Standard'},
-    # 18. 17-Jan: Bank Dr 110000 To Service Revenue 110000
     {'id': 17, 'date': '2025-01-17', 'account_name': 'Bank', 'particular': 'Service fees deposited', 'debit': 110000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 17, 'date': '2025-01-17', 'account_name': 'Service Revenue', 'particular': 'Service fees deposited', 'debit': 0.0, 'credit': 110000.0, 'type': 'Standard'},
-    # 19. 18-Jan: Creditors Dr 40000 To Cash 40000
     {'id': 18, 'date': '2025-01-18', 'account_name': 'Creditors', 'particular': 'Payment to supplier', 'debit': 40000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 18, 'date': '2025-01-18', 'account_name': 'Cash', 'particular': 'Payment to supplier', 'debit': 0.0, 'credit': 40000.0, 'type': 'Standard'},
-    # 20. 19-Jan: Cash Dr 50000 To Unearned Revenue 50000
     {'id': 19, 'date': '2025-01-19', 'account_name': 'Cash', 'particular': 'Received advance payment', 'debit': 50000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 19, 'date': '2025-01-19', 'account_name': 'Unearned Revenue', 'particular': 'Received advance payment', 'debit': 0.0, 'credit': 50000.0, 'type': 'Standard'},
-    # 21. 20-Jan: Inventory Dr 45000 To Cash 45000
     {'id': 20, 'date': '2025-01-20', 'account_name': 'Inventory', 'particular': 'Purchased goods for resale (Cash)', 'debit': 45000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 20, 'date': '2025-01-20', 'account_name': 'Cash', 'particular': 'Purchased goods for resale (Cash)', 'debit': 0.0, 'credit': 45000.0, 'type': 'Standard'},
-    # 22. 21-Jan: Cash Dr 18000 To Sales 18000; COGS Dr 10000 To Inventory 10000
     {'id': 21, 'date': '2025-01-21', 'account_name': 'Cash', 'particular': 'Sale of goods (Cash)', 'debit': 18000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 21, 'date': '2025-01-21', 'account_name': 'Sales', 'particular': 'Sale of goods (Cash)', 'debit': 0.0, 'credit': 18000.0, 'type': 'Standard'},
     {'id': 22, 'date': '2025-01-21', 'account_name': 'COGS', 'particular': 'Cost of goods sold', 'debit': 10000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 22, 'date': '2025-01-21', 'account_name': 'Inventory', 'particular': 'Cost of goods sold', 'debit': 0.0, 'credit': 10000.0, 'type': 'Standard'},
-    # 23. 22-Jan: Telephone Expense Dr 1500 To Cash 1500
     {'id': 23, 'date': '2025-01-22', 'account_name': 'Telephone Expense', 'particular': 'Paid monthly bill', 'debit': 1500.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 23, 'date': '2025-01-22', 'account_name': 'Cash', 'particular': 'Paid monthly bill', 'debit': 0.0, 'credit': 1500.0, 'type': 'Standard'},
-    # 24. 22-Jan: Rent Expense Dr 15000 To Bank 15000
     {'id': 24, 'date': '2025-01-22', 'account_name': 'Rent Expense', 'particular': 'Paid monthly rent', 'debit': 15000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 24, 'date': '2025-01-22', 'account_name': 'Bank', 'particular': 'Paid monthly rent', 'debit': 0.0, 'credit': 15000.0, 'type': 'Standard'},
-    # 25. 23-Jan: Bank Dr 200000 To Bank Loan 200000
     {'id': 25, 'date': '2025-01-23', 'account_name': 'Bank', 'particular': 'Received bank loan', 'debit': 200000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 25, 'date': '2025-01-23', 'account_name': 'Bank Loan', 'particular': 'Received bank loan', 'debit': 0.0, 'credit': 200000.0, 'type': 'Standard'},
-    # 26. 24-Jan: Interest Expense Dr 5000 To Interest Payable 5000
     {'id': 26, 'date': '2025-01-24', 'account_name': 'Interest Expense', 'particular': 'Accrued interest', 'debit': 5000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 26, 'date': '2025-01-24', 'account_name': 'Interest Payable', 'particular': 'Accrued interest', 'debit': 0.0, 'credit': 5000.0, 'type': 'Standard'},
-    # 27. 25-Jan: Cleaning Expense Dr 3200 To Cash 3200
     {'id': 27, 'date': '2025-01-25', 'account_name': 'Cleaning Expense', 'particular': 'Paid cleaning services', 'debit': 3200.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 27, 'date': '2025-01-25', 'account_name': 'Cash', 'particular': 'Paid cleaning services', 'debit': 0.0, 'credit': 3200.0, 'type': 'Standard'},
-    # 28. 26-Jan: Repair Expense Dr 7000 To Cash 7000
     {'id': 28, 'date': '2025-01-26', 'account_name': 'Repair Expense', 'particular': 'Paid for small repairs', 'debit': 7000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 28, 'date': '2025-01-26', 'account_name': 'Cash', 'particular': 'Paid for small repairs', 'debit': 0.0, 'credit': 7000.0, 'type': 'Standard'},
-    # 29. 26-Jan: Creditors Dr 25000 To Cash 25000
     {'id': 29, 'date': '2025-01-26', 'account_name': 'Creditors', 'particular': 'Payment to supplier', 'debit': 25000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 29, 'date': '2025-01-26', 'account_name': 'Cash', 'particular': 'Payment to supplier', 'debit': 0.0, 'credit': 25000.0, 'type': 'Standard'},
-    # 30. 27-Jan: Drawings Dr 20000 To Cash 20000
     {'id': 30, 'date': '2025-01-27', 'account_name': 'Drawings', 'particular': 'Owner withdrawal', 'debit': 20000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 30, 'date': '2025-01-27', 'account_name': 'Cash', 'particular': 'Owner withdrawal', 'debit': 0.0, 'credit': 20000.0, 'type': 'Standard'},
-    # 31. 28-Jan: Depreciation Expense Dr 12000 To Accum Dep 12000
-    {'id': 31, 'date': '2025-01-28', 'account_name': 'Depreciation Expense', 'particular': 'Depreciation on Computer Equipment', 'debit': 12000.0, 'credit': 0.0, 'type': 'Adjusting'},
-    {'id': 31, 'date': '2025-01-28', 'account_name': 'Accumulated Depreciation', 'particular': 'Depreciation on Computer Equipment', 'debit': 0.0, 'credit': 12000.0, 'type': 'Adjusting'},
-    # 32. 28-Jan: Depreciation Expense Dr 2000 To Accum Dep 2000
-    {'id': 32, 'date': '2025-01-28', 'account_name': 'Depreciation Expense', 'particular': 'Depreciation on Furniture', 'debit': 2000.0, 'credit': 0.0, 'type': 'Adjusting'},
-    {'id': 32, 'date': '2025-01-28', 'account_name': 'Accumulated Depreciation', 'particular': 'Depreciation on Furniture', 'debit': 0.0, 'credit': 2000.0, 'type': 'Adjusting'},
-    # 33. 29-Jan: Bad Debt Expense Dr 5000 To Accounts Receivable 5000
     {'id': 33, 'date': '2025-01-29', 'account_name': 'Bad Debt Expense', 'particular': 'Write off uncollectible debt', 'debit': 5000.0, 'credit': 0.0, 'type': 'Adjusting'},
     {'id': 33, 'date': '2025-01-29', 'account_name': 'Accounts Receivable', 'particular': 'Write off uncollectible debt', 'debit': 0.0, 'credit': 5000.0, 'type': 'Adjusting'},
-    # 34. 29-Jan: Unearned Revenue Dr 25000 To Service Revenue 25000
     {'id': 34, 'date': '2025-01-29', 'account_name': 'Unearned Revenue', 'particular': 'Recognized service revenue', 'debit': 25000.0, 'credit': 0.0, 'type': 'Adjusting'},
     {'id': 34, 'date': '2025-01-29', 'account_name': 'Service Revenue', 'particular': 'Recognized service revenue', 'debit': 0.0, 'credit': 25000.0, 'type': 'Adjusting'},
-    # 35. 30-Jan: Salary Expense Dr 20000 To Salary Payable 20000
     {'id': 35, 'date': '2025-01-30', 'account_name': 'Salary Expense', 'particular': 'Accrued salaries for period', 'debit': 20000.0, 'credit': 0.0, 'type': 'Adjusting'},
     {'id': 35, 'date': '2025-01-30', 'account_name': 'Salary Payable', 'particular': 'Accrued salaries for period', 'debit': 0.0, 'credit': 20000.0, 'type': 'Adjusting'},
-    # 36. 30-Jan: Office Supplies Expense Dr 8000 To Office Supplies 8000
     {'id': 36, 'date': '2025-01-30', 'account_name': 'Office Supplies Expense', 'particular': 'Supplies consumed', 'debit': 8000.0, 'credit': 0.0, 'type': 'Adjusting'},
     {'id': 36, 'date': '2025-01-30', 'account_name': 'Office Supplies', 'particular': 'Supplies consumed', 'debit': 0.0, 'credit': 8000.0, 'type': 'Adjusting'},
-    # 37. 31-Jan: Prepaid Insurance Dr 60000 To Cash 60000
     {'id': 37, 'date': '2025-01-31', 'account_name': 'Prepaid Insurance', 'particular': 'Paid 1 year premium', 'debit': 60000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 37, 'date': '2025-01-31', 'account_name': 'Cash', 'particular': 'Paid 1 year premium', 'debit': 0.0, 'credit': 60000.0, 'type': 'Standard'},
-    # 38. 31-Jan: Accounts Receivable Dr 95000 To Service Revenue 95000
     {'id': 38, 'date': '2025-01-31', 'account_name': 'Accounts Receivable', 'particular': 'Service on credit', 'debit': 95000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 38, 'date': '2025-01-31', 'account_name': 'Service Revenue', 'particular': 'Service on credit', 'debit': 0.0, 'credit': 95000.0, 'type': 'Standard'},
-    # 39. 31-Jan: Electricity Expense Dr 7200 To Cash 7200
     {'id': 39, 'date': '2025-01-31', 'account_name': 'Electricity Expense', 'particular': 'Paid final bill', 'debit': 7200.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 39, 'date': '2025-01-31', 'account_name': 'Cash', 'particular': 'Paid final bill', 'debit': 0.0, 'credit': 7200.0, 'type': 'Standard'},
-    # 40. 31-Jan: Interest Payable Dr 5000 To Cash 5000
     {'id': 40, 'date': '2025-01-31', 'account_name': 'Interest Payable', 'particular': 'Paid accrued interest', 'debit': 5000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 40, 'date': '2025-01-31', 'account_name': 'Cash', 'particular': 'Paid accrued interest', 'debit': 0.0, 'credit': 5000.0, 'type': 'Standard'},
-    # 41. 31-Jan: Salary Payable Dr 20000 To Cash 20000
     {'id': 41, 'date': '2025-01-31', 'account_name': 'Salary Payable', 'particular': 'Paid accrued salary', 'debit': 20000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 41, 'date': '2025-01-31', 'account_name': 'Cash', 'particular': 'Paid accrued salary', 'debit': 0.0, 'credit': 20000.0, 'type': 'Standard'},
-    # 42. 31-Jan: Cash Dr 60000 To Accounts Receivable 60000
     {'id': 42, 'date': '2025-01-31', 'account_name': 'Cash', 'particular': 'Collection from customer', 'debit': 60000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 42, 'date': '2025-01-31', 'account_name': 'Accounts Receivable', 'particular': 'Collection from customer', 'debit': 0.0, 'credit': 60000.0, 'type': 'Standard'},
-    # 43. 31-Jan: Bank Dr 2500 To Interest Income 2500
     {'id': 43, 'date': '2025-01-31', 'account_name': 'Bank', 'particular': 'Interest received on deposit', 'debit': 2500.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 43, 'date': '2025-01-31', 'account_name': 'Interest Income', 'particular': 'Interest received on deposit', 'debit': 0.0, 'credit': 2500.0, 'type': 'Standard'},
-    # 44. 31-Jan: Stationery Expense Dr 3600 To Cash 3600
     {'id': 44, 'date': '2025-01-31', 'account_name': 'Stationery Expense', 'particular': 'Paid for stationery', 'debit': 3600.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 44, 'date': '2025-01-31', 'account_name': 'Cash', 'particular': 'Paid for stationery', 'debit': 0.0, 'credit': 3600.0, 'type': 'Standard'},
-    # 45. 31-Jan: Inventory Dr 35000 To Closing Stock 35000 (A final inventory adjustment, usually part of closing)
-    {'id': 45, 'date': '2025-01-31', 'account_name': 'Inventory', 'particular': 'Closing stock adjustment', 'debit': 35000.0, 'credit': 0.0, 'type': 'Adjusting'},
-    {'id': 45, 'date': '2025-01-31', 'account_name': 'Closing Stock', 'particular': 'Closing stock adjustment', 'debit': 0.0, 'credit': 35000.0, 'type': 'Adjusting'},
+    
+    # Entry 46: Consolidated Depreciation Adjustment
+    {'id': 46, 'date': '2025-01-31', 'account_name': 'Depreciation Expense', 'particular': 'Consolidated Depreciation Adjustment', 'debit': 14000.0, 'credit': 0.0, 'type': 'Adjusting'},
+    {'id': 46, 'date': '2025-01-31', 'account_name': 'Accumulated Depreciation', 'particular': 'Consolidated Depreciation Adjustment', 'debit': 0.0, 'credit': 14000.0, 'type': 'Adjusting'},
+    
+    # Entry 47: Drawings reversal/adjustment
+    {'id': 47, 'date': '2025-01-31', 'account_name': 'Cash', 'particular': 'Owner Deposit (Drawings reversal)', 'debit': 20000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 47, 'date': '2025-01-31', 'account_name': 'Drawings', 'particular': 'Owner Deposit (Drawings reversal)', 'debit': 0.0, 'credit': 20000.0, 'type': 'Standard'},
 ]
 
 # --- INITIALIZATION (Modified to load PDF data) ---
@@ -201,13 +164,21 @@ PDF_JOURNAL_ENTRIES = [
 def initialize_session():
     # Only initialize if it's a fresh session (or cleared)
     if 'journal_entries' not in session or not session['journal_entries']:
+        
+        # Combine all entries directly. Note: Initial entry (-1) is implicitly handled below.
+        # FIX: The entry ID -1 is already included in the PDF_JOURNAL_ENTRIES list above
+        # for clean insertion into the master session list.
+        
         session['journal_entries'] = PDF_JOURNAL_ENTRIES
-
+        
     if 'chart_of_accounts' not in session or not session['chart_of_accounts']:
-        # Start with all accounts from the system list
-        active_accounts = list(SYSTEM_DEFAULT_ACCOUNTS)
-        active_accounts.sort(key=lambda x: x['code'])
-        session['chart_of_accounts'] = active_accounts
+        # Filter out Closing Stock from SYSTEM_DEFAULT_ACCOUNTS here
+        filtered_accounts = [
+            acc for acc in SYSTEM_DEFAULT_ACCOUNTS 
+            if acc.get('name') != 'Closing Stock'
+        ]
+        filtered_accounts.sort(key=lambda x: x['code'])
+        session['chart_of_accounts'] = filtered_accounts
 
     session.modified = True
     # Ensure username is set for dashboard access if testing directly
@@ -231,7 +202,9 @@ def activate_account(account_name):
     
     if found_default:
         # If it's a system default but not in the user's active list, add it.
-        current_accounts.append(found_default)
+        # Ensure 'Closing Stock' isn't added even if it appears in old session data
+        if found_default.get('name') != 'Closing Stock':
+             current_accounts.append(found_default)
     else:
         # Create new custom account only if the name is non-empty and not just a space
         if account_name.strip():
@@ -249,7 +222,14 @@ def activate_account(account_name):
 # NEW HELPER: For preparing dropdown data
 def get_all_dropdown_accounts():
     active_accounts = session.get('chart_of_accounts', [])
-    merged_dict = {acc['name']: acc for acc in SYSTEM_DEFAULT_ACCOUNTS} 
+    
+    # Filter out Closing Stock before merging for dropdown
+    filtered_system_accounts = [
+        acc for acc in SYSTEM_DEFAULT_ACCOUNTS 
+        if acc.get('name') != 'Closing Stock'
+    ]
+    
+    merged_dict = {acc['name']: acc for acc in filtered_system_accounts} 
     merged_dict.update({acc['name']: acc for acc in active_accounts}) 
     return sorted(merged_dict.values(), key=lambda x: x['code'])
 
@@ -330,7 +310,9 @@ def dashboard():
     # Fallback if session expires
     if 'username' not in session:
         return redirect(url_for('login')) 
-    return render_template('dashboard.html', username=session.get('username'))
+    # Fetch data for charts
+    data = generate_financials()
+    return render_template('dashboard.html', username=session.get('username'), data=data)
 
 @app.route('/chart_of_accounts', methods=['GET', 'POST'])
 def chart_of_accounts():
@@ -537,20 +519,88 @@ def generate_financials():
     # 3. Calculate Financial Statements totals
     
     # Income Statement Items
-    # Include all relevant expense accounts from the PDF
+    # Revenue accounts (Credit balance)
     revenue_total = sum(data['balance'] for name, data in ledger.items() if data['type'] == 'Revenue')
-    # FIX: Exclude 'Drawings' from the expense calculation
+    # Expense accounts (Debit balance, thus positive values in ledger['balance'])
     expenses_total = sum(data['balance'] for name, data in ledger.items() if data['type'] == 'Expense' or name in ['COGS', 'Loss on Sale'])
 
     net_income = revenue_total - expenses_total
     
-    # Balance Sheet Items
-    assets = sum(data['balance'] for name, data in ledger.items() if data['type'] == 'Asset' and name != 'Accumulated Depreciation')
-    # Subtract Accumulated Depreciation (which has a credit balance, but must reduce asset total)
-    assets -= ledger.get('Accumulated Depreciation', {'balance': 0.0})['balance']
+    # =======================================================
+    # NEW BLOCK: DATA FOR CHARTS
+    # =======================================================
+    type_summary = {
+        'Asset': 0.0, 'Liability': 0.0, 'Equity': 0.0, 
+        'Revenue': 0.0, 'Expense': 0.0
+    }
+    for name, data in ledger.items():
+        acct_type = data['type']
+        
+        # Use the calculated final balance for the chart data
+        balance = data['balance']
+        
+        # Assets have a normal debit balance (positive is debit)
+        if acct_type == 'Asset':
+            # Contra-asset (Accumulated Depreciation) is a credit balance, reducing total assets.
+            if name == 'Accumulated Depreciation':
+                type_summary[acct_type] -= balance 
+            else:
+                type_summary[acct_type] += balance
+            
+        # Liabilities and Revenue have a normal credit balance (positive is credit)
+        elif acct_type in ['Liability', 'Revenue']:
+            type_summary[acct_type] += balance
+            
+        # Equity is Capital - Drawings + Net Income, but here we aggregate the Equity type accounts only.
+        # Drawings is contra-equity (debit), Capital is equity (credit).
+        elif acct_type == 'Equity':
+            if name == 'Drawings':
+                type_summary[acct_type] -= balance # Drawings reduces equity
+            else:
+                 type_summary[acct_type] += balance # Capital increases equity
+                 
+        # Expenses have a normal debit balance (positive is debit)
+        elif acct_type == 'Expense' or name in ['COGS', 'Loss on Sale']:
+            type_summary['Expense'] += balance
 
-    liabilities = sum(data['balance'] for data in ledger.values() if data['type'] == 'Liability')
+    # =======================================================
+    # END NEW BLOCK
+    # =======================================================
+
     
+    # Balance Sheet Items
+    assets = 0.0
+    liabilities = 0.0
+    
+    bank_balance = ledger.get('Bank', {'balance': 0.0})['balance']
+    accumulated_depreciation = ledger.get('Accumulated Depreciation', {'balance': 0.0})['balance']
+    
+    # Calculate Total Assets based on cleaned logic (Only include positive asset balances)
+    for name, data in ledger.items():
+        acct_type = data['type']
+        balance = data['balance']
+        
+        if acct_type == 'Asset':
+            if name != 'Accumulated Depreciation':
+                # Only include assets with a positive balance (Debit balance)
+                if balance > 0.01:
+                    assets += balance
+            
+    # Subtract Accumulated Depreciation (Contra-Asset with Credit Balance, so balance is positive)
+    assets -= accumulated_depreciation
+
+    # Calculate Liabilities
+    for name, data in ledger.items():
+        acct_type = data['type']
+        balance = data['balance']
+        
+        if acct_type == 'Liability':
+            liabilities += balance
+            
+    # Add Bank Overdraft if Bank balance is negative
+    if bank_balance < 0:
+        liabilities += abs(bank_balance)
+
     # Adjust Equity: Capital + Net Income - Drawings
     capital = ledger.get('Capital', {'balance': 0.0})['balance']
     drawings = ledger.get('Drawings', {'balance': 0.0})['balance']
@@ -560,7 +610,7 @@ def generate_financials():
     is_balanced = abs(assets - total_equity_liab) < 0.01
 
     # =======================================================
-    # NEW BLOCK: TRIAL BALANCE DATA PREPARATION
+    # TRIAL BALANCE DATA PREPARATION
     # =======================================================
     tb_debits = 0.0
     tb_credits = 0.0
@@ -602,7 +652,7 @@ def generate_financials():
     tb_balanced = abs(tb_debits - tb_credits) < 0.01
     
     # =======================================================
-    # END NEW BLOCK
+    # END TRIAL BALANCE BLOCK
     # =======================================================
 
 
@@ -610,7 +660,8 @@ def generate_financials():
         'ledger': ledger,
         'income_statement': {'revenue': revenue_total, 'expenses': expenses_total, 'net_income': net_income},
         'balance_sheet': {'assets': assets, 'liabilities': liabilities, 'equity': total_equity_liab - liabilities, 'total_eq_liab': total_equity_liab, 'is_balanced': is_balanced},
-        'trial_balance': {'accounts': trial_balance_accounts, 'total_debits': tb_debits, 'total_credits': tb_credits, 'is_balanced': tb_balanced}
+        'trial_balance': {'accounts': trial_balance_accounts, 'total_debits': tb_debits, 'total_credits': tb_credits, 'is_balanced': tb_balanced},
+        'type_summary': type_summary # Add summary data for charts
     }
 
 

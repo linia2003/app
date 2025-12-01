@@ -4,104 +4,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Accountoria</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Quicksand:wght@700&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Quicksand:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        /* --- CHIC PALETTE --- */
+        /* --- PROFESSIONAL DASHBOARD PALETTE (PURPLE, BLUE, WHITE FOCUS) --- */
         :root {
-            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-            --node-center-bg: #ffffff;
-            --purple-vivid: #6366f1;
-            --button-glow: rgba(99, 102, 241, 0.6);
-            --button-dark: #1e293b;
-            --text-offwhite: #f8fafc;
-            /* MUTED COLOR for Center */
-            --muted-lavender: #f1f5f9; 
-            /* Softening the circle for a more natural look */
-            --center-size: 200px;
+            --bg-deep-blue: #0A0C16; /* Near Black Blue */
+            --purple-dark: #272B4B; /* Deep Muted Indigo/Purple */
+            --blue-accent: #4F70F5; /* Main Accent Blue */
+            --blue-vivid: #0EA5E9;  /* Secondary Bright Blue */
+            
+            --text-main: #1e293b;
+            --text-light: #f8fafc;
+            --card-bg-light: #ffffff;
+            --card-bg-muted: #f1f5f9; 
+            --shadow-subtle: rgba(0, 0, 0, 0.1);
+            
+            --glow-color: rgba(79, 112, 245, 0.6); /* Blue glow */
+            
+            /* NEW: Darker shade for contrast in Welcome Card */
+            --welcome-dark-bg: #1A1F3E; 
+            --welcome-text-contrast: #e0e7ff;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: var(--bg-gradient);
+            /* Blue/Purple Gradient */
+            background: linear-gradient(135deg, var(--bg-deep-blue) 0%, var(--purple-dark) 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: var(--text-dark);
+            color: var(--text-main);
             padding-top: 100px;
             padding-bottom: 40px; 
+            animation: backgroundShift 20s ease infinite alternate;
+        }
+        
+        @keyframes backgroundShift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
         }
 
         /* --- DASHBOARD CONTAINER (Main Card) --- */
         .dashboard-container {
             width: 100%;
-            max-width: 1000px;
-            height: 600px; 
-            background-color: rgba(255, 255, 255, 0.98);
-            padding: 60px 50px;
-            border-radius: 24px;
+            max-width: 1200px; 
+            height: auto; 
+            background-color: var(--card-bg-light);
+            padding: 40px; 
+            border-radius: 18px;
             box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; 
+            justify-content: flex-start;
         }
 
         .dashboard-container::before {
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 6px;
-            background: linear-gradient(90deg, #312e81, #581c87, #701a75);
+            /* Blue/Purple Accent Line */
+            background: linear-gradient(90deg, var(--blue-accent), var(--purple-dark));
+            border-radius: 18px 18px 0 0;
         }
-
-        /* HEADER SECTION (CONTROL CENTER) */
+        
+        /* HEADER */
         .header-section {
+            width: 100%;
             text-align: center;
-            margin-top: 40px; 
-            margin-bottom: 30px; 
-            padding-bottom: 10px;
-            position: relative;
+            margin-bottom: 40px; 
+            border-bottom: 1px solid var(--card-bg-muted);
+            padding-bottom: 20px;
         }
 
         .header-section h2 {
             font-family: 'Quicksand', sans-serif;
             font-weight: 800;
-            font-size: 3rem;
-            letter-spacing: 2px;
-            color: var(--button-dark);
-            background: linear-gradient(135deg, var(--button-dark) 0%, var(--purple-vivid) 100%);
+            font-size: 2.5rem; 
+            letter-spacing: 1px;
+            color: var(--text-main);
+            /* Gradient Text */
+            background: linear-gradient(135deg, var(--purple-dark) 0%, var(--blue-accent) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: inline-block;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.1); 
             animation: fadeInDown 0.8s;
-            position: relative;
-            padding-bottom: 5px; /* Space for the line */
-        }
-        
-        /* STYLISH UNDERLINE */
-        .header-section h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%; /* Width of the line */
-            height: 4px;
-            border-radius: 2px;
-            background: var(--purple-vivid);
-            box-shadow: 0 0 10px var(--purple-vivid);
-            animation: expandLine 1s ease-out;
-        }
-
-        @keyframes expandLine {
-            0% { width: 0%; opacity: 0; }
-            100% { width: 80%; opacity: 1; }
         }
 
         @keyframes fadeInDown {
@@ -111,159 +104,273 @@
 
 
         /* -----------------------------------------------------
-           V1 CIRCULAR NAVIGATION (RESTORED)
+           NEW: MAIN GRID LAYOUT (2 Columns)
            ----------------------------------------------------- */
 
-        .circular-nav-container {
-            position: relative;
-            width: 450px;
-            height: 450px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: rotateIn 1s cubic-bezier(0.16, 1, 0.3, 1);
-            /* Adjust top margin to compensate for new header positioning */
-            margin-top: 20px; 
+        .main-grid-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* Two-thirds for content, one-third for navigation */
+            gap: 30px;
+            width: 100%;
+            margin-bottom: 40px;
+            align-items: stretch; 
         }
 
-        @keyframes rotateIn {
-            from { opacity: 0; transform: rotate(30deg) scale(0.8); }
-            to { opacity: 1; transform: rotate(0deg) scale(1); }
-        }
-
-        /* CENTRAL WELCOME MESSAGE (Core Node) - NATURAL & ROUNDED */
-        .welcome-center {
-            text-align: center;
-            
-            /* Dimensions and Shape for Natural Feel */
-            width: var(--center-size);
-            height: var(--center-size);
-            background: var(--muted-lavender); 
-            border-radius: 50%; /* Perfect Circle */
-            padding: 30px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border: 4px solid var(--purple-vivid); 
-            z-index: 10;
-            
+        /* LEFT PANEL: WELCOME & METRICS (Unique Card Styling) */
+        .info-panel {
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            
-            animation: breathe 4s ease-in-out infinite;
+            gap: 20px;
+            animation: fadeInUp 1s ease-out;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        @keyframes breathe {
-            0% { transform: scale(1); box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
-            50% { transform: scale(1.02); box-shadow: 0 15px 25px rgba(0,0,0,0.25); }
-            100% { transform: scale(1); box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
+        /* New Bounce Animation for Welcome Card */
+        @keyframes welcomeBounce {
+            0% { opacity: 0; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.01); }
+            100% { transform: scale(1); }
+        }
+        
+        /* NEW KEYFRAME: Animated background for welcome card */
+        @keyframes gradient-flow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
         }
 
 
-        /* WELCOME TEXT ("Welcome Back,") - BIGGER, Clean */
-        .welcome-center .welcome-text {
+        /* Unique Dark Welcome Card */
+        .welcome-card {
+            /* Modified background for animation */
+            background: linear-gradient(135deg, var(--welcome-dark-bg), var(--purple-dark), var(--welcome-dark-bg));
+            background-size: 400% 400%; /* Stretch gradient for movement */
+            /* FIX: Removed 'alternate' keyword for continuous, non-reversing flow */
+            animation: welcomeBounce 1s ease-out, gradient-flow 15s linear infinite; 
+            
+            padding: 30px 35px; 
+            border-radius: 12px;
+            border-left: 6px solid var(--blue-vivid); 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4); 
+            color: var(--welcome-text-contrast); 
+            transform-origin: top center;
+            overflow: hidden; /* Important to keep gradient contained */
+            position: relative;
+        }
+        
+        /* Ensure text is clearly visible over the moving background */
+        .welcome-card * {
+            position: relative;
+            z-index: 2;
+        }
+
+
+        .welcome-card .welcome-text {
+            font-family: 'Poppins', sans-serif; 
+            font-weight: 300; 
+            color: var(--welcome-text-contrast);
+            font-size: 1.3rem; 
+            margin-bottom: 0; 
+            display: block;
+        }
+
+        .welcome-card .user-id {
             font-family: 'Quicksand', sans-serif; 
             font-weight: 700;
-            color: var(--button-dark);
-            font-size: 1.8rem; /* Main Text Size */
+            color: var(--blue-vivid); 
+            font-size: 2.3rem; 
+            letter-spacing: 1px;
             line-height: 1.2;
-            margin-bottom: 2px; /* Reduced margin for natural vertical flow */
+            display: block;
+        }
+        
+        .metrics-area {
+            display: grid;
+            /* Ensure metrics use all available space below the welcome card */
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+            gap: 20px;
+            padding-top: 0; /* Adjusted padding */
+        }
+        
+        .metric-box {
+            background: var(--card-bg-light);
+            padding: 25px 20px; /* Increased vertical padding for taller boxes */
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease-out;
+            animation: bounceIn 0.8s backwards; /* New load animation */
+        }
+        .metric-box:nth-child(1) { animation-delay: 0.1s; }
+        .metric-box:nth-child(2) { animation-delay: 0.2s; }
+        .metric-box:nth-child(3) { animation-delay: 0.3s; }
+        
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            60% { opacity: 1; transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .metric-box:hover {
+            transform: translateY(-5px); 
+            box-shadow: 0 12px 25px var(--shadow-subtle);
         }
 
-        /* USERNAME ID - Distinct Font (Changed from Pacifico to Quicksand Light) */
-        .welcome-center .user-id {
-            font-family: 'Quicksand', sans-serif; 
-            font-weight: 400; /* Lighter weight to contrast with 700 weight welcome text */
-            color: var(--purple-vivid);
-            font-size: 1.2rem; /* Clear size hierarchy */
-            line-height: 1.1;
-            letter-spacing: 1px; /* Spacing for chic look */
-        }
-
-        /* NAVIGATION BUTTONS (ORBITING) */
-        .module-button {
-            position: absolute;
-            width: 120px; 
-            height: 120px;
-            text-align: center;
-            line-height: 1;
-            padding: 20px;
-            background: linear-gradient(145deg, var(--purple-vivid), var(--button-dark)); 
-            color: white;
-            border-radius: 50%; 
-            text-decoration: none;
-            font-size: 0.8rem;
-            font-weight: 600;
+        .metric-box h4 {
+            color: #64748b;
+            font-size: 0.8rem; 
             text-transform: uppercase;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-            border: 4px solid #fff;
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-weight: 600;
+            letter-spacing: 0.5px; /* Added spacing for label readability */
+        }
+        .metric-box p {
+            font-size: 1.8rem; /* Prominent value size */
+            font-weight: 700;
+            color: var(--text-main);
+            margin-top: 8px; /* Increased spacing below label */
+            font-family: 'Quicksand', sans-serif; /* Using Quicksand for strong numerical data */
+        }
+        
+        /* RIGHT PANEL: NAVIGATION STACK (Layered Button Design) */
+        .nav-stack-area {
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            animation: float 4s ease-in-out infinite; 
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-            50% { transform: translateY(-10px); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
-            100% { transform: translateY(0px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        }
-        
-        .module-button:hover {
-            transform: scale(1.1);
-            background: linear-gradient(145deg, #7c3aed, #4c1d95);
-            box-shadow: 0 15px 30px var(--button-glow);
+            gap: 10px; 
+            animation: fadeInUp 1.2s ease-out;
+            /* Added padding-top to optically align the first button with the welcome card */
+            padding-top: 0; 
         }
 
-        .module-button .icon {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
+        .nav-card {
+            position: relative;
+            z-index: 1;
+            display: block; 
+            padding: 16px 20px; 
+            border-radius: 10px; 
+            background: var(--purple-dark); 
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.0rem; 
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        /* Positioning the Modules around the center (Clockwise from top right) */
-        .module-button:nth-child(2) { top: 30px; right: 30px; } /* JOURNAL */
-        .module-button:nth-child(3) { top: 30px; left: 30px; } /* LEDGER (Formerly History) */
-        .module-button:nth-child(4) { bottom: 30px; left: 30px; } /* ACCOUNTS */
-        .module-button:nth-child(5) { bottom: 30px; right: 30px; } /* REPORTS */
+        /* Layered background animation effect */
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--blue-accent);
+            border-radius: 10px;
+            z-index: -1;
+            transform: scaleX(0); 
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-card:hover::before {
+            transform: scaleX(1); /* Expand on hover */
+        }
+
+        .nav-card:hover {
+            transform: translateY(-5px) scale(1.02); 
+            box-shadow: 0 15px 25px var(--glow-color);
+            color: var(--text-light); 
+        }
+        
+        .nav-card-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-card .icon {
+            font-size: 1.6rem; 
+            margin-right: 15px;
+            color: var(--blue-vivid); 
+            transition: color 0.3s;
+        }
+        
+        .nav-card:hover .icon {
+            color: var(--text-light); 
+        }
 
         /* -----------------------------------------------------
-           FIXED TOP BAR & Responsiveness (Kept Simple)
+           CHART SECTION (Full Width Bottom)
+           ----------------------------------------------------- */
+
+        .chart-row {
+            padding-top: 20px; 
+            width: 100%; 
+            display: flex;
+            justify-content: center;
+            gap: 30px; 
+            flex-wrap: wrap; 
+        }
+        
+        .chart-section {
+            width: 100%;
+            max-width: 600px; 
+            padding: 25px; 
+            background: var(--card-bg-muted); 
+            border-radius: 12px;
+            box-shadow: 0 2px 10px var(--shadow-subtle);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.3s ease-out;
+            animation: fadeInUp 1.4s ease-out;
+        }
+
+        .chart-section:hover {
+            transform: translateY(-2px);
+        }
+
+        .chart-title {
+            font-family: 'Quicksand', sans-serif; 
+            text-align: center; 
+            color: var(--purple-dark); 
+            margin-bottom: 20px; 
+            font-size: 1.4rem; 
+            border-bottom: 1px solid #c7d2fe; 
+            padding-bottom: 5px;
+        }
+        
+        .chart-box {
+            padding: 5px; 
+            background: var(--card-bg-light); 
+            border-radius: 8px;
+        }
+
+        /* -----------------------------------------------------
+           Responsive adjustments
            ----------------------------------------------------- */
         
+        @media (max-width: 900px) {
+            .dashboard-container { padding: 40px 20px; }
+            .main-grid-content {
+                grid-template-columns: 1fr; 
+                gap: 30px;
+            }
+            .chart-row { 
+                flex-direction: column; 
+                gap: 20px; 
+            }
+            .chart-section { max-width: 100%; }
+        }
+        
         @media (max-width: 600px) {
-            .dashboard-container { padding: 40px 20px; height: 500px; }
-            .circular-nav-container {
-                width: 320px;
-                height: 320px;
-            }
-            :root { --center-size: 150px; } 
-
-            .welcome-center {
-                padding: 10px; /* Reduced padding for smaller shape */
-                width: var(--center-size);
-                height: var(--center-size);
-            }
-            .header-section h2 { font-size: 2rem; margin-bottom: 15px; } 
-            .welcome-center .welcome-text { font-size: 1.4rem; }
-            .welcome-center .user-id { font-size: 1rem; } 
-
-            .module-button {
-                width: 90px;
-                height: 90px;
-                font-size: 0.7rem;
-                padding: 10px;
-            }
-            .module-button .icon {
-                font-size: 1.2rem;
-            }
-            /* Repositioning for smaller screen */
-            .module-button:nth-child(2) { top: 15px; right: 15px; } 
-            .module-button:nth-child(3) { top: 15px; left: 15px; }
-            .module-button:nth-child(4) { bottom: 15px; left: 15px; } 
-            .module-button:nth-child(5) { bottom: 15px; right: 15px; }
+            .header-section h2 { font-size: 2rem; }
+            .welcome-card .welcome-text { font-size: 1.2rem; }
+            .welcome-card .user-id { font-size: 1.8rem; }
+            .nav-card { font-size: 1rem; padding: 12px 15px; }
+            .nav-card .icon { font-size: 1.2rem; }
+            .metrics-area { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -280,34 +387,232 @@
             <h2>CONTROL CENTER</h2>
         </div>
 
-        <div class="circular-nav-container">
+        <div class="main-grid-content">
             
-            <div class="welcome-center">
-                <span class="welcome-text">Welcome Back,</span>
-                <span class="user-id">{{ username | upper }}</span>
+            <!-- LEFT PANEL: WELCOME & METRICS -->
+            <div class="info-panel">
+                <div class="welcome-card">
+                    <span class="welcome-text">Welcome Back,</span>
+                    <span class="user-id">{{ username | upper }}</span>
+                </div>
+                
+                <!-- Mockup Metrics Area -->
+                <div class="metrics-area">
+                    <div class="metric-box">
+                        <h4>Net Income (YTD)</h4>
+                        <p style="color: #16a34a;">$ {{ "%.2f"|format(data.income_statement.net_income) }}</p>
+                    </div>
+                    <div class="metric-box">
+                        <h4>Total Assets</h4>
+                        <p>$ {{ "%.2f"|format(data.balance_sheet.assets) }}</p>
+                    </div>
+                    <div class="metric-box">
+                        <h4>Balance Status</h4>
+                        <p style="color: {{ 'green' if data.trial_balance.is_balanced else '#ef4444' }}; font-size: 1.3rem;">
+                            {{ 'BALANCED' if data.trial_balance.is_balanced else 'UNBALANCED' }}
+                        </p>
+                    </div>
+                </div>
+
             </div>
 
-            <a href="{{ url_for('journal_entry', username=username) }}" class="module-button" style="animation-delay: 0s;">
-                <span class="icon">&#9997;</span> 
-                JOURNAL
-            </a>
-            
-            <a href="{{ url_for('view_journal', username=username) }}" class="module-button" style="animation-delay: 1s;">
-                <span class="icon">&#128196;</span> 
-                LEDGER
-            </a>
-            
-            <a href="{{ url_for('chart_of_accounts') }}" class="module-button" style="animation-delay: 2s;">
-                <span class="icon">&#128184;</span> 
-                ACCOUNTS
-            </a>
-            
-            <a href="{{ url_for('financial_reports') }}" class="module-button" style="animation-delay: 3s;">
-                <span class="icon">&#128202;</span> 
-                REPORTS
-            </a>
+            <!-- RIGHT PANEL: NAVIGATION STACK -->
+            <div class="nav-stack-area">
+                
+                <!-- Journal Entry -->
+                <a href="{{ url_for('journal_entry', username=username) }}" class="nav-card">
+                    <div class="nav-card-content">
+                        <span class="icon">&#9997;</span> 
+                        Journal Entry
+                    </div>
+                </a>
+                
+                <!-- Ledger View -->
+                <a href="{{ url_for('view_journal', username=username) }}" class="nav-card">
+                    <div class="nav-card-content">
+                        <span class="icon">&#128196;</span> 
+                        View Ledger
+                    </div>
+                </a>
+                
+                <!-- Chart of Accounts -->
+                <a href="{{ url_for('chart_of_accounts') }}" class="nav-card">
+                    <div class="nav-card-content">
+                        <span class="icon">&#128184;</span> 
+                        Chart of Accounts
+                    </div>
+                </a>
+                
+                <!-- Financial Reports -->
+                <a href="{{ url_for('financial_reports') }}" class="nav-card">
+                    <div class="nav-card-content">
+                        <span class="icon">&#128202;</span> 
+                        Financial Reports
+                    </div>
+                </a>
 
+            </div>
         </div>
+
+        <!-- NEW SECTION: FINANCIAL SNAPSHOT CHARTS -->
+        <div class="chart-row">
+            
+            <!-- PIE CHART (Composition) - Single Chart Layout -->
+            <div class="chart-section">
+                 <h3 class="chart-title">
+                     Account Composition
+                 </h3>
+                 <div id="pieChartContainer" class="chart-box">
+                     <canvas id="balanceChart"></canvas>
+                 </div>
+                 <div id="noPieDataMessage" class="no-data" style="display: none;">
+                     No significant account balances to display.
+                 </div>
+            </div>
+            
+            <!-- Removed the Bar Chart section to focus only on the pie chart -->
         </div>
+
+
+    </div>
+
+    <!-- CHART.JS LIBRARY (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Chart.js Data Labels Plugin (Required for showing values on segments) -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+    <!-- CHART INTEGRATION SCRIPT -->
+    <script>
+        // Use Flask/Jinja to pass the type_summary data from app.py
+        const rawSummaryData = '{{ data.type_summary | tojson }}';
+        
+        // Define distinct shades of blue and purple for the segments
+        const segmentColors = {
+            'Asset': '#3A4F7F',       // Muted Navy Blue
+            'Liability': '#5D4A6E',   // Dark Muted Purple
+            'Equity': '#4F70F5',      // Main Accent Blue
+            'Revenue': '#4B2767',     // Darker Purple/Indigo
+            'Expense': '#7C92D5'      // Muted Light Blue
+        };
+
+        function renderChart() {
+            try {
+                // Ensure the string is correctly parsed
+                const summaryData = JSON.parse(rawSummaryData.replace(/&#34;/g, '"'));
+
+                // --- DATA FOR PIE CHART (Composition) ---
+                const pieLabels = [];
+                const pieBalances = [];
+                const pieBackgroundColors = [];
+                
+                let totalAssets = 0;
+                let totalLiabilities = 0;
+                let totalRevenue = 0;
+                let totalExpenses = 0;
+                let totalEquity = 0;
+                
+                // Aggregate data first
+                for (const [type, balance] of Object.entries(summaryData)) {
+                    if (type === 'Asset') { totalAssets = balance; }
+                    if (type === 'Liability') { totalLiabilities = balance; }
+                    if (type === 'Equity') { totalEquity = balance; }
+                    if (type === 'Revenue') { totalRevenue = balance; }
+                    if (type === 'Expense') { totalExpenses = balance; }
+                }
+
+                // 1. Prepare PIE Chart Data
+                const pieSource = [
+                    { type: 'Asset', balance: totalAssets },
+                    { type: 'Liability', balance: totalLiabilities },
+                    { type: 'Equity', balance: totalEquity },
+                    { type: 'Revenue', balance: totalRevenue },
+                    { type: 'Expense', balance: totalExpenses }
+                ];
+
+                let hasPieData = false;
+                for (const item of pieSource) {
+                    if (Math.abs(item.balance) > 0.01) {
+                        pieLabels.push(item.type);
+                        // Use absolute value for pie chart segments
+                        pieBalances.push(Math.abs(item.balance)); 
+                        pieBackgroundColors.push(segmentColors[item.type] || '#64748b');
+                        hasPieData = true;
+                    }
+                }
+                
+                // --- RENDER PIE CHART ---
+                const pieContainer = document.getElementById('pieChartContainer');
+                const noPieMessage = document.getElementById('noPieDataMessage');
+
+                if (hasPieData) {
+                    pieContainer.style.display = 'block';
+                    noPieMessage.style.display = 'none';
+
+                    const ctx = document.getElementById('balanceChart').getContext('2d');
+                    // Destroy previous chart instance if it exists
+                    if (Chart.getChart(ctx)) {
+                        Chart.getChart(ctx).destroy();
+                    }
+
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        plugins: [ChartDataLabels], // Register the plugin
+                        data: {
+                            labels: pieLabels,
+                            datasets: [{
+                                label: 'Balance Composition ($)',
+                                data: pieBalances,
+                                backgroundColor: pieBackgroundColors,
+                                hoverOffset: 10,
+                                borderWidth: 3, // Add border for better separation
+                                borderColor: 'white'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        font: { family: 'Poppins' }
+                                    }
+                                },
+                                datalabels: {
+                                    formatter: (value, context) => {
+                                        // Format value as currency with K/M abbreviation
+                                        if (value >= 1000) {
+                                            return '$' + (value / 1000).toFixed(1) + 'K';
+                                        }
+                                        return '$' + value.toFixed(0);
+                                    },
+                                    color: 'white',
+                                    font: {
+                                        weight: 'bold',
+                                        family: 'Poppins',
+                                        size: 14
+                                    },
+                                    textShadowBlur: 2,
+                                    textShadowColor: 'black'
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    pieContainer.style.display = 'none';
+                    noPieMessage.style.display = 'block';
+                }
+
+            } catch (error) {
+                console.error("Error parsing summary data or rendering chart:", error);
+                document.getElementById('pieChartContainer').style.display = 'none';
+                document.getElementById('noPieDataMessage').innerText = "Error loading chart data.";
+                document.getElementById('noPieDataMessage').style.display = 'block';
+            }
+        }
+
+        window.onload = function() {
+            renderChart();
+        };
+    </script>
 </body>
 </html>

@@ -206,15 +206,24 @@
             font-weight: 500;
         }
 
-        /* Expense/Revenue Coloring on Income Statement */
-        .positive { color: var(--success); background: var(--success-bg-light); padding: 4px 8px; border-radius: 4px; font-weight: 600;}
-        .negative { color: var(--danger); background: var(--danger-bg-light); padding: 4px 8px; border-radius: 4px; font-weight: 600;}
+        /* Income Statement: Neutral Formatting (No colors/signs) */
+        .neutral-amount { 
+            color: var(--text-dark); 
+            font-weight: 500;
+            padding: 0; 
+            background: transparent; 
+        }
+
+        /* Income Statement: Indentation for expenses */
+        .expense-row-indentation {
+            padding-left: 30px; /* Add indentation for visual distinction */
+        }
 
         @media (max-width: 950px) {
             .report-grid { grid-template-columns: 1fr; }
         }
         
-        /* Added for Balance Sheet deduction style */
+        /* Added for Balance Sheet deduction style (Indentation) */
         .deduction-row td {
              padding-left: 30px; 
              font-style: italic;
@@ -222,6 +231,12 @@
         }
         .negative-amount {
              color: var(--danger);
+        }
+        
+        /* Custom style for overdraft */
+        .overdraft-row {
+            font-weight: 600;
+            color: var(--danger);
         }
 
         /* --- TRIAL BALANCE SPECIFIC STYLING (NEW) --- */
@@ -326,7 +341,8 @@
                             <tr>
                                 <td class="sub-account">{{ name }}</td>
                                 <td class="col-amount">
-                                    <span class="positive">+ {{ "%.2f"|format(details.balance) }}</span>
+                                    {# Removed sign, kept neutral-amount styling for clean text #}
+                                    <span class="neutral-amount">{{ "%.2f"|format(details.balance) }}</span>
                                 </td>
                             </tr>
                             {% endif %}
@@ -334,16 +350,18 @@
                             
                             <tr class="row-total">
                                 <td style="font-weight:600; color:var(--text-dark);">Total Revenue</td>
-                                <td class="col-amount" style="color:var(--text-dark);">+ {{ "%.2f"|format(data.income_statement.revenue) }}</td>
+                                <td class="col-amount" style="color:var(--text-dark);">{{ "%.2f"|format(data.income_statement.revenue) }}</td>
                             </tr>
                             
                             <tr><td colspan="2" class="section-header">EXPENSES</td></tr>
                             {% for name, details in data.ledger.items() %}
                             {% if details.type == 'Expense' and details.balance != 0 %}
                             <tr>
-                                <td class="sub-account">{{ name }}</td>
+                                {# Added indentation class to distinguish expenses #}
+                                <td class="sub-account expense-row-indentation">{{ name }}</td>
                                 <td class="col-amount">
-                                    <span class="negative">- {{ "%.2f"|format(details.balance) }}</span>
+                                    {# Removed sign, kept neutral-amount styling for clean text #}
+                                    <span class="neutral-amount">{{ "%.2f"|format(details.balance) }}</span>
                                 </td>
                             </tr>
                             {% endif %}
@@ -351,7 +369,7 @@
                             
                             <tr class="row-total">
                                 <td>Total Expenses</td>
-                                <td class="col-amount" style="color:var(--text-dark);">- {{ "%.2f"|format(data.income_statement.expenses) }}</td>
+                                <td class="col-amount" style="color:var(--text-dark);">{{ "%.2f"|format(data.income_statement.expenses) }}</td>
                             </tr>
                             
                             <tr class="row-total net-income-row">
@@ -378,8 +396,39 @@
                         <tbody>
                             <tr><td colspan="2" class="section-header">ASSETS</td></tr>
                             
+                            {# Check for Bank Overdraft scenario and handle 'Bank' asset separately #}
+                            {% set bank_balance = data.ledger.get('Bank', {'balance': 0.0}).balance %}
+                            {% set cash_balance = data.ledger.get('Cash', {'balance': 0.0}).balance %}
+                            {% set office_equipment_balance = data.ledger.get('Office Equipment', {'balance': 0.0}).balance %}
+
                             {% for name, details in data.ledger.items() %}
-                            {% if details.type == 'Asset' and details.balance != 0 and name != 'Accumulated Depreciation' %}
+                            
+                            {# 1. Display Cash separately if it's positive #}
+                            {% if name == 'Cash' and cash_balance > 0 %}
+                            <tr>
+                                <td class="sub-account">Cash</td>
+                                <td class="col-amount">{{ "%.2f"|format(cash_balance) }}</td>
+                            </tr>
+                            {% endif %}
+
+                            {# 2. Only display Bank as Asset if positive #}
+                            {% if name == 'Bank' and bank_balance > 0 %}
+                            <tr>
+                                <td class="sub-account">Bank</td>
+                                <td class="col-amount">{{ "%.2f"|format(bank_balance) }}</td>
+                            </tr>
+                            {% endif %}
+                            
+                            {# 3. Display Office Equipment if positive #}
+                            {% if name == 'Office Equipment' and office_equipment_balance > 0 %}
+                            <tr>
+                                <td class="sub-account">Office Equipment</td>
+                                <td class="col-amount">{{ "%.2f"|format(office_equipment_balance) }}</td>
+                            </tr>
+                            {% endif %}
+
+                            {# 4. Display all other Assets, excluding Bank, Cash, Office Equipment, and Contra-Assets. Assets must be > 0.01 based on Python logic #}
+                            {% if details.type == 'Asset' and details.balance > 0.01 and name != 'Accumulated Depreciation' and name not in ['Bank', 'Cash', 'Office Equipment'] %}
                             <tr>
                                 <td class="sub-account">{{ name }}</td>
                                 <td class="col-amount">{{ "%.2f"|format(details.balance) }}</td>
@@ -387,12 +436,12 @@
                             {% endif %}
                             {% endfor %}
                             
-                            {# ADD ACCUMULATED DEPRECIATION AS A DEDUCTION #}
+                            {# ADD ACCUMULATED DEPRECIATION AS A DEDUCTION (Negative value passed by Python means deduction) #}
                             {% set accum_dep_balance = data.ledger.get('Accumulated Depreciation', {'balance': 0.0}).balance %}
                             {% if accum_dep_balance != 0 %}
                             <tr class="deduction-row">
-                                <td class="sub-account">Less: Accumulated Depreciation</td>
-                                <td class="col-amount negative-amount">- {{ "%.2f"|format(accum_dep_balance) }}</td>
+                                <td class="sub-account">Accumulated Depreciation</td>
+                                <td class="col-amount negative-amount">{{ "%.2f"|format(accum_dep_balance|abs) }}</td>
                             </tr>
                             {% endif %}
                             
@@ -403,6 +452,14 @@
 
                             <tr><td colspan="2" class="section-header">LIABILITIES & EQUITY</td></tr>
                             
+                            {# ADD BANK OVERDRAFT HERE IF BANK IS NEGATIVE #}
+                            {% if bank_balance < 0 %}
+                            <tr class="overdraft-row">
+                                <td class="sub-account">Bank Overdraft</td>
+                                <td class="col-amount">{{ "%.2f"|format(bank_balance|abs) }}</td>
+                            </tr>
+                            {% endif %}
+
                             {% for name, details in data.ledger.items() %}
                             {% if details.type == 'Liability' and details.balance != 0 %}
                             <tr>
@@ -422,12 +479,12 @@
                             {% endif %}
                             {% endfor %}
 
-                            {# Display Drawings as a deduction #}
+                            {# Display Drawings as a deduction (Negative value passed by Python means deduction) #}
                             {% set drawings_balance = data.ledger.get('Drawings', {'balance': 0.0}).balance %}
                             {% if drawings_balance != 0 %}
                             <tr class="deduction-row">
-                                <td class="sub-account">Less: Drawings</td>
-                                <td class="col-amount negative-amount">- {{ "%.2f"|format(drawings_balance) }}</td>
+                                <td class="sub-account">Drawings</td>
+                                <td class="col-amount negative-amount">{{ "%.2f"|format(drawings_balance|abs) }}</td>
                             </tr>
                             {% endif %}
 
