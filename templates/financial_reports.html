@@ -223,6 +223,24 @@
         .negative-amount {
              color: var(--danger);
         }
+
+        /* --- TRIAL BALANCE SPECIFIC STYLING (NEW) --- */
+        .tb-header {
+            color: var(--text-muted-dark) !important; /* Use dark muted text for header columns */
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .tb-account-row td:nth-child(2), .tb-account-row td:nth-child(3) {
+            text-align: right;
+            font-family: 'Poppins', monospace;
+            font-weight: 500;
+        }
+        .tb-total-row td {
+             border-top: 2px solid var(--border-subtle);
+             border-bottom: 4px double var(--purple-vivid);
+             font-weight: 700;
+             color: var(--purple-vivid); /* Accent color for final totals */
+        }
     </style>
 </head>
 <body>
@@ -245,7 +263,9 @@
     <div class="main-wrapper">
         
         <div class="report-controls">
-            <button id="show-income-btn" class="report-btn active" onclick="showReport('income-card', 'show-income-btn')">Income Statement</button>
+            <!-- NEW BUTTON FOR TRIAL BALANCE -->
+            <button id="show-tb-btn" class="report-btn active" onclick="showReport('tb-card', 'show-tb-btn')">Trial Balance</button>
+            <button id="show-income-btn" class="report-btn" onclick="showReport('income-card', 'show-income-btn')">Income Statement</button>
             <button id="show-balance-btn" class="report-btn" onclick="showReport('balance-card', 'show-balance-btn')">Balance Sheet</button>
         </div>
 
@@ -253,7 +273,47 @@
             
             <div id="reports-container" class="full-width">
                 
-                <div class="report-card" id="income-card">
+                <!-- TRIAL BALANCE CARD (NEW) -->
+                <div class="report-card" id="tb-card">
+                    <div class="card-header">
+                        <h2>Trial Balance</h2>
+                        
+                        {% if data.trial_balance.is_balanced %}
+                            <span class="status-badge status-valid">Balanced</span>
+                        {% else %}
+                            <span class="status-badge status-invalid">Unbalanced</span>
+                        {% endif %}
+
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 60%; font-weight: 600; color: var(--text-dark);">Account Name</th>
+                                <th class="tb-header" style="width: 20%; text-align: right;">Debit</th>
+                                <th class="tb-header" style="width: 20%; text-align: right;">Credit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for acc in data.trial_balance.accounts %}
+                            <tr class="tb-account-row">
+                                <td style="font-weight: 500; color: var(--text-dark);">{{ acc.name }}</td>
+                                <td>{% if acc.debit > 0 %} {{ "%.2f"|format(acc.debit) }} {% endif %}</td>
+                                <td>{% if acc.credit > 0 %} {{ "%.2f"|format(acc.credit) }} {% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                            
+                            <tr class="tb-total-row">
+                                <td style="font-weight:700; color:var(--text-dark);">TOTALS</td>
+                                <td style="text-align: right;">{{ "%.2f"|format(data.trial_balance.total_debits) }}</td>
+                                <td style="text-align: right;">{{ "%.2f"|format(data.trial_balance.total_credits) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- INCOME STATEMENT CARD (EXISTING, set to display:none initially) -->
+                <div class="report-card" id="income-card" style="display:none;">
                     <div class="card-header">
                         <h2>Income Statement</h2>
                     </div>
@@ -302,6 +362,7 @@
                     </table>
                 </div>
 
+                <!-- BALANCE SHEET CARD (EXISTING, set to display:none initially) -->
                 <div class="report-card" id="balance-card" style="display:none;">
                     <div class="card-header">
                         <h2>Balance Sheet</h2>
@@ -390,10 +451,12 @@
         // Function to toggle report visibility
         function showReport(reportIdToShow, buttonIdToActivate) {
             // Hide all report cards
+            document.getElementById('tb-card').style.display = 'none';
             document.getElementById('income-card').style.display = 'none';
             document.getElementById('balance-card').style.display = 'none';
 
             // Deactivate all report buttons
+            document.getElementById('show-tb-btn').classList.remove('active');
             document.getElementById('show-income-btn').classList.remove('active');
             document.getElementById('show-balance-btn').classList.remove('active');
 
@@ -404,10 +467,9 @@
             document.getElementById(buttonIdToActivate).classList.add('active');
         }
         
-        // Initial state load
+        // Initial state load: Default to Trial Balance as it's the start of the reporting cycle
         window.onload = function() {
-            // Ensure Income Statement is shown and its button is active on load
-            showReport('income-card', 'show-income-btn');
+            showReport('tb-card', 'show-tb-btn');
         }
     </script>
 </body>

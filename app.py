@@ -539,7 +539,8 @@ def generate_financials():
     # Income Statement Items
     # Include all relevant expense accounts from the PDF
     revenue_total = sum(data['balance'] for name, data in ledger.items() if data['type'] == 'Revenue')
-    expenses_total = sum(data['balance'] for name, data in ledger.items() if data['type'] == 'Expense' or name in ['COGS', 'Loss on Sale', 'Drawings'])
+    # FIX: Exclude 'Drawings' from the expense calculation
+    expenses_total = sum(data['balance'] for name, data in ledger.items() if data['type'] == 'Expense' or name in ['COGS', 'Loss on Sale'])
 
     net_income = revenue_total - expenses_total
     
@@ -558,10 +559,58 @@ def generate_financials():
     
     is_balanced = abs(assets - total_equity_liab) < 0.01
 
+    # =======================================================
+    # NEW BLOCK: TRIAL BALANCE DATA PREPARATION
+    # =======================================================
+    tb_debits = 0.0
+    tb_credits = 0.0
+    trial_balance_accounts = []
+
+    # Iterate over ledger, only include accounts with non-zero balances
+    for name, data in sorted(ledger.items()):
+        balance = data['balance']
+        acct_type = data['type']
+        
+        # Determine the account's "normal" balance type (Debit or Credit)
+        is_debit_type = (acct_type in ['Asset', 'Expense'] or name in ['Drawings', 'COGS', 'Loss on Sale']) and name != 'Accumulated Depreciation'
+        
+        if name == 'Accumulated Depreciation':
+            is_debit_type = False # Contra-Asset's normal balance is Credit
+        
+        # Only include accounts that have a significant activity balance
+        if abs(balance) > 0.005: 
+            
+            # If the final balance direction matches the normal direction (or is a Credit type with a negative balance)
+            # This is the logic for how a final balance is placed on the TB
+            if (is_debit_type and balance >= 0) or (not is_debit_type and balance < 0):
+                debit_amount = abs(balance)
+                credit_amount = 0.0
+                tb_debits += debit_amount
+            # Otherwise, assign to Credit column
+            else:
+                debit_amount = 0.0
+                credit_amount = abs(balance)
+                tb_credits += credit_amount
+            
+            trial_balance_accounts.append({
+                'name': name,
+                'debit': debit_amount,
+                'credit': credit_amount
+            })
+
+    # Check if the Trial Balance balances
+    tb_balanced = abs(tb_debits - tb_credits) < 0.01
+    
+    # =======================================================
+    # END NEW BLOCK
+    # =======================================================
+
+
     return {
         'ledger': ledger,
         'income_statement': {'revenue': revenue_total, 'expenses': expenses_total, 'net_income': net_income},
-        'balance_sheet': {'assets': assets, 'liabilities': liabilities, 'equity': total_equity_liab - liabilities, 'total_eq_liab': total_equity_liab, 'is_balanced': is_balanced}
+        'balance_sheet': {'assets': assets, 'liabilities': liabilities, 'equity': total_equity_liab - liabilities, 'total_eq_liab': total_equity_liab, 'is_balanced': is_balanced},
+        'trial_balance': {'accounts': trial_balance_accounts, 'total_debits': tb_debits, 'total_credits': tb_credits, 'is_balanced': tb_balanced}
     }
 
 
