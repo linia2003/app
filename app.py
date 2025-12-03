@@ -290,7 +290,11 @@ def initialize_session():
         if session['journal_entries']:
             max_id = max(e.get('id', -1) for e in session['journal_entries'])
         session['next_entry_id'] = max_id + 1
-        
+    
+    # NEW AUTH FIX: Initialize user registry {user_id: password}
+    if 'registered_users' not in session:
+        session['registered_users'] = {}
+
     if 'chart_of_accounts' not in session or not session['chart_of_accounts']:
         # Filter out Closing Stock from SYSTEM_DEFAULT_ACCOUNTS here
         filtered_accounts = [
@@ -409,16 +413,25 @@ def home():
 def login():
     message = request.args.get('message')
     new_user_id = request.args.get('user_id')
+    # Get registered users from session (empty dict if not set)
+    registered_users = session.get('registered_users', {}) 
 
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
         
-        if username and password:
+        # 1. Check for hardcoded admin access
+        is_admin = (username == 'admin' and password == '1234')
+        
+        # 2. Check for registered user access
+        is_registered = (username in registered_users and registered_users[username] == password)
+        
+        if is_admin or is_registered:
             session['username'] = username
             return redirect(url_for('dashboard'))
         else:
-            return render_template('login.html', error="Invalid Credentials")
+            error_msg = "Invalid User ID or Access Key."
+            return render_template('login.html', error=error_msg, new_user_id=username)
 
     return render_template('login.html', message=message, new_user_id=new_user_id)
 
@@ -426,9 +439,16 @@ def login():
 def register():
     if request.method == 'POST':
         name = request.form.get('name')
+        password = request.form.get('password') # Get password from form submission
+
         first_name = name.split()[0].upper() if name else "USER"
         random_digits = str(random.randint(1000, 9999))
         generated_user_id = f"{first_name}{random_digits}"
+        
+        # Store new user credentials in the session
+        session['registered_users'][generated_user_id] = password
+        session.modified = True # Important to save changes to the mutable dictionary
+        
         success_msg = f"Account Created! Your User ID is: {generated_user_id}"
         return redirect(url_for('login', message=success_msg, user_id=generated_user_id))
     return render_template('register.html')
