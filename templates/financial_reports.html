@@ -4,23 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Financial Intelligence - Accountoria</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <!-- MODIFIED: Using Poppins and Playfair Display (matching Journal Entry) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        /* --- THEME VARIABLES (Refined for White Card Contrast) --- */
+        /* --- FUSION THEME (Matching Journal Entry/Ledger) --- */
         :root {
-            --bg-obsidian: #0f131f;      /* Main Body Background */
-            --panel-dark: #1e2532;       /* Report Control Bar Background */
-            --purple-vivid: #6366f1;     /* Main Accent Color (Indigo) */
-            --purple-accent: #818cf8;    /* Lighter accent */
-            --white: #ffffff;
-            --text-dark: #334155;        /* Dark text for use on white backgrounds */
+            /* Background: Deep Navy -> Royal Purple (From Journal Entry/Ledger) */
+            --page-bg: linear-gradient(135deg, #020617 0%, #2e1065 100%);
+            
+            /* Report Card: Clean White */
+            --card-bg: #ffffff;
+            
+            /* Report Controls/Panel: Dark Navy Accent (From Journal Entry Input/Chart of Accounts Filter) */
+            --panel-dark: #1e1b4b; 
+            
+            /* Typography */
+            --text-dark: #0f172a;        /* Dark text for use on white backgrounds */
             --text-muted-dark: #64748b;  /* Muted dark text */
             --text-primary-light: #f1f5f9; /* Near white for dark areas */
-            --text-muted-light: #94a3b8;   /* Muted gray for dark areas */
+            --text-muted-light: #c4b5fd;   /* Muted purple for dark areas */
             --border-subtle: #e2e8f0;    /* Light border for white cards */
             
-            /* Status Colors (Standard colors work well on white) */
+            /* Accents: Vibrant Purple */
+            --accent-purple: #7c3aed; /* The main accent color */
+            --accent-purple-light: #9f7aea; /* Lighter shade */
+            
+            /* Status Colors */
             --success: #10b981;
             --danger: #ef4444;
             --success-bg-light: #dcfce7;
@@ -31,9 +41,9 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-obsidian);
+            background: var(--page-bg); /* Use the gradient background */
             min-height: 100vh;
-            color: var(--text-primary-light); /* Main body text is light */
+            color: var(--text-primary-light); 
             
             display: block; 
             padding-top: 110px; 
@@ -42,15 +52,26 @@
             padding-right: 20px;
         }
 
-        /* --- BACKGROUND EFFECTS (Simplified) --- */
+        /* --- BACKGROUND EFFECTS (Simplified using theme colors) --- */
         .bg-shape {
             position: absolute;
-            background: linear-gradient(45deg, #1e1b4b, var(--purple-vivid));
+            background: var(--accent-purple);
             filter: blur(100px); opacity: 0.2; z-index: -1;
             position: fixed;
         }
         .shape-1 { top: -10%; right: -10%; width: 600px; height: 600px; border-radius: 50%; }
-        .shape-2 { bottom: -10%; left: -10%; width: 500px; height: 500px; border-radius: 50%; background: var(--purple-vivid); opacity: 0.1; }
+        .shape-2 { bottom: -10%; left: -10%; width: 500px; height: 500px; border-radius: 50%; background: #1e293b; opacity: 0.1; }
+        
+        /* Style for User ID in Nav (Kept original style from view_journal.html) */
+        .nav-user-id {
+            color: #d1d5db; 
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 8px 10px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
 
         /* --- MAIN WRAPPER --- */
         .main-wrapper {
@@ -65,7 +86,7 @@
             align-items: center;
             gap: 20px;
             margin-bottom: 40px;
-            background: var(--panel-dark); 
+            background: var(--panel-dark); /* Dark navy panel */
             padding: 12px 20px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
@@ -85,24 +106,24 @@
         }
         
         .report-btn:hover {
-            color: var(--white);
+            color: var(--text-light);
         }
         
         .report-btn.active {
-            background: var(--purple-vivid);
-            color: var(--white);
-            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.5);
+            background: var(--accent-purple); /* Vibrant Purple */
+            color: var(--card-bg); /* White text */
+            box-shadow: 0 4px 10px rgba(124, 58, 237, 0.5);
             transform: translateY(-2px);
         }
 
         /* --- CARDS (White Theme) --- */
         .report-card {
-            background: var(--white); 
+            background: var(--card-bg); 
             border-radius: 16px;
             padding: 40px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            border-top: 4px solid var(--purple-vivid);
-            color: var(--text-dark); /* Default card text is DARK */
+            border-top: 4px solid var(--accent-purple); /* Vibrant Purple border */
+            color: var(--text-dark); 
             display: flex;
             flex-direction: column;
             transition: transform 0.3s ease;
@@ -121,72 +142,78 @@
         }
         
         h2 {
-            font-family: 'Quicksand', sans-serif; /* Rounded Font for Headlines */
+            /* FONT: Playfair Display (matching Journal Entry H1) */
+            font-family: 'Playfair Display', serif; 
             font-size: 1.6rem;
             color: var(--text-dark);
             font-weight: 700;
         }
         
-        /* --- STATUS BADGES (Rounded Bold Text & Animation) --- */
+        /* --- STATUS BADGES --- */
         @keyframes popIn {
             0% { opacity: 0; transform: scale(0.8); }
             100% { opacity: 1; transform: scale(1); }
         }
 
         .status-badge {
-            font-family: 'Quicksand', sans-serif; /* Rounded Font for Status */
+            font-family: 'Poppins', sans-serif; /* Changed from Playfair for readability */
             padding: 8px 18px; 
             border-radius: 20px; 
             font-size: 0.85rem;
-            font-weight: 700; /* Bold */
+            font-weight: 700; 
             text-transform: uppercase;
             letter-spacing: 0.5px;
             display: inline-block;
             animation: popIn 0.5s ease-out;
+            border: 1px solid transparent;
         }
 
         .status-valid {
             background: var(--success-bg-light);
             color: var(--success);
+            border-color: var(--success);
         }
         .status-invalid {
             background: var(--danger-bg-light);
             color: var(--danger);
+            border-color: var(--danger);
         }
 
-        /* --- TABLES (Dark text on White background) --- */
+        /* --- TABLES --- */
         table { width: 100%; border-collapse: collapse; }
 
         td {
             padding: 14px 0;
             border-bottom: 1px solid var(--border-subtle); 
             font-size: 0.95rem;
-            color: var(--text-dark); /* Dark text on white */
+            color: var(--text-dark); 
         }
         
         /* Section Headers */
         .section-header { 
-            color: var(--text-muted-dark) !important; 
-            background: #f1f5f9; /* Light background for separation */
-            padding: 8px !important;
+            color: var(--accent-purple) !important; /* Used accent purple for section titles */
+            background: #f5f3ff; /* Very light purple background */
+            padding: 10px !important;
             padding-left: 10px !important;
-            font-weight: 600;
+            font-weight: 700;
             border-bottom: 1px solid var(--border-subtle) !important;
+            font-size: 1rem;
+            text-transform: uppercase;
         }
         
         /* Sub-account details */
         .sub-account {
-             color: var(--text-muted-dark) !important; /* Muted dark text */
-             font-weight: 400;
+             color: var(--text-muted-dark) !important; 
+             font-weight: 500;
         }
 
         /* Total Rows */
         .row-total td {
             font-weight: 700;
-            color: var(--purple-vivid);
+            color: var(--accent-purple); /* Vibrant Purple for Totals */
             font-size: 1.1rem;
             border-top: 2px solid var(--border-subtle);
-            border-bottom: 4px double var(--purple-vivid);
+            border-bottom: 4px double var(--accent-purple); /* Double underline in accent color */
             padding-top: 20px;
         }
         
@@ -195,7 +222,7 @@
             border-top: 2px solid var(--border-subtle) !important;
         }
         .net-income-row .col-amount {
-            color: var(--purple-vivid);
+            color: var(--accent-purple); /* Vibrant Purple for Net Profit */
         }
 
 
@@ -203,26 +230,22 @@
         .col-amount {
             text-align: right;
             font-family: 'Poppins', monospace; 
-            font-weight: 500;
+            font-weight: 600; /* Increased weight for money values */
         }
 
         /* Income Statement: Neutral Formatting (No colors/signs) */
         .neutral-amount { 
             color: var(--text-dark); 
-            font-weight: 500;
+            font-weight: 600;
             padding: 0; 
             background: transparent; 
         }
 
         /* Income Statement: Indentation for expenses */
         .expense-row-indentation {
-            padding-left: 30px; /* Add indentation for visual distinction */
+            padding-left: 30px; 
         }
 
-        @media (max-width: 950px) {
-            .report-grid { grid-template-columns: 1fr; }
-        }
-        
         /* Added for Balance Sheet deduction style (Indentation) */
         .deduction-row td {
              padding-left: 30px; 
@@ -239,22 +262,36 @@
             color: var(--danger);
         }
 
-        /* --- TRIAL BALANCE SPECIFIC STYLING (NEW) --- */
+        /* --- TRIAL BALANCE SPECIFIC STYLING --- */
         .tb-header {
-            color: var(--text-muted-dark) !important; /* Use dark muted text for header columns */
+            color: var(--accent-purple) !important; /* Used accent purple for TB header columns */
             font-weight: 700;
             text-transform: uppercase;
         }
         .tb-account-row td:nth-child(2), .tb-account-row td:nth-child(3) {
             text-align: right;
             font-family: 'Poppins', monospace;
-            font-weight: 500;
+            font-weight: 600;
         }
         .tb-total-row td {
              border-top: 2px solid var(--border-subtle);
-             border-bottom: 4px double var(--purple-vivid);
+             border-bottom: 4px double var(--accent-purple);
              font-weight: 700;
-             color: var(--purple-vivid); /* Accent color for final totals */
+             color: var(--accent-purple); 
+        }
+        
+        /* Net Profit/Loss Row Styles - Ensuring visual consistency */
+        .net-result-profit-amount {
+             font-weight: 700;
+             color: var(--accent-purple) !important;
+        }
+        .net-result-loss-amount {
+             font-weight: 700;
+             color: var(--text-dark) !important; 
+        }
+
+        @media (max-width: 950px) {
+            .report-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -269,7 +306,14 @@
             <a href="{{ url_for('chart_of_accounts') }}" class="nav-item">Accounts</a>
             <a href="{{ url_for('financial_reports') }}" class="nav-item active">Reports</a>
         </div>
-        <a href="{{ url_for('home') }}" class="nav-logout">Sign Out</a>
+        
+        <!-- User ID display -->
+        <div style="display: flex; align-items: center;">
+            {% if session.get('username') %}
+                <span class="nav-user-id">User: {{ session.get('username') | upper }}</span>
+            {% endif %}
+            <a href="{{ url_for('home') }}" class="nav-logout">Sign Out</a>
+        </div>
     </nav>
 
     <div class="bg-shape shape-1"></div>
@@ -278,7 +322,6 @@
     <div class="main-wrapper">
         
         <div class="report-controls">
-            <!-- NEW BUTTON FOR TRIAL BALANCE -->
             <button id="show-tb-btn" class="report-btn active" onclick="showReport('tb-card', 'show-tb-btn')">Trial Balance</button>
             <button id="show-income-btn" class="report-btn" onclick="showReport('income-card', 'show-income-btn')">Income Statement</button>
             <button id="show-balance-btn" class="report-btn" onclick="showReport('balance-card', 'show-balance-btn')">Balance Sheet</button>
@@ -288,7 +331,6 @@
             
             <div id="reports-container" class="full-width">
                 
-                <!-- TRIAL BALANCE CARD (NEW) -->
                 <div class="report-card" id="tb-card">
                     <div class="card-header">
                         <h2>Trial Balance</h2>
@@ -327,7 +369,6 @@
                     </table>
                 </div>
 
-                <!-- INCOME STATEMENT CARD (EXISTING, set to display:none initially) -->
                 <div class="report-card" id="income-card" style="display:none;">
                     <div class="card-header">
                         <h2>Income Statement</h2>
@@ -372,15 +413,23 @@
                                 <td class="col-amount" style="color:var(--text-dark);">{{ "%.2f"|format(data.income_statement.expenses) }}</td>
                             </tr>
                             
-                            <tr class="row-total net-income-row">
-                                <td style="font-weight:700; color:var(--text-dark);">NET INCOME</td>
-                                <td class="col-amount" style="font-weight:700; color:var(--purple-vivid);">{{ "%.2f"|format(data.income_statement.net_income) }}</td>
+                            {% set net_result = data.income_statement.net_income %}
+
+                            {% if net_result >= 0 %}
+                            <tr class="row-total net-income-row net-profit-row">
+                                <td style="font-weight:700;" class="col-label">NET PROFIT</td>
+                                <td class="col-amount net-result-profit-amount">{{ "%.2f"|format(net_result) }}</td>
                             </tr>
-                        </tbody>
+                            {% else %}
+                            <tr class="row-total net-income-row net-loss-row">
+                                <td style="font-weight:700;" class="col-label">NET LOSS</td>
+                                <td class="col-amount net-result-loss-amount">( {{ "%.2f"|format(net_result|abs) }} )</td>
+                            </tr>
+                            {% endif %}
+                            </tbody>
                     </table>
                 </div>
 
-                <!-- BALANCE SHEET CARD (EXISTING, set to display:none initially) -->
                 <div class="report-card" id="balance-card" style="display:none;">
                     <div class="card-header">
                         <h2>Balance Sheet</h2>
@@ -447,7 +496,7 @@
                             
                             <tr class="row-total">
                                 <td style="font-weight:600; color:var(--text-dark);">Total Assets</td>
-                                <td class="col-amount" style="font-weight:700; color:var(--purple-vivid);">{{ "%.2f"|format(data.balance_sheet.assets) }}</td>
+                                <td class="col-amount" style="font-weight:700; color:var(--accent-purple);">{{ "%.2f"|format(data.balance_sheet.assets) }}</td>
                             </tr>
 
                             <tr><td colspan="2" class="section-header">LIABILITIES & EQUITY</td></tr>
@@ -489,13 +538,25 @@
                             {% endif %}
 
                             <tr>
-                                <td class="sub-account">Retained Earnings (Net Income)</td>
-                                <td class="col-amount">{{ "%.2f"|format(data.income_statement.net_income) }}</td>
+                                <td class="sub-account">
+                                    {% if data.income_statement.net_income >= 0 %}
+                                        Retained Earnings (Net Profit)
+                                    {% else %}
+                                        Retained Earnings (Net Loss)
+                                    {% endif %}
+                                </td>
+                                
+                                {# Display Net Income/Loss based on sign, using neutral colors #}
+                                {% if data.income_statement.net_income >= 0 %}
+                                    <td class="col-amount" style="color:var(--accent-purple);">{{ "%.2f"|format(data.income_statement.net_income) }}</td>
+                                {% else %}
+                                    <td class="col-amount" style="color:var(--text-dark);">({{ "%.2f"|format(data.income_statement.net_income|abs) }})</td>
+                                {% endif %}
                             </tr>
 
                             <tr class="row-total">
                                 <td style="color:var(--text-dark);">Total Liabilities & Equity</td>
-                                <td class="col-amount" style="font-weight:700; color:var(--purple-vivid);">{{ "%.2f"|format(data.balance_sheet.total_eq_liab) }}</td>
+                                <td class="col-amount" style="font-weight:700; color:var(--accent-purple);">{{ "%.2f"|format(data.balance_sheet.total_eq_liab) }}</td>
                             </tr>
                         </tbody>
                     </table>

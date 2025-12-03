@@ -44,14 +44,17 @@
         .glow-1 { top: -10%; left: -10%; width: 600px; height: 600px; background: #4c1d95; }
         .glow-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #1e293b; }
 
-        /* --- MAIN JOURNAL CARD --- */
+        /* --- MAIN JOURNAL CARD (NEON ADDED) --- */
         .journal-wrapper {
             width: 100%;
             max-width: 1100px;
             background: var(--card-bg);
             border-radius: 20px;
             padding: 50px 60px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            /* Added neon glow to the shadow */
+            box-shadow: 
+                0 0 10px rgba(124, 58, 237, 0.4), /* Neon base */
+                0 25px 50px -12px rgba(0, 0, 0, 0.5); 
             border-top: 8px solid var(--accent-purple);
             position: relative;
         }
@@ -116,9 +119,10 @@
             cursor: pointer;
         }
         
+        /* Neon focus glow for date input */
         .main-date-input:focus {
             border-color: var(--accent-purple);
-            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.2);
+            box-shadow: 0 0 10px rgba(124, 58, 237, 0.7); 
         }
 
         /* --- STATUS BADGE (Animated) --- */
@@ -152,13 +156,14 @@
             25% { transform: translateX(-6px); }
             75% { transform: translateX(6px); }
         }
-
+        
+        /* Added neon glow to status indicators */
         .status-valid { 
             background: var(--success-bg); 
             color: var(--success-text); 
             border-color: #86efac;
             animation: jump 0.5s ease-out;
-            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.15);
+            box-shadow: 0 0 5px rgba(22, 163, 74, 0.5); /* Subtle green neon */
         }
 
         .status-invalid { 
@@ -166,7 +171,7 @@
             color: var(--danger-text); 
             border-color: #fda4af;
             animation: shake 0.4s ease-in-out;
-            box-shadow: 0 4px 12px rgba(225, 29, 72, 0.15);
+            box-shadow: 0 0 5px rgba(225, 29, 72, 0.5); /* Subtle red neon */
         }
 
         /* --- TABLE --- */
@@ -277,10 +282,11 @@
             color: var(--input-text) !important;
         }
 
+        /* Neon focus glow for table inputs */
         .input-cell:focus {
             outline: none;
             border-color: var(--accent-purple);
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.25);
+            box-shadow: 0 0 10px rgba(124, 58, 237, 0.7); /* Neon glow */
             /* Removed translateY(-2px) to prevent layout shifts during input */
             background-color: var(--input-bg) !important; 
             color: var(--input-text) !important;
@@ -327,12 +333,18 @@
             border-radius: 10px;
             cursor: pointer;
             transition: 0.3s;
-            box-shadow: 0 10px 20px rgba(30, 27, 75, 0.25);
+            /* Added Neon Glow to Post Button */
+            box-shadow: 
+                0 0 5px var(--accent-purple),
+                0 10px 20px rgba(30, 27, 75, 0.25);
         }
 
         .btn-post:hover:not(:disabled) {
             transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(76, 29, 149, 0.35);
+            /* Enhanced Neon Glow on hover */
+            box-shadow: 
+                0 0 15px var(--accent-purple),
+                0 15px 30px rgba(76, 29, 149, 0.35);
         }
 
         .btn-post:disabled {
@@ -358,7 +370,11 @@
             border-radius: 15px;
             width: 90%;
             max-width: 500px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            /* Added subtle neon border to modal */
+            box-shadow: 
+                0 0 5px rgba(124, 58, 237, 0.5),
+                0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--accent-purple);
         }
         .modal-content h3 {
             font-family: 'Playfair Display', serif;
@@ -418,6 +434,16 @@
         #journalEntries tr {
              animation: rowFadeIn 0.3s ease-out;
         }
+        
+        /* NEW: Style for User ID in Nav */
+        .nav-user-id {
+            color: #d1d5db;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 8px 10px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -431,7 +457,14 @@
             <a href="{{ url_for('chart_of_accounts') }}" class="nav-item">Accounts</a>
             <a href="{{ url_for('financial_reports') }}" class="nav-item">Reports</a>
         </div>
-        <a href="{{ url_for('home') }}" class="nav-logout">Sign Out</a>
+        
+        <!-- MODIFICATION: Added User ID span before Sign Out -->
+        <div style="display: flex; align-items: center;">
+            {% if username %}
+                <span class="nav-user-id">User: {{ username | upper }}</span>
+            {% endif %}
+            <a href="{{ url_for('home') }}" class="nav-logout">Sign Out</a>
+        </div>
     </nav>
 
     <div class="bg-glow glow-1"></div>
@@ -527,6 +560,42 @@
                 { name: "{{ acc.name }}", code: "{{ acc.code }}" },
             {% endfor %}
         ];
+
+        // --- KEYBOARD NAVIGATION LOGIC (New) ---
+        function enableKeyboardNavigation(row) {
+            const inputs = row.querySelectorAll('input[name^="account_name"], input[name^="particular"], input[name^="debit"], input[name^="credit"]');
+            
+            inputs.forEach((input, index) => {
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault(); 
+                        
+                        // Determine the next field
+                        const nextIndex = index + 1;
+                        if (nextIndex < inputs.length) {
+                            // Focus the next input in the same row
+                            inputs[nextIndex].focus();
+                        } else {
+                            // If this is the last input (Credit field), add a new row
+                            // and focus the first input of the new row.
+                            addJournalEntry();
+                            
+                            // Find the newly added row
+                            const newRows = document.querySelectorAll('#journalEntries tr');
+                            const newRow = newRows[newRows.length - 1];
+                            
+                            // Find the first input in the new row
+                            const firstNewInput = newRow.querySelector('input[name^="account_name"]');
+                            if (firstNewInput) {
+                                firstNewInput.focus();
+                            }
+                        }
+                    }
+                });
+            });
+        }
+        // --- END KEYBOARD NAVIGATION LOGIC ---
+
 
         // --- ACCOUNT CREATION LOGIC ---
 
@@ -634,6 +703,9 @@
             tbody.appendChild(row);
             syncDates();
             validate();
+            
+            // Enable keyboard navigation for the new row
+            enableKeyboardNavigation(row);
         }
 
         function removeRow(btn) {

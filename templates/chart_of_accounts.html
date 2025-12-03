@@ -49,6 +49,16 @@
         }
         .glow-1 { top: -10%; left: -10%; width: 600px; height: 600px; background: #4c1d95; }
         .glow-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #1e293b; }
+        
+        /* NEW: Style for User ID in Nav */
+        .nav-user-id {
+            color: #d1d5db; /* Light gray text on dark nav background */
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 8px 10px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
 
         /* --- MAIN CARD (Centered & Floating) --- */
         .accounts-wrapper {
@@ -268,7 +278,14 @@
             <a href="{{ url_for('chart_of_accounts') }}" class="nav-item active">Accounts</a>
             <a href="{{ url_for('financial_reports') }}" class="nav-item">Reports</a>
         </div>
-        <a href="{{ url_for('home') }}" class="nav-logout">Sign Out</a>
+        
+        <!-- MODIFICATION: Added User ID span before Sign Out -->
+        <div style="display: flex; align-items: center;">
+            {% if session.get('username') %}
+                <span class="nav-user-id">User: {{ session.get('username') | upper }}</span>
+            {% endif %}
+            <a href="{{ url_for('home') }}" class="nav-logout">Sign Out</a>
+        </div>
     </nav>
 
     <div class="bg-glow glow-1"></div>

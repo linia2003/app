@@ -4,523 +4,553 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Accountoria</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <!-- MODIFIED: Included Playfair Display for complete fusion of fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Quicksand:wght@700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        /* --- PROFESSIONAL DASHBOARD PALETTE (PURPLE, BLUE, WHITE FOCUS) --- */
+        /* --- CHIC & FUTURISTIC PALETTE (FUSION: Login/Journal Theme) --- */
         :root {
-            --bg-deep-blue: #0A0C16; /* Near Black Blue */
-            --purple-dark: #272B4B; /* Deep Muted Indigo/Purple */
-            --blue-accent: #4F70F5; /* Main Accent Blue */
-            --blue-vivid: #0EA5E9;  /* Secondary Bright Blue */
+            /* FUSION BACKGROUND: Use Journal Entry/Edit Journal Gradient */
+            --page-bg: linear-gradient(135deg, #020617 0%, #2e1065 100%);
             
-            --text-main: #1e293b;
-            --text-light: #f8fafc;
-            --card-bg-light: #ffffff;
-            --card-bg-muted: #f1f5f9; 
-            --shadow-subtle: rgba(0, 0, 0, 0.1);
+            --container-dark: #121422; /* Main Card Background */
+            --glass-bg: rgba(255, 255, 255, 0.05); 
+            --metric-bg: #1e293b; 
             
-            --glow-color: rgba(79, 112, 245, 0.6); /* Blue glow */
+            /* FUSION ACCENTS: Use the common Vibrant Purple (#7c3aed) from Login/Journal */
+            --accent-purple-main: #7c3aed; /* Vibrant Purple */
+            --accent-purple-dark: #4c1d95;  /* Deep Purple (from Login/Journal) */
+            --accent-blue-glow: #38bdf8;    /* Light Blue Accent (from Login/Journal) */
             
-            /* NEW: Darker shade for contrast in Welcome Card */
-            --welcome-dark-bg: #1A1F3E; 
-            --welcome-text-contrast: #e0e7ff;
+            --success-green: #4ade80;
+            --danger-red: #f87171;
+
+            /* Text */
+            --text-light: #ffffff; 
+            --text-muted: #c4b5fd; /* Light purple muted text (from Login) */
+            
+            --glow-color: var(--accent-purple-main);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            /* Blue/Purple Gradient */
-            background: linear-gradient(135deg, var(--bg-deep-blue) 0%, var(--purple-dark) 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--text-main);
-            padding-top: 100px;
-            padding-bottom: 40px; 
-            animation: backgroundShift 20s ease infinite alternate;
-        }
-        
-        @keyframes backgroundShift {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
-        }
-
-        /* --- DASHBOARD CONTAINER (Main Card) --- */
-        .dashboard-container {
-            width: 100%;
-            max-width: 1200px; 
-            height: auto; 
-            background-color: var(--card-bg-light);
-            padding: 40px; 
-            border-radius: 18px;
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-        }
-
-        .dashboard-container::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 6px;
-            /* Blue/Purple Accent Line */
-            background: linear-gradient(90deg, var(--blue-accent), var(--purple-dark));
-            border-radius: 18px 18px 0 0;
-        }
-        
-        /* HEADER */
-        .header-section {
-            width: 100%;
-            text-align: center;
-            margin-bottom: 40px; 
-            border-bottom: 1px solid var(--card-bg-muted);
-            padding-bottom: 20px;
-        }
-
-        .header-section h2 {
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 800;
-            font-size: 2.5rem; 
-            letter-spacing: 1px;
-            color: var(--text-main);
-            /* Gradient Text */
-            background: linear-gradient(135deg, var(--purple-dark) 0%, var(--blue-accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
-            animation: fadeInDown 0.8s;
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-
-        /* -----------------------------------------------------
-           NEW: MAIN GRID LAYOUT (2 Columns)
-           ----------------------------------------------------- */
-
-        .main-grid-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr; /* Two-thirds for content, one-third for navigation */
-            gap: 30px;
-            width: 100%;
-            margin-bottom: 40px;
-            align-items: stretch; 
-        }
-
-        /* LEFT PANEL: WELCOME & METRICS (Unique Card Styling) */
-        .info-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            animation: fadeInUp 1s ease-out;
-        }
-        @keyframes fadeInUp {
+        /* Re-implementing previous animations for Dashboard */
+        @keyframes consoleLoad {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
-        /* New Bounce Animation for Welcome Card */
-        @keyframes welcomeBounce {
-            0% { opacity: 0; transform: scale(0.95); }
-            50% { opacity: 1; transform: scale(1.01); }
-            100% { transform: scale(1); }
-        }
-        
-        /* NEW KEYFRAME: Animated background for welcome card */
-        @keyframes gradient-flow {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
-        }
-
-
-        /* Unique Dark Welcome Card */
-        .welcome-card {
-            /* Modified background for animation */
-            background: linear-gradient(135deg, var(--welcome-dark-bg), var(--purple-dark), var(--welcome-dark-bg));
-            background-size: 400% 400%; /* Stretch gradient for movement */
-            /* FIX: Removed 'alternate' keyword for continuous, non-reversing flow */
-            animation: welcomeBounce 1s ease-out, gradient-flow 15s linear infinite; 
-            
-            padding: 30px 35px; 
-            border-radius: 12px;
-            border-left: 6px solid var(--blue-vivid); 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4); 
-            color: var(--welcome-text-contrast); 
-            transform-origin: top center;
-            overflow: hidden; /* Important to keep gradient contained */
-            position: relative;
-        }
-        
-        /* Ensure text is clearly visible over the moving background */
-        .welcome-card * {
-            position: relative;
-            z-index: 2;
-        }
-
-
-        .welcome-card .welcome-text {
-            font-family: 'Poppins', sans-serif; 
-            font-weight: 300; 
-            color: var(--welcome-text-contrast);
-            font-size: 1.3rem; 
-            margin-bottom: 0; 
-            display: block;
-        }
-
-        .welcome-card .user-id {
-            font-family: 'Quicksand', sans-serif; 
-            font-weight: 700;
-            color: var(--blue-vivid); 
-            font-size: 2.3rem; 
-            letter-spacing: 1px;
-            line-height: 1.2;
-            display: block;
-        }
-        
-        .metrics-area {
-            display: grid;
-            /* Ensure metrics use all available space below the welcome card */
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-            gap: 20px;
-            padding-top: 0; /* Adjusted padding */
-        }
-        
-        .metric-box {
-            background: var(--card-bg-light);
-            padding: 25px 20px; /* Increased vertical padding for taller boxes */
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease-out;
-            animation: bounceIn 0.8s backwards; /* New load animation */
-        }
-        .metric-box:nth-child(1) { animation-delay: 0.1s; }
-        .metric-box:nth-child(2) { animation-delay: 0.2s; }
-        .metric-box:nth-child(3) { animation-delay: 0.3s; }
-        
         @keyframes bounceIn {
             0% { opacity: 0; transform: scale(0.9); }
             60% { opacity: 1; transform: scale(1.05); }
             100% { transform: scale(1); }
         }
         
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--page-bg); /* Gradient Background */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; 
+            color: var(--text-light);
+            padding-top: 100px;
+            padding-bottom: 40px;
+            overflow-x: hidden;
+        }
+
+        /* Abstract Background Decoration (Retained Glowing Circles) */
+        .bg-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        /* Use FUSION ACCENTS */
+        .glow-1 { top: 5%; left: 10%; width: 500px; height: 500px; background: var(--accent-purple-main); }
+        .glow-2 { bottom: 5%; right: 10%; width: 400px; height: 400px; background: var(--accent-blue-glow); opacity: 0.4; }
+
+
+        /* --- DASHBOARD CONTAINER (Main Framed Console) --- */
+        .dashboard-container {
+            width: 100%;
+            max-width: 1200px; 
+            background: var(--container-dark);
+            border-radius: 16px;
+            padding: 40px;
+            
+            /* Neon Glow Border Effect: Uses accent-purple-main */
+            box-shadow: 0 0 15px var(--accent-purple-main), 
+                        0 0 40px rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--accent-purple-main);
+            
+            position: relative;
+            z-index: 10;
+            animation: consoleLoad 0.8s ease-out; 
+            margin: 0 20px;
+        }
+        
+        /* HEADER (FUSION: Use Quicksand for title, use solid text color with shadow for a cleaner look) */
+        .header-section {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 40px; 
+            /* Border uses accent purple */
+            border-bottom: 1px solid rgba(124, 58, 237, 0.3); /* Adjusted opacity for visual match */
+            padding-bottom: 20px;
+        }
+
+        .header-section h2 {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 2.8rem; 
+            letter-spacing: 2px;
+            
+            /* Reverting to simple solid color + shadow for sharp look (matching Login/Journal feel) */
+            color: var(--text-light); 
+            text-shadow: 0 0 10px var(--accent-purple-main); /* Shadow uses new accent */
+        }
+        .header-section span { display: none; }
+
+
+        /* LEFT PANEL */
+        .info-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* 1. Welcome Card (Digital ID / High Contrast) */
+        .welcome-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            
+            /* Gradient uses FUSION colors */
+            background: linear-gradient(90deg, var(--accent-purple-dark) 0%, var(--accent-purple-main) 100%);
+            border: none;
+            padding: 0; 
+            height: 120px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5); 
+            position: relative;
+            overflow: hidden;
+            animation: bounceIn 0.8s backwards;
+            animation-delay: 0.1s;
+        }
+        
+        .welcome-text-group {
+             padding: 0 35px;
+             text-align: left;
+        }
+
+        .welcome-card .welcome-text {
+            font-family: 'Poppins', sans-serif; 
+            font-weight: 300; 
+            color: var(--text-muted); 
+            font-size: 1.1rem; 
+            display: block;
+        }
+
+        .welcome-card .user-id {
+            background: rgba(0, 0, 0, 0.3);
+            height: 100%;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            
+            font-family: 'Quicksand', sans-serif; 
+            font-weight: 700;
+            color: var(--text-light); 
+            font-size: 1.6rem; 
+            letter-spacing: 1px;
+            /* Glow uses FUSION colors */
+            text-shadow: 0 0 10px var(--accent-blue-glow); 
+            border-radius: 0 12px 12px 0;
+            min-width: 200px;
+        }
+        
+        .user-id span {
+             font-size: 0.7rem;
+             color: var(--text-muted); 
+             margin-bottom: 5px;
+             text-transform: uppercase;
+             letter-spacing: 2px;
+        }
+
+
+        /* 2. Metrics (Stat Pods) */
+        .metrics-grid-wrapper {
+            padding: 30px; 
+        }
+
+        .metrics-area {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+            gap: 20px;
+        }
+        
+        .metric-box {
+            background: var(--metric-bg); 
+            padding: 25px; 
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4); 
+            animation: bounceIn 0.8s backwards; 
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        
         .metric-box:hover {
             transform: translateY(-5px); 
-            box-shadow: 0 12px 25px var(--shadow-subtle);
+            /* Hover border/shadow uses FUSION colors */
+            border-color: var(--accent-purple-main);
+            box-shadow: 0 12px 25px rgba(124, 58, 237, 0.4); /* Used specific color for defined glow */
         }
 
         .metric-box h4 {
-            color: #64748b;
+            color: var(--text-muted); 
             font-size: 0.8rem; 
             text-transform: uppercase;
             font-weight: 600;
-            letter-spacing: 0.5px; /* Added spacing for label readability */
-        }
-        .metric-box p {
-            font-size: 1.8rem; /* Prominent value size */
-            font-weight: 700;
-            color: var(--text-main);
-            margin-top: 8px; /* Increased spacing below label */
-            font-family: 'Quicksand', sans-serif; /* Using Quicksand for strong numerical data */
+            letter-spacing: 1.5px; 
         }
         
-        /* RIGHT PANEL: NAVIGATION STACK (Layered Button Design) */
+        .metric-box p {
+            font-size: 2rem; 
+            font-weight: 700;
+            color: var(--text-light); 
+            margin-top: 10px;
+            font-family: 'Quicksand', sans-serif; /* Keep Quicksand for values */
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); 
+        }
+        
+        /* 3. Navigation Links (2-Column Grid) */
         .nav-stack-area {
-            display: flex;
-            flex-direction: column;
-            gap: 10px; 
-            animation: fadeInUp 1.2s ease-out;
-            /* Added padding-top to optically align the first button with the welcome card */
-            padding-top: 0; 
+            padding: 30px;
+        }
+        
+        .nav-grid {
+             display: grid;
+             grid-template-columns: 1fr 1fr;
+             gap: 15px;
         }
 
         .nav-card {
-            position: relative;
-            z-index: 1;
-            display: block; 
-            padding: 16px 20px; 
-            border-radius: 10px; 
-            background: var(--purple-dark); 
-            color: var(--text-light);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.0rem; 
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        /* Layered background animation effect */
-        .nav-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--blue-accent);
+            display: flex; 
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 120px;
+            padding: 15px; 
             border-radius: 10px;
-            z-index: -1;
-            transform: scaleX(0); 
-            transform-origin: left;
-            transition: transform 0.3s ease;
-        }
-        
-        .nav-card:hover::before {
-            transform: scaleX(1); /* Expand on hover */
+            background: rgba(0, 0, 0, 0.1); 
+            color: var(--text-light); 
+            font-weight: 600; 
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            text-align: center;
         }
 
         .nav-card:hover {
-            transform: translateY(-5px) scale(1.02); 
-            box-shadow: 0 15px 25px var(--glow-color);
-            color: var(--text-light); 
+            /* Hover background uses FUSION dark purple */
+            background: var(--accent-purple-dark); 
+            /* Hover border/shadow uses FUSION main purple */
+            border-color: var(--accent-purple-main);
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px var(--accent-purple-main);
         }
         
-        .nav-card-content {
+        .nav-card .icon {
+            font-size: 2rem; 
+            margin-bottom: 5px;
+            /* Icon color uses FUSION blue glow */
+            color: var(--accent-blue-glow); 
+        }
+        
+        .nav-card:hover .icon { 
+            color: var(--text-light); 
+            text-shadow: 0 0 5px var(--text-light);
+        }
+        
+        .nav-card span {
+             font-size: 0.9rem;
+             font-weight: 600;
+        }
+
+
+        /* 4. CHART SECTION */
+        .chart-section .layered-card {
+            padding: 30px; 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Container for Chart and Legend (Flex Layout) */
+        .chart-content-flex {
             display: flex;
             align-items: center;
-        }
-
-        .nav-card .icon {
-            font-size: 1.6rem; 
-            margin-right: 15px;
-            color: var(--blue-vivid); 
-            transition: color 0.3s;
-        }
-        
-        .nav-card:hover .icon {
-            color: var(--text-light); 
-        }
-
-        /* -----------------------------------------------------
-           CHART SECTION (Full Width Bottom)
-           ----------------------------------------------------- */
-
-        .chart-row {
-            padding-top: 20px; 
-            width: 100%; 
-            display: flex;
-            justify-content: center;
-            gap: 30px; 
+            /* MODIFIED: Changed from space-between to center to visually center the chart/legend block */
+            justify-content: center; 
+            gap: 40px; /* Increased gap for better separation */
             flex-wrap: wrap; 
         }
         
-        .chart-section {
-            width: 100%;
-            max-width: 600px; 
-            padding: 25px; 
-            background: var(--card-bg-muted); 
-            border-radius: 12px;
-            box-shadow: 0 2px 10px var(--shadow-subtle);
-            border: 1px solid #e2e8f0;
-            transition: transform 0.3s ease-out;
-            animation: fadeInUp 1.4s ease-out;
-        }
-
-        .chart-section:hover {
-            transform: translateY(-2px);
-        }
-
-        .chart-title {
-            font-family: 'Quicksand', sans-serif; 
-            text-align: center; 
-            color: var(--purple-dark); 
-            margin-bottom: 20px; 
-            font-size: 1.4rem; 
-            border-bottom: 1px solid #c7d2fe; 
-            padding-bottom: 5px;
-        }
-        
+        /* Chart container */
         .chart-box {
-            padding: 5px; 
-            background: var(--card-bg-light); 
-            border-radius: 8px;
+            /* REMOVED max-width: 450px for flexible sizing */
+            width: 100%;
+            max-width: 400px; /* Reduced max-width slightly to balance with legend */
+            margin: 0; 
+            flex-shrink: 0; 
+            /* ADDED: Ensure chart itself centers within its box on larger screens */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* Custom Legend Styling */
+        .custom-legend {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px 25px; 
+            flex-grow: 1;
+            min-width: 250px; 
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 1rem; 
+            font-weight: 500;
+            color: var(--text-muted); 
+            transition: color 0.3s;
+        }
+        
+        .legend-item:hover {
+            color: var(--text-light);
+        }
+        
+        .legend-color-box {
+            width: 18px; 
+            height: 18px;
+            border-radius: 4px;
+            margin-right: 12px; 
+            transition: box-shadow 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Responsive break point for chart/legend stacking */
+        @media (max-width: 768px) {
+            .chart-content-flex {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .chart-box {
+                max-width: 100%; 
+                margin: 0 auto 20px auto; 
+                /* Ensures chart centers in mobile view */
+                display: flex; 
+                justify-content: center; 
+            }
+            .custom-legend {
+                grid-template-columns: 1fr; 
+            }
         }
 
-        /* -----------------------------------------------------
-           Responsive adjustments
-           ----------------------------------------------------- */
-        
+
+        /* --- RESPONSIVE --- */
         @media (max-width: 900px) {
-            .dashboard-container { padding: 40px 20px; }
-            .main-grid-content {
-                grid-template-columns: 1fr; 
-                gap: 30px;
-            }
-            .chart-row { 
-                flex-direction: column; 
-                gap: 20px; 
-            }
+            .dashboard-container { padding: 30px 20px; }
+            .main-grid-content { grid-template-columns: 1fr; }
             .chart-section { max-width: 100%; }
         }
         
         @media (max-width: 600px) {
-            .header-section h2 { font-size: 2rem; }
-            .welcome-card .welcome-text { font-size: 1.2rem; }
-            .welcome-card .user-id { font-size: 1.8rem; }
-            .nav-card { font-size: 1rem; padding: 12px 15px; }
-            .nav-card .icon { font-size: 1.2rem; }
-            .metrics-area { grid-template-columns: 1fr; }
+            .welcome-card { height: auto; flex-direction: column; text-align: center; }
+            .welcome-card .user-id { 
+                width: 100%;
+                border-radius: 0 0 12px 12px;
+                min-height: 50px;
+            }
+            .welcome-text-group { padding: 20px; }
+            .nav-grid { grid-template-columns: 1fr; }
+            .nav-card { height: 100px; }
         }
     </style>
 </head>
 <body class="with-nav-padding">
 
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
+
     <nav class="app-navbar">
         <div class="nav-brand">Accountoria</div>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}" class="nav-item active">Dashboard</a>
+            <a href="{{ url_for('journal_entry', username=username) }}" class="nav-item">Journal</a>
+            <a href="{{ url_for('view_journal', username=username) }}" class="nav-item">Ledger</a>
+            <a href="{{ url_for('chart_of_accounts') }}" class="nav-item">Accounts</a>
+            <a href="{{ url_for('financial_reports') }}" class="nav-item">Reports</a>
+        </div>
         <a href="{{ url_for('home') }}" class="nav-logout">Sign Out</a>
     </nav>
 
     <div class="dashboard-container">
         
         <div class="header-section">
-            <h2>CONTROL CENTER</h2>
+            <h2>DASHBOARD</h2>
+            <span></span>
         </div>
 
         <div class="main-grid-content">
             
             <!-- LEFT PANEL: WELCOME & METRICS -->
             <div class="info-panel">
+                
+                <!-- 1. Welcome Card (Digital ID / High Contrast) -->
                 <div class="welcome-card">
-                    <span class="welcome-text">Welcome Back,</span>
-                    <span class="user-id">{{ username | upper }}</span>
+                    <div class="welcome-text-group">
+                        <span class="welcome-text">Authenticated Session:</span>
+                        <span class="welcome-text">Status: Active</span>
+                    </div>
+                    <div class="user-id">
+                        <span>User ID</span>
+                        {{ username | upper }}
+                    </div>
                 </div>
                 
-                <!-- Mockup Metrics Area -->
-                <div class="metrics-area">
-                    <div class="metric-box">
-                        <h4>Net Income (YTD)</h4>
-                        <p style="color: #16a34a;">$ {{ "%.2f"|format(data.income_statement.net_income) }}</p>
-                    </div>
-                    <div class="metric-box">
-                        <h4>Total Assets</h4>
-                        <p>$ {{ "%.2f"|format(data.balance_sheet.assets) }}</p>
-                    </div>
-                    <div class="metric-box">
-                        <h4>Balance Status</h4>
-                        <p style="color: {{ 'green' if data.trial_balance.is_balanced else '#ef4444' }}; font-size: 1.3rem;">
-                            {{ 'BALANCED' if data.trial_balance.is_balanced else 'UNBALANCED' }}
-                        </p>
+                <!-- 2. Metrics Card (Layered) -->
+                <div class="metrics-grid-wrapper layered-card">
+                    <h3 class="module-title">Performance Snapshot</h3>
+                    <div class="metrics-area">
+                        <div class="metric-box">
+                            <h4>Net Income (YTD)</h4>
+                            <!-- UPDATED: Currency symbol changed to Taka (৳) -->
+                            <p style="color: var(--success-green);">৳ {{ "%.2f"|format(data.income_statement.net_income) }}</p>
+                        </div>
+                        <div class="metric-box">
+                            <h4>Total Assets</h4>
+                            <!-- UPDATED: Currency symbol changed to Taka (৳) -->
+                            <p style="color: var(--accent-blue-glow);">৳ {{ "%.2f"|format(data.balance_sheet.assets) }}</p>
+                        </div>
+                        <div class="metric-box">
+                            <h4>Balance Status</h4>
+                            <p style="color: {{ 'var(--success-green)' if data.trial_balance.is_balanced else 'var(--danger-red)' }}; font-size: 1.6rem;">
+                                {{ 'BALANCED' if data.trial_balance.is_balanced else 'UNBALANCED' }}
+                            </p>
+                        </div>
                     </div>
                 </div>
 
             </div>
 
-            <!-- RIGHT PANEL: NAVIGATION STACK -->
-            <div class="nav-stack-area">
+            <!-- RIGHT PANEL: NAVIGATION STACK (Layered Card) -->
+            <div class="nav-stack-area layered-card">
+                 <h3 class="module-title">Financial Modules</h3>
                 
-                <!-- Journal Entry -->
-                <a href="{{ url_for('journal_entry', username=username) }}" class="nav-card">
-                    <div class="nav-card-content">
+                <div class="nav-grid">
+                    <a href="{{ url_for('journal_entry', username=username) }}" class="nav-card">
                         <span class="icon">&#9997;</span> 
-                        Journal Entry
-                    </div>
-                </a>
-                
-                <!-- Ledger View -->
-                <a href="{{ url_for('view_journal', username=username) }}" class="nav-card">
-                    <div class="nav-card-content">
+                        <span>Journal Entry</span>
+                    </a>
+                    
+                    <a href="{{ url_for('view_journal', username=username) }}" class="nav-card">
                         <span class="icon">&#128196;</span> 
-                        View Ledger
-                    </div>
-                </a>
-                
-                <!-- Chart of Accounts -->
-                <a href="{{ url_for('chart_of_accounts') }}" class="nav-card">
-                    <div class="nav-card-content">
+                        <span>Ledger</span>
+                    </a>
+                    
+                    <a href="{{ url_for('chart_of_accounts') }}" class="nav-card">
                         <span class="icon">&#128184;</span> 
-                        Chart of Accounts
-                    </div>
-                </a>
-                
-                <!-- Financial Reports -->
-                <a href="{{ url_for('financial_reports') }}" class="nav-card">
-                    <div class="nav-card-content">
+                        <span>Chart of Accounts</span>
+                    </a>
+                    
+                    <a href="{{ url_for('financial_reports') }}" class="nav-card">
                         <span class="icon">&#128202;</span> 
-                        Financial Reports
-                    </div>
-                </a>
+                        <span>Reports</span>
+                    </a>
+                </div>
 
             </div>
         </div>
 
-        <!-- NEW SECTION: FINANCIAL SNAPSHOT CHARTS -->
+        <!-- CHART SECTION (Layered Card) -->
         <div class="chart-row">
-            
-            <!-- PIE CHART (Composition) - Single Chart Layout -->
             <div class="chart-section">
-                 <h3 class="chart-title">
-                     Account Composition
-                 </h3>
-                 <div id="pieChartContainer" class="chart-box">
-                     <canvas id="balanceChart"></canvas>
-                 </div>
-                 <div id="noPieDataMessage" class="no-data" style="display: none;">
-                     No significant account balances to display.
+                 <div class="layered-card">
+                     <!-- FUSION: Use Playfair Display for a slightly more formal, Journal-style section header -->
+                     <h3 class="module-title" style="font-family: 'Playfair Display', serif;">Account Composition</h3>
+                     
+                     <div class="chart-content-flex">
+                         <!-- 1. CHART CONTAINER (Left/Top) -->
+                         <div id="pieChartContainer" class="chart-box">
+                             <canvas id="balanceChart"></canvas>
+                         </div>
+                         
+                         <!-- 2. CUSTOM LEGEND (Right/Bottom) -->
+                         <div id="customLegendContainer">
+                             <ul id="customLegend" class="custom-legend"></ul>
+                         </div>
+                     </div>
+
+                     <div id="noPieDataMessage" style="display: none; color: var(--text-muted); text-align: center; margin-top: 20px;">
+                         No data available for display.
+                     </div>
                  </div>
             </div>
-            
-            <!-- Removed the Bar Chart section to focus only on the pie chart -->
         </div>
-
 
     </div>
 
-    <!-- CHART.JS LIBRARY (CDN) -->
+    <!-- CHART.JS LIBRARY -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <!-- Chart.js Data Labels Plugin (Required for showing values on segments) -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 
-    <!-- CHART INTEGRATION SCRIPT -->
     <script>
-        // Use Flask/Jinja to pass the type_summary data from app.py
         const rawSummaryData = '{{ data.type_summary | tojson }}';
         
-        // Define distinct shades of blue and purple for the segments
+        // FUSION COLORS: Brighter, neon-friendly palette from Login/Journal
         const segmentColors = {
-            'Asset': '#3A4F7F',       // Muted Navy Blue
-            'Liability': '#5D4A6E',   // Dark Muted Purple
-            'Equity': '#4F70F5',      // Main Accent Blue
-            'Revenue': '#4B2767',     // Darker Purple/Indigo
-            'Expense': '#7C92D5'      // Muted Light Blue
+            'Asset': '#38bdf8',       // Light Blue Glow (from Login/Journal style)
+            'Liability': '#5eead4',   // Mint/Cyan
+            'Equity': '#7c3aed',      // Vibrant Purple (from Login/Journal style)
+            'Revenue': '#4ade80',     // Bright Green
+            'Expense': '#fbbf24'      // Amber/Yellow
         };
+        
+        // FUSION FONT: Use Quicksand for chart labels/data
+        const chartFontFamily = 'Quicksand, sans-serif';
 
         function renderChart() {
-            try {
-                // Ensure the string is correctly parsed
-                const summaryData = JSON.parse(rawSummaryData.replace(/&#34;/g, '"'));
+            const textColor = '#ffffff'; 
+            const legendContainer = document.getElementById('customLegend');
+            legendContainer.innerHTML = ''; 
 
-                // --- DATA FOR PIE CHART (Composition) ---
+            try {
+                const summaryData = JSON.parse(rawSummaryData.replace(/&#34;/g, '"'));
                 const pieLabels = [];
                 const pieBalances = [];
                 const pieBackgroundColors = [];
                 
                 let totalAssets = 0;
-                let totalLiabilities = 0;
-                let totalRevenue = 0;
-                let totalExpenses = 0;
+                let totalLiabilities = 0; 
+                let totalRevenue = 0; 
+                let totalExpenses = 0; 
                 let totalEquity = 0;
                 
-                // Aggregate data first
+                // Aggregate balances by type
                 for (const [type, balance] of Object.entries(summaryData)) {
-                    if (type === 'Asset') { totalAssets = balance; }
-                    if (type === 'Liability') { totalLiabilities = balance; }
-                    if (type === 'Equity') { totalEquity = balance; }
-                    if (type === 'Revenue') { totalRevenue = balance; }
-                    if (type === 'Expense') { totalExpenses = balance; }
+                    if (type === 'Asset') totalAssets = balance;
+                    if (type === 'Liability') totalLiabilities = balance;
+                    if (type === 'Equity') totalEquity = balance;
+                    if (type === 'Revenue') totalRevenue = balance;
+                    if (type === 'Expense') totalExpenses = balance;
                 }
 
-                // 1. Prepare PIE Chart Data
                 const pieSource = [
                     { type: 'Asset', balance: totalAssets },
                     { type: 'Liability', balance: totalLiabilities },
@@ -530,88 +560,82 @@
                 ];
 
                 let hasPieData = false;
-                for (const item of pieSource) {
+                
+                // Prepare data for Chart and custom legend
+                pieSource.forEach(item => {
                     if (Math.abs(item.balance) > 0.01) {
                         pieLabels.push(item.type);
-                        // Use absolute value for pie chart segments
                         pieBalances.push(Math.abs(item.balance)); 
-                        pieBackgroundColors.push(segmentColors[item.type] || '#64748b');
+                        const color = segmentColors[item.type] || '#94a3b8';
+                        pieBackgroundColors.push(color);
                         hasPieData = true;
+
+                        // Build Custom Legend Item
+                        const listItem = document.createElement('li');
+                        listItem.className = 'legend-item';
+                        listItem.innerHTML = `
+                            <span class="legend-color-box" style="background-color: ${color};"></span>
+                            ${item.type}
+                        `;
+                        legendContainer.appendChild(listItem);
                     }
-                }
+                });
                 
-                // --- RENDER PIE CHART ---
                 const pieContainer = document.getElementById('pieChartContainer');
                 const noPieMessage = document.getElementById('noPieDataMessage');
+                const contentFlex = document.querySelector('.chart-content-flex');
 
                 if (hasPieData) {
                     pieContainer.style.display = 'block';
+                    contentFlex.style.display = 'flex';
                     noPieMessage.style.display = 'none';
 
                     const ctx = document.getElementById('balanceChart').getContext('2d');
-                    // Destroy previous chart instance if it exists
-                    if (Chart.getChart(ctx)) {
-                        Chart.getChart(ctx).destroy();
-                    }
+                    if (Chart.getChart(ctx)) Chart.getChart(ctx).destroy();
 
                     new Chart(ctx, {
                         type: 'doughnut',
-                        plugins: [ChartDataLabels], // Register the plugin
+                        plugins: [ChartDataLabels],
                         data: {
                             labels: pieLabels,
                             datasets: [{
-                                label: 'Balance Composition ($)',
                                 data: pieBalances,
                                 backgroundColor: pieBackgroundColors,
                                 hoverOffset: 10,
-                                borderWidth: 3, // Add border for better separation
-                                borderColor: 'white'
+                                borderWidth: 0, 
                             }]
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: true, 
                             plugins: {
                                 legend: {
-                                    position: 'bottom',
-                                    labels: {
-                                        font: { family: 'Poppins' }
-                                    }
+                                    display: false, 
                                 },
                                 datalabels: {
-                                    formatter: (value, context) => {
-                                        // Format value as currency with K/M abbreviation
-                                        if (value >= 1000) {
-                                            return '$' + (value / 1000).toFixed(1) + 'K';
-                                        }
-                                        return '$' + value.toFixed(0);
+                                    formatter: (value) => {
+                                        if (value >= 1000) return (value / 1000).toFixed(1) + 'K';
+                                        return value.toFixed(0);
                                     },
-                                    color: 'white',
-                                    font: {
-                                        weight: 'bold',
-                                        family: 'Poppins',
-                                        size: 14
-                                    },
-                                    textShadowBlur: 2,
-                                    textShadowColor: 'black'
+                                    color: textColor,
+                                    font: { weight: 'bold', family: chartFontFamily, size: 14 }
                                 }
                             }
                         }
                     });
                 } else {
                     pieContainer.style.display = 'none';
+                    contentFlex.style.display = 'none';
                     noPieMessage.style.display = 'block';
                 }
 
             } catch (error) {
-                console.error("Error parsing summary data or rendering chart:", error);
-                document.getElementById('pieChartContainer').style.display = 'none';
-                document.getElementById('noPieDataMessage').innerText = "Error loading chart data.";
-                document.getElementById('noPieDataMessage').style.display = 'block';
+                console.error("Error rendering chart:", error);
             }
         }
 
         window.onload = function() {
-            renderChart();
+            renderChart(); 
         };
     </script>
 </body>
