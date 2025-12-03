@@ -279,9 +279,17 @@ PDF_JOURNAL_ENTRIES = [
 # --- INITIALIZATION (Modified to load PDF data) ---
 @app.before_request
 def initialize_session():
-    # Force reload if the number of entries doesn't match the hardcoded list size (64 entries total now)
-    if 'journal_entries' not in session or len(session['journal_entries']) != len(PDF_JOURNAL_ENTRIES):
+    # FIX 1: Only initialize the Journal Entries list if it doesn't exist in the session.
+    # This prevents new user-added entries from being overwritten by the hardcoded list.
+    if 'journal_entries' not in session:
         session['journal_entries'] = PDF_JOURNAL_ENTRIES
+        
+    # FIX 2: Initialize or update the next available transaction ID.
+    if 'next_entry_id' not in session:
+        max_id = -1
+        if session['journal_entries']:
+            max_id = max(e.get('id', -1) for e in session['journal_entries'])
+        session['next_entry_id'] = max_id + 1
         
     if 'chart_of_accounts' not in session or not session['chart_of_accounts']:
         # Filter out Closing Stock from SYSTEM_DEFAULT_ACCOUNTS here
@@ -292,7 +300,7 @@ def initialize_session():
         filtered_accounts.sort(key=lambda x: x['code'])
         session['chart_of_accounts'] = filtered_accounts
 
-    # --- FIX 1: Explicitly remove the specific 'rent' custom account from COA if present on load ---
+    # --- FIX 3: Explicitly remove the specific 'rent' custom account from COA if present on load ---
     if 'chart_of_accounts' in session:
         session['chart_of_accounts'] = [
             acc for acc in session['chart_of_accounts'] 
@@ -475,7 +483,7 @@ def chart_of_accounts():
             else:
                 balances[name] += (credit - debit)
                 
-    # --- FIX 2: Refined display filtering for Chart of Accounts ---
+    # --- FIX 4: Refined display filtering for Chart of Accounts ---
     display_accounts = []
     for acc in accounts:
         balance = balances.get(acc['name'], 0.0)
@@ -529,10 +537,8 @@ def journal_entry(username):
 
 
         # 4. If all accounts are valid, process and post entries
-        max_id = -1
-        if session['journal_entries']:
-            max_id = max(e.get('id', -1) for e in session['journal_entries'])
-        transaction_id = max_id + 1
+        # FIX: Use the ID stored in the session and immediately increment it for the next transaction.
+        transaction_id = session['next_entry_id']
 
 
         for i in range(len(dates)):
@@ -552,6 +558,9 @@ def journal_entry(username):
                 'type': 'Adjusting' if is_adjusting else 'Standard'
             }
             session['journal_entries'].append(new_entry)
+        
+        # CRITICAL FIX: Increment the ID for the next transaction
+        session['next_entry_id'] = transaction_id + 1
         
         session.modified = True
         return redirect(url_for('view_journal', username=username))
