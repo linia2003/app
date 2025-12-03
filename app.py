@@ -292,6 +292,14 @@ def initialize_session():
         filtered_accounts.sort(key=lambda x: x['code'])
         session['chart_of_accounts'] = filtered_accounts
 
+    # --- FIX 1: Explicitly remove the specific 'rent' custom account from COA if present on load ---
+    if 'chart_of_accounts' in session:
+        session['chart_of_accounts'] = [
+            acc for acc in session['chart_of_accounts'] 
+            if not (acc.get('name', '').lower() == 'rent' and acc.get('code') == '000' and acc.get('type') == 'Custom')
+        ]
+        session['chart_of_accounts'].sort(key=lambda x: x['code'])
+        
     session.modified = True
     # Ensure username is set for dashboard access if testing directly
     if 'username' not in session:
@@ -467,8 +475,21 @@ def chart_of_accounts():
             else:
                 balances[name] += (credit - debit)
                 
-    # Filter to only show accounts that have activity or are manually added
-    display_accounts = [acc for acc in accounts if balances.get(acc['name'], 0.0) != 0.0 or acc.get('code') in ['000', '101', '301']]
+    # --- FIX 2: Refined display filtering for Chart of Accounts ---
+    display_accounts = []
+    for acc in accounts:
+        balance = balances.get(acc['name'], 0.0)
+        
+        # Condition to keep the account in the display list:
+        # 1. If the account has a balance (active in the ledger)
+        # 2. OR if it is a core Capital account ('301') or the Cash account ('101') (always show core)
+        # 3. AND it is NOT the specific 'rent' custom account with code '000'
+        if abs(balance) > 0.005 or acc.get('code') in ['101', '301']:
+            if not (acc.get('name', '').lower() == 'rent' and acc.get('code') == '000' and acc.get('type') == 'Custom'):
+                display_accounts.append(acc)
+
+    # Note: I am keeping the logic to display custom accounts ('000') if they have a non-zero balance. 
+    # The initial filtering in initialize_session() should prevent the old 'rent' one from loading.
     
     return render_template('chart_of_accounts.html', accounts=display_accounts, balances=balances)
 
