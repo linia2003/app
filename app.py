@@ -5,158 +5,261 @@ import random
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-# --- SYSTEM LIBRARY (Updated - Closing Stock Removed) ---
+# --- SYSTEM LIBRARY (Updated to match all 35 new accounts required by the journals) ---
 SYSTEM_DEFAULT_ACCOUNTS = [
+    # ASSET ACCOUNTS (15)
     {'code': '101', 'name': 'Cash', 'type': 'Asset'},
     {'code': '102', 'name': 'Accounts Receivable', 'type': 'Asset'},
-    {'code': '110', 'name': 'Inventory', 'type': 'Asset'}, # Updated name for clarity (was Goods)
-    {'code': '150', 'name': 'Computer Equipment', 'type': 'Asset'}, # New
-    {'code': '151', 'name': 'Furniture', 'type': 'Asset'},
-    {'code': '152', 'name': 'Software Asset', 'type': 'Asset'}, # New
-    {'code': '153', 'name': 'Office Equipment', 'type': 'Asset'}, # New
-    {'code': '160', 'name': 'Prepaid Rent', 'type': 'Asset'}, # New
-    {'code': '161', 'name': 'Prepaid Insurance', 'type': 'Asset'}, # New
-    {'code': '180', 'name': 'Office Supplies', 'type': 'Asset'}, # New
-    {'code': '190', 'name': 'Bank', 'type': 'Asset'}, # Added Bank
+    {'code': '103', 'name': 'Bank', 'type': 'Asset'},
+    {'code': '104', 'name': 'Inventory', 'type': 'Asset'},
+    {'code': '105', 'name': 'Land', 'type': 'Asset'},
+    {'code': '106', 'name': 'Building', 'type': 'Asset'},
+    {'code': '107', 'name': 'Vehicles', 'type': 'Asset'},
+    {'code': '108', 'name': 'Furniture', 'type': 'Asset'},
+    {'code': '109', 'name': 'Computer Equipment', 'type': 'Asset'},
+    {'code': '111', 'name': 'Prepaid Rent', 'type': 'Asset'},
+    {'code': '112', 'name': 'Prepaid Insurance', 'type': 'Asset'},
+    {'code': '113', 'name': 'Supplies', 'type': 'Asset'},
+    {'code': '114', 'name': 'Short-Term Investments', 'type': 'Asset'},
+    {'code': '115', 'name': 'Long-Term Investments', 'type': 'Asset'},
+    {'code': '116', 'name': 'Notes Receivable', 'type': 'Asset'},
 
-    {'code': '201', 'name': 'Accounts Payable', 'type': 'Liability'}, 
-    {'code': '202', 'name': 'Creditors', 'type': 'Liability'}, # Used for various payables in PDF
-    {'code': '210', 'name': 'Bank Loan', 'type': 'Liability'}, # New
-    {'code': '220', 'name': 'Interest Payable', 'type': 'Liability'}, # New
-    {'code': '230', 'name': 'Unearned Revenue', 'type': 'Liability'}, # New
-    {'code': '240', 'name': 'Salary Payable', 'type': 'Liability'}, # New
+    # LIABILITY ACCOUNTS (14)
+    {'code': '201', 'name': 'Accounts Payable', 'type': 'Liability'}, # Vendor Payable in JE
+    {'code': '202', 'name': 'Bank Loan', 'type': 'Liability'},
+    {'code': '203', 'name': 'Tax Payable', 'type': 'Liability'},
+    {'code': '204', 'name': 'Unearned Revenue', 'type': 'Liability'},
+    {'code': '205', 'name': 'Notes Payable', 'type': 'Liability'},
+    {'code': '206', 'name': 'Interest Payable', 'type': 'Liability'},
+    {'code': '207', 'name': 'Salaries Payable', 'type': 'Liability'},
+    {'code': '208', 'name': 'Utilities Payable', 'type': 'Liability'},
+    {'code': '209', 'name': 'Rent Payable', 'type': 'Liability'},
+    {'code': '210', 'name': 'Short-Term Loan', 'type': 'Liability'},
+    {'code': '211', 'name': 'Long-Term Loan', 'type': 'Liability'},
+    {'code': '212', 'name': 'Service Payable', 'type': 'Liability'},
+    {'code': '213', 'name': 'Commission Payable', 'type': 'Liability'},
+    {'code': '214', 'name': 'Insurance Payable', 'type': 'Liability'},
+    
+    # EQUITY ACCOUNTS (1)
+    {'code': '301', 'name': 'Capital', 'type': 'Equity'},
 
-    {'code': '301', 'name': 'Capital', 'type': 'Equity'}, # Renamed from Owner Capital
-    {'code': '302', 'name': 'Drawings', 'type': 'Equity'}, # Renamed from Owner Drawing
-    {'code': '350', 'name': 'Accumulated Depreciation', 'type': 'Asset'}, # Contra-Asset for Accum Dep
-    
-    {'code': '401', 'name': 'Service Revenue', 'type': 'Revenue'}, # New
-    {'code': '402', 'name': 'Sales', 'type': 'Revenue'},
-    {'code': '410', 'name': 'Interest Income', 'type': 'Revenue'}, # New
-    # Closing Stock removed
-    
+    # REVENUE ACCOUNTS (14)
+    {'code': '401', 'name': 'Sales Revenue', 'type': 'Revenue'},
+    {'code': '402', 'name': 'Service Revenue', 'type': 'Revenue'},
+    {'code': '403', 'name': 'Commission Revenue', 'type': 'Revenue'},
+    {'code': '404', 'name': 'Interest Revenue', 'type': 'Revenue'},
+    {'code': '405', 'name': 'Rental Revenue', 'type': 'Revenue'},
+    {'code': '406', 'name': 'Consulting Revenue', 'type': 'Revenue'},
+    {'code': '407', 'name': 'Delivery Revenue', 'type': 'Revenue'},
+    {'code': '408', 'name': 'Software Revenue', 'type': 'Revenue'},
+    {'code': '409', 'name': 'Repair Revenue', 'type': 'Revenue'},
+    {'code': '410', 'name': 'Subscription Revenue', 'type': 'Revenue'},
+    {'code': '411', 'name': 'Installation Revenue', 'type': 'Revenue'},
+    {'code': '412', 'name': 'Training Revenue', 'type': 'Revenue'},
+    {'code': '413', 'name': 'Internet Service Revenue', 'type': 'Revenue'},
+    {'code': '414', 'name': 'Maintenance Revenue', 'type': 'Revenue'},
+
+    # EXPENSE ACCOUNTS (19)
     {'code': '501', 'name': 'Rent Expense', 'type': 'Expense'},
-    {'code': '502', 'name': 'Salary Expense', 'type': 'Expense'},
-    {'code': '503', 'name': 'COGS', 'type': 'Expense'}, # New
-    {'code': '504', 'name': 'Loss on Sale', 'type': 'Expense'}, # Treated as expense in IS
-    {'code': '510', 'name': 'Internet Expense', 'type': 'Expense'}, # New
-    {'code': '511', 'name': 'Electricity Expense', 'type': 'Expense'}, # New
-    {'code': '512', 'name': 'Advertising Expense', 'type': 'Expense'}, # New
-    {'code': '513', 'name': 'Staff Welfare', 'type': 'Expense'}, # New
-    {'code': '514', 'name': 'Bank Charges Expense', 'type': 'Expense'}, # New
-    {'code': '515', 'name': 'Telephone Expense', 'type': 'Expense'}, # New
-    {'code': '516', 'name': 'Interest Expense', 'type': 'Expense'}, # New
-    {'code': '517', 'name': 'Cleaning Expense', 'type': 'Expense'}, # New
-    {'code': '518', 'name': 'Repair Expense', 'type': 'Expense'}, # New
-    {'code': '519', 'name': 'Depreciation Expense', 'type': 'Expense'}, # New
-    {'code': '520', 'name': 'Bad Debt Expense', 'type': 'Expense'}, # New
-    {'code': '521', 'name': 'Office Supplies Expense', 'type': 'Expense'}, # New
-    {'code': '522', 'name': 'Stationery Expense', 'type': 'Expense'} # New
+    {'code': '502', 'name': 'Utilities Expense', 'type': 'Expense'},
+    {'code': '503', 'name': 'Salaries Expense', 'type': 'Expense'},
+    {'code': '504', 'name': 'Advertising Expense', 'type': 'Expense'},
+    {'code': '505', 'name': 'Insurance Expense', 'type': 'Expense'},
+    {'code': '506', 'name': 'Supplies Expense', 'type': 'Expense'},
+    {'code': '507', 'name': 'Telephone Expense', 'type': 'Expense'},
+    {'code': '508', 'name': 'Travel Expense', 'type': 'Expense'},
+    {'code': '509', 'name': 'Repairs Expense', 'type': 'Expense'},
+    {'code': '510', 'name': 'Fuel Expense', 'type': 'Expense'},
+    {'code': '511', 'name': 'Internet Expense', 'type': 'Expense'},
+    {'code': '512', 'name': 'Delivery Expense', 'type': 'Expense'},
+    {'code': '513', 'name': 'Maintenance Expense', 'type': 'Expense'},
+    {'code': '514', 'name': 'Training Expense', 'type': 'Expense'},
+    {'code': '515', 'name': 'Miscellaneous Expense', 'type': 'Expense'},
+    {'code': '516', 'name': 'Tax Expense', 'type': 'Expense'},
+    {'code': '517', 'name': 'Interest Expense', 'type': 'Expense'},
+    {'code': '518', 'name': 'Services Expense', 'type': 'Expense'},
+    {'code': '519', 'name': 'Commission Expense', 'type': 'Expense'}
 ]
 
-# --- PDF JOURNAL ENTRIES (Consolidated for a clean, balanced ledger) ---
+# --- NEW JOURNAL ENTRIES (58 entries provided by the user) ---
 PDF_JOURNAL_ENTRIES = [
-    # Initial Capital and Cash
-    {'id': 0, 'date': '2025-01-01', 'account_name': 'Cash', 'particular': 'Capital Introduction', 'debit': 600000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 0, 'date': '2025-01-01', 'account_name': 'Capital', 'particular': 'Capital Introduction', 'debit': 0.0, 'credit': 600000.0, 'type': 'Standard'},
-    
-    # Office Equipment (Initial Debit to balance sale in Entry 12)
-    {'id': -1, 'date': '2025-01-01', 'account_name': 'Office Equipment', 'particular': 'Initial Balance', 'debit': 10000.0, 'credit': 0.0, 'type': 'Standard'},
-    
-    # Operations continued...
-    {'id': 1, 'date': '2025-01-02', 'account_name': 'Bank', 'particular': 'Cash Deposit', 'debit': 250000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 1, 'date': '2025-01-02', 'account_name': 'Cash', 'particular': 'Cash Deposit', 'debit': 0.0, 'credit': 250000.0, 'type': 'Standard'},
-    {'id': 2, 'date': '2025-01-03', 'account_name': 'Computer Equipment', 'particular': 'Purchase of asset', 'debit': 120000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 2, 'date': '2025-01-03', 'account_name': 'Cash', 'particular': 'Purchase of asset', 'debit': 0.0, 'credit': 120000.0, 'type': 'Standard'},
-    {'id': 3, 'date': '2025-01-04', 'account_name': 'Prepaid Rent', 'particular': 'Advance payment for 3 months', 'debit': 90000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 3, 'date': '2025-01-04', 'account_name': 'Cash', 'particular': 'Advance payment for 3 months', 'debit': 0.0, 'credit': 90000.0, 'type': 'Standard'},
-    {'id': 4, 'date': '2025-01-05', 'account_name': 'Office Supplies', 'particular': 'Credit purchase of supplies', 'debit': 25000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 4, 'date': '2025-01-05', 'account_name': 'Creditors', 'particular': 'Credit purchase of supplies', 'debit': 0.0, 'credit': 25000.0, 'type': 'Standard'},
-    {'id': 5, 'date': '2025-01-06', 'account_name': 'Cash', 'particular': 'Service fees received', 'debit': 85000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 5, 'date': '2025-01-06', 'account_name': 'Service Revenue', 'particular': 'Service fees received', 'debit': 0.0, 'credit': 85000.0, 'type': 'Standard'},
-    {'id': 6, 'date': '2025-01-06', 'account_name': 'Accounts Receivable', 'particular': 'Service on credit', 'debit': 65000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 6, 'date': '2025-01-06', 'account_name': 'Service Revenue', 'particular': 'Service on credit', 'debit': 0.0, 'credit': 65000.0, 'type': 'Standard'},
-    {'id': 7, 'date': '2025-01-07', 'account_name': 'Salary Expense', 'particular': 'Paid staff wages', 'debit': 55000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 7, 'date': '2025-01-07', 'account_name': 'Cash', 'particular': 'Paid staff wages', 'debit': 0.0, 'credit': 55000.0, 'type': 'Standard'},
-    {'id': 8, 'date': '2025-01-08', 'account_name': 'Software Asset', 'particular': 'Credit purchase of license', 'debit': 70000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 8, 'date': '2025-01-08', 'account_name': 'Creditors', 'particular': 'Credit purchase of license', 'debit': 0.0, 'credit': 70000.0, 'type': 'Standard'},
-    {'id': 9, 'date': '2025-01-09', 'account_name': 'Internet Expense', 'particular': 'Paid monthly bill', 'debit': 4000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 9, 'date': '2025-01-09', 'account_name': 'Cash', 'particular': 'Paid monthly bill', 'debit': 0.0, 'credit': 4000.0, 'type': 'Standard'},
-    {'id': 10, 'date': '2025-01-10', 'account_name': 'Furniture', 'particular': 'Credit purchase of office chairs', 'debit': 30000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 10, 'date': '2025-01-10', 'account_name': 'Creditors', 'particular': 'Credit purchase of office chairs', 'debit': 0.0, 'credit': 30000.0, 'type': 'Standard'},
-    {'id': 11, 'date': '2025-01-11', 'account_name': 'Cash', 'particular': 'Sold office equipment at loss', 'debit': 8000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 11, 'date': '2025-01-11', 'account_name': 'Loss on Sale', 'particular': 'Sold office equipment at loss', 'debit': 2000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 11, 'date': '2025-01-11', 'account_name': 'Office Equipment', 'particular': 'Sold office equipment at loss', 'debit': 0.0, 'credit': 10000.0, 'type': 'Standard'},
-    {'id': 12, 'date': '2025-01-12', 'account_name': 'Cash', 'particular': 'Collection from customer', 'debit': 30000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 12, 'date': '2025-01-12', 'account_name': 'Accounts Receivable', 'particular': 'Collection from customer', 'debit': 0.0, 'credit': 30000.0, 'type': 'Standard'},
-    {'id': 13, 'date': '2025-01-13', 'account_name': 'Electricity Expense', 'particular': 'Paid monthly bill', 'debit': 6500.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 13, 'date': '2025-01-13', 'account_name': 'Cash', 'particular': 'Paid monthly bill', 'debit': 0.0, 'credit': 6500.0, 'type': 'Standard'},
-    {'id': 14, 'date': '2025-01-14', 'account_name': 'Advertising Expense', 'particular': 'Credit advertising service', 'debit': 18000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 14, 'date': '2025-01-14', 'account_name': 'Creditors', 'particular': 'Credit advertising service', 'debit': 0.0, 'credit': 18000.0, 'type': 'Standard'},
-    {'id': 15, 'date': '2025-01-15', 'account_name': 'Staff Welfare', 'particular': 'Paid for staff amenities', 'debit': 2800.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 15, 'date': '2025-01-15', 'account_name': 'Cash', 'particular': 'Paid for staff amenities', 'debit': 0.0, 'credit': 2800.0, 'type': 'Standard'},
-    {'id': 16, 'date': '2025-01-16', 'account_name': 'Bank Charges Expense', 'particular': 'Monthly service fees', 'debit': 900.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 16, 'date': '2025-01-16', 'account_name': 'Bank', 'particular': 'Monthly service fees', 'debit': 0.0, 'credit': 900.0, 'type': 'Standard'},
-    {'id': 17, 'date': '2025-01-17', 'account_name': 'Bank', 'particular': 'Service fees deposited', 'debit': 110000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 17, 'date': '2025-01-17', 'account_name': 'Service Revenue', 'particular': 'Service fees deposited', 'debit': 0.0, 'credit': 110000.0, 'type': 'Standard'},
-    {'id': 18, 'date': '2025-01-18', 'account_name': 'Creditors', 'particular': 'Payment to supplier', 'debit': 40000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 18, 'date': '2025-01-18', 'account_name': 'Cash', 'particular': 'Payment to supplier', 'debit': 0.0, 'credit': 40000.0, 'type': 'Standard'},
-    {'id': 19, 'date': '2025-01-19', 'account_name': 'Cash', 'particular': 'Received advance payment', 'debit': 50000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 19, 'date': '2025-01-19', 'account_name': 'Unearned Revenue', 'particular': 'Received advance payment', 'debit': 0.0, 'credit': 50000.0, 'type': 'Standard'},
-    {'id': 20, 'date': '2025-01-20', 'account_name': 'Inventory', 'particular': 'Purchased goods for resale (Cash)', 'debit': 45000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 20, 'date': '2025-01-20', 'account_name': 'Cash', 'particular': 'Purchased goods for resale (Cash)', 'debit': 0.0, 'credit': 45000.0, 'type': 'Standard'},
-    {'id': 21, 'date': '2025-01-21', 'account_name': 'Cash', 'particular': 'Sale of goods (Cash)', 'debit': 18000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 21, 'date': '2025-01-21', 'account_name': 'Sales', 'particular': 'Sale of goods (Cash)', 'debit': 0.0, 'credit': 18000.0, 'type': 'Standard'},
-    {'id': 22, 'date': '2025-01-21', 'account_name': 'COGS', 'particular': 'Cost of goods sold', 'debit': 10000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 22, 'date': '2025-01-21', 'account_name': 'Inventory', 'particular': 'Cost of goods sold', 'debit': 0.0, 'credit': 10000.0, 'type': 'Standard'},
-    {'id': 23, 'date': '2025-01-22', 'account_name': 'Telephone Expense', 'particular': 'Paid monthly bill', 'debit': 1500.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 23, 'date': '2025-01-22', 'account_name': 'Cash', 'particular': 'Paid monthly bill', 'debit': 0.0, 'credit': 1500.0, 'type': 'Standard'},
-    {'id': 24, 'date': '2025-01-22', 'account_name': 'Rent Expense', 'particular': 'Paid monthly rent', 'debit': 15000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 24, 'date': '2025-01-22', 'account_name': 'Bank', 'particular': 'Paid monthly rent', 'debit': 0.0, 'credit': 15000.0, 'type': 'Standard'},
-    {'id': 25, 'date': '2025-01-23', 'account_name': 'Bank', 'particular': 'Received bank loan', 'debit': 200000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 25, 'date': '2025-01-23', 'account_name': 'Bank Loan', 'particular': 'Received bank loan', 'debit': 0.0, 'credit': 200000.0, 'type': 'Standard'},
-    {'id': 26, 'date': '2025-01-24', 'account_name': 'Interest Expense', 'particular': 'Accrued interest', 'debit': 5000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 26, 'date': '2025-01-24', 'account_name': 'Interest Payable', 'particular': 'Accrued interest', 'debit': 0.0, 'credit': 5000.0, 'type': 'Standard'},
-    {'id': 27, 'date': '2025-01-25', 'account_name': 'Cleaning Expense', 'particular': 'Paid cleaning services', 'debit': 3200.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 27, 'date': '2025-01-25', 'account_name': 'Cash', 'particular': 'Paid cleaning services', 'debit': 0.0, 'credit': 3200.0, 'type': 'Standard'},
-    {'id': 28, 'date': '2025-01-26', 'account_name': 'Repair Expense', 'particular': 'Paid for small repairs', 'debit': 7000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 28, 'date': '2025-01-26', 'account_name': 'Cash', 'particular': 'Paid for small repairs', 'debit': 0.0, 'credit': 7000.0, 'type': 'Standard'},
-    {'id': 29, 'date': '2025-01-26', 'account_name': 'Creditors', 'particular': 'Payment to supplier', 'debit': 25000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 29, 'date': '2025-01-26', 'account_name': 'Cash', 'particular': 'Payment to supplier', 'debit': 0.0, 'credit': 25000.0, 'type': 'Standard'},
-    {'id': 30, 'date': '2025-01-27', 'account_name': 'Drawings', 'particular': 'Owner withdrawal', 'debit': 20000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 30, 'date': '2025-01-27', 'account_name': 'Cash', 'particular': 'Owner withdrawal', 'debit': 0.0, 'credit': 20000.0, 'type': 'Standard'},
-    {'id': 33, 'date': '2025-01-29', 'account_name': 'Bad Debt Expense', 'particular': 'Write off uncollectible debt', 'debit': 5000.0, 'credit': 0.0, 'type': 'Adjusting'},
-    {'id': 33, 'date': '2025-01-29', 'account_name': 'Accounts Receivable', 'particular': 'Write off uncollectible debt', 'debit': 0.0, 'credit': 5000.0, 'type': 'Adjusting'},
-    {'id': 34, 'date': '2025-01-29', 'account_name': 'Unearned Revenue', 'particular': 'Recognized service revenue', 'debit': 25000.0, 'credit': 0.0, 'type': 'Adjusting'},
-    {'id': 34, 'date': '2025-01-29', 'account_name': 'Service Revenue', 'particular': 'Recognized service revenue', 'debit': 0.0, 'credit': 25000.0, 'type': 'Adjusting'},
-    {'id': 35, 'date': '2025-01-30', 'account_name': 'Salary Expense', 'particular': 'Accrued salaries for period', 'debit': 20000.0, 'credit': 0.0, 'type': 'Adjusting'},
-    {'id': 35, 'date': '2025-01-30', 'account_name': 'Salary Payable', 'particular': 'Accrued salaries for period', 'debit': 0.0, 'credit': 20000.0, 'type': 'Adjusting'},
-    {'id': 36, 'date': '2025-01-30', 'account_name': 'Office Supplies Expense', 'particular': 'Supplies consumed', 'debit': 8000.0, 'credit': 0.0, 'type': 'Adjusting'},
-    {'id': 36, 'date': '2025-01-30', 'account_name': 'Office Supplies', 'particular': 'Supplies consumed', 'debit': 0.0, 'credit': 8000.0, 'type': 'Adjusting'},
-    {'id': 37, 'date': '2025-01-31', 'account_name': 'Prepaid Insurance', 'particular': 'Paid 1 year premium', 'debit': 60000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 37, 'date': '2025-01-31', 'account_name': 'Cash', 'particular': 'Paid 1 year premium', 'debit': 0.0, 'credit': 60000.0, 'type': 'Standard'},
-    {'id': 38, 'date': '2025-01-31', 'account_name': 'Accounts Receivable', 'particular': 'Service on credit', 'debit': 95000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 38, 'date': '2025-01-31', 'account_name': 'Service Revenue', 'particular': 'Service on credit', 'debit': 0.0, 'credit': 95000.0, 'type': 'Standard'},
-    {'id': 39, 'date': '2025-01-31', 'account_name': 'Electricity Expense', 'particular': 'Paid final bill', 'debit': 7200.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 39, 'date': '2025-01-31', 'account_name': 'Cash', 'particular': 'Paid final bill', 'debit': 0.0, 'credit': 7200.0, 'type': 'Standard'},
-    {'id': 40, 'date': '2025-01-31', 'account_name': 'Interest Payable', 'particular': 'Paid accrued interest', 'debit': 5000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 40, 'date': '2025-01-31', 'account_name': 'Cash', 'particular': 'Paid accrued interest', 'debit': 0.0, 'credit': 5000.0, 'type': 'Standard'},
-    {'id': 41, 'date': '2025-01-31', 'account_name': 'Salary Payable', 'particular': 'Paid accrued salary', 'debit': 20000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 41, 'date': '2025-01-31', 'account_name': 'Cash', 'particular': 'Paid accrued salary', 'debit': 0.0, 'credit': 20000.0, 'type': 'Standard'},
-    {'id': 42, 'date': '2025-01-31', 'account_name': 'Cash', 'particular': 'Collection from customer', 'debit': 60000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 42, 'date': '2025-01-31', 'account_name': 'Accounts Receivable', 'particular': 'Collection from customer', 'debit': 0.0, 'credit': 60000.0, 'type': 'Standard'},
-    {'id': 43, 'date': '2025-01-31', 'account_name': 'Bank', 'particular': 'Interest received on deposit', 'debit': 2500.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 43, 'date': '2025-01-31', 'account_name': 'Interest Income', 'particular': 'Interest received on deposit', 'debit': 0.0, 'credit': 2500.0, 'type': 'Standard'},
-    {'id': 44, 'date': '2025-01-31', 'account_name': 'Stationery Expense', 'particular': 'Paid for stationery', 'debit': 3600.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 44, 'date': '2025-01-31', 'account_name': 'Cash', 'particular': 'Paid for stationery', 'debit': 0.0, 'credit': 3600.0, 'type': 'Standard'},
-    
-    # Entry 46: Consolidated Depreciation Adjustment
-    {'id': 46, 'date': '2025-01-31', 'account_name': 'Depreciation Expense', 'particular': 'Consolidated Depreciation Adjustment', 'debit': 14000.0, 'credit': 0.0, 'type': 'Adjusting'},
-    {'id': 46, 'date': '2025-01-31', 'account_name': 'Accumulated Depreciation', 'particular': 'Consolidated Depreciation Adjustment', 'debit': 0.0, 'credit': 14000.0, 'type': 'Adjusting'},
-    
-    # Entry 47: Drawings reversal/adjustment
-    {'id': 47, 'date': '2025-01-31', 'account_name': 'Cash', 'particular': 'Owner Deposit (Drawings reversal)', 'debit': 20000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 47, 'date': '2025-01-31', 'account_name': 'Drawings', 'particular': 'Owner Deposit (Drawings reversal)', 'debit': 0.0, 'credit': 20000.0, 'type': 'Standard'},
+    # ASSET JOURNALS (15)
+    {'id': 1, 'date': '2025-01-01', 'account_name': 'Cash', 'particular': 'Cash Investment', 'debit': 2000000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 1, 'date': '2025-01-01', 'account_name': 'Capital', 'particular': 'Cash Investment', 'debit': 0.0, 'credit': 2000000.0, 'type': 'Standard'},
+
+    {'id': 2, 'date': '2025-01-02', 'account_name': 'Bank', 'particular': 'Bank Deposit', 'debit': 1000000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 2, 'date': '2025-01-02', 'account_name': 'Cash', 'particular': 'Bank Deposit', 'debit': 0.0, 'credit': 1000000.0, 'type': 'Standard'},
+
+    {'id': 3, 'date': '2025-01-03', 'account_name': 'Inventory', 'particular': 'Purchased on Credit', 'debit': 600000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 3, 'date': '2025-01-03', 'account_name': 'Accounts Payable', 'particular': 'Purchased on Credit', 'debit': 0.0, 'credit': 600000.0, 'type': 'Standard'},
+
+    {'id': 4, 'date': '2025-01-04', 'account_name': 'Accounts Receivable', 'particular': 'AR Generated', 'debit': 450000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 4, 'date': '2025-01-04', 'account_name': 'Sales Revenue', 'particular': 'AR Generated', 'debit': 0.0, 'credit': 450000.0, 'type': 'Standard'},
+
+    {'id': 5, 'date': '2025-01-05', 'account_name': 'Land', 'particular': 'Land Purchase (Cash)', 'debit': 1500000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 5, 'date': '2025-01-05', 'account_name': 'Cash', 'particular': 'Land Purchase (Cash)', 'debit': 0.0, 'credit': 1500000.0, 'type': 'Standard'},
+
+    {'id': 6, 'date': '2025-01-06', 'account_name': 'Building', 'particular': 'Building Purchased with Bank Loan', 'debit': 3000000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 6, 'date': '2025-01-06', 'account_name': 'Bank Loan', 'particular': 'Building Purchased with Bank Loan', 'debit': 0.0, 'credit': 3000000.0, 'type': 'Standard'},
+
+    {'id': 7, 'date': '2025-01-07', 'account_name': 'Vehicles', 'particular': 'Vehicle Purchased', 'debit': 550000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 7, 'date': '2025-01-07', 'account_name': 'Bank', 'particular': 'Vehicle Purchased', 'debit': 0.0, 'credit': 550000.0, 'type': 'Standard'},
+
+    {'id': 8, 'date': '2025-01-08', 'account_name': 'Furniture', 'particular': 'Furniture Purchase (Cash)', 'debit': 220000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 8, 'date': '2025-01-08', 'account_name': 'Cash', 'particular': 'Furniture Purchase (Cash)', 'debit': 0.0, 'credit': 220000.0, 'type': 'Standard'},
+
+    {'id': 9, 'date': '2025-01-09', 'account_name': 'Computer Equipment', 'particular': 'Computer Equipment Purchase', 'debit': 180000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 9, 'date': '2025-01-09', 'account_name': 'Cash', 'particular': 'Computer Equipment Purchase', 'debit': 0.0, 'credit': 180000.0, 'type': 'Standard'},
+
+    {'id': 10, 'date': '2025-01-10', 'account_name': 'Prepaid Rent', 'particular': 'Prepaid Rent', 'debit': 120000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 10, 'date': '2025-01-10', 'account_name': 'Cash', 'particular': 'Prepaid Rent', 'debit': 0.0, 'credit': 120000.0, 'type': 'Standard'},
+
+    {'id': 11, 'date': '2025-01-11', 'account_name': 'Prepaid Insurance', 'particular': 'Prepaid Insurance', 'debit': 90000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 11, 'date': '2025-01-11', 'account_name': 'Cash', 'particular': 'Prepaid Insurance', 'debit': 0.0, 'credit': 90000.0, 'type': 'Standard'},
+
+    {'id': 12, 'date': '2025-01-12', 'account_name': 'Supplies', 'particular': 'Supplies Purchased', 'debit': 45000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 12, 'date': '2025-01-12', 'account_name': 'Cash', 'particular': 'Supplies Purchased', 'debit': 0.0, 'credit': 45000.0, 'type': 'Standard'},
+
+    {'id': 13, 'date': '2025-01-13', 'account_name': 'Short-Term Investments', 'particular': 'Short-Term Investment Purchased', 'debit': 350000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 13, 'date': '2025-01-13', 'account_name': 'Bank', 'particular': 'Short-Term Investment Purchased', 'debit': 0.0, 'credit': 350000.0, 'type': 'Standard'},
+
+    {'id': 14, 'date': '2025-01-14', 'account_name': 'Long-Term Investments', 'particular': 'Long-Term Investments Purchased', 'debit': 800000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 14, 'date': '2025-01-14', 'account_name': 'Bank', 'particular': 'Long-Term Investments Purchased', 'debit': 0.0, 'credit': 800000.0, 'type': 'Standard'},
+
+    {'id': 15, 'date': '2025-01-15', 'account_name': 'Notes Receivable', 'particular': 'Notes Receivable Issued', 'debit': 260000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 15, 'date': '2025-01-15', 'account_name': 'Cash', 'particular': 'Notes Receivable Issued', 'debit': 0.0, 'credit': 260000.0, 'type': 'Standard'},
+
+    # EXPENSE JOURNALS (15)
+    {'id': 16, 'date': '2025-01-16', 'account_name': 'Rent Expense', 'particular': 'Rent Paid', 'debit': 60000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 16, 'date': '2025-01-16', 'account_name': 'Cash', 'particular': 'Rent Paid', 'debit': 0.0, 'credit': 60000.0, 'type': 'Standard'},
+
+    {'id': 17, 'date': '2025-01-17', 'account_name': 'Utilities Expense', 'particular': 'Utilities Paid', 'debit': 40000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 17, 'date': '2025-01-17', 'account_name': 'Cash', 'particular': 'Utilities Paid', 'debit': 0.0, 'credit': 40000.0, 'type': 'Standard'},
+
+    {'id': 18, 'date': '2025-01-18', 'account_name': 'Salaries Expense', 'particular': 'Salaries Paid', 'debit': 180000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 18, 'date': '2025-01-18', 'account_name': 'Cash', 'particular': 'Salaries Paid', 'debit': 0.0, 'credit': 180000.0, 'type': 'Standard'},
+
+    {'id': 19, 'date': '2025-01-19', 'account_name': 'Advertising Expense', 'particular': 'Advertising Paid', 'debit': 90000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 19, 'date': '2025-01-19', 'account_name': 'Cash', 'particular': 'Advertising Paid', 'debit': 0.0, 'credit': 90000.0, 'type': 'Standard'},
+
+    {'id': 20, 'date': '2025-01-20', 'account_name': 'Insurance Expense', 'particular': 'Insurance Expense', 'debit': 30000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 20, 'date': '2025-01-20', 'account_name': 'Cash', 'particular': 'Insurance Expense', 'debit': 0.0, 'credit': 30000.0, 'type': 'Standard'},
+
+    {'id': 21, 'date': '2025-01-21', 'account_name': 'Supplies Expense', 'particular': 'Supplies Expense', 'debit': 25000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 21, 'date': '2025-01-21', 'account_name': 'Supplies', 'particular': 'Supplies Expense', 'debit': 0.0, 'credit': 25000.0, 'type': 'Standard'},
+
+    {'id': 22, 'date': '2025-01-22', 'account_name': 'Telephone Expense', 'particular': 'Telephone Expense', 'debit': 18000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 22, 'date': '2025-01-22', 'account_name': 'Cash', 'particular': 'Telephone Expense', 'debit': 0.0, 'credit': 18000.0, 'type': 'Standard'},
+
+    {'id': 23, 'date': '2025-01-23', 'account_name': 'Travel Expense', 'particular': 'Travel Expense', 'debit': 50000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 23, 'date': '2025-01-23', 'account_name': 'Cash', 'particular': 'Travel Expense', 'debit': 0.0, 'credit': 50000.0, 'type': 'Standard'},
+
+    {'id': 24, 'date': '2025-01-24', 'account_name': 'Repairs Expense', 'particular': 'Repairs Expense', 'debit': 45000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 24, 'date': '2025-01-24', 'account_name': 'Cash', 'particular': 'Repairs Expense', 'debit': 0.0, 'credit': 45000.0, 'type': 'Standard'},
+
+    {'id': 25, 'date': '2025-01-25', 'account_name': 'Fuel Expense', 'particular': 'Fuel Expense', 'debit': 22000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 25, 'date': '2025-01-25', 'account_name': 'Cash', 'particular': 'Fuel Expense', 'debit': 0.0, 'credit': 22000.0, 'type': 'Standard'},
+
+    {'id': 26, 'date': '2025-01-26', 'account_name': 'Internet Expense', 'particular': 'Internet Expense', 'debit': 15000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 26, 'date': '2025-01-26', 'account_name': 'Cash', 'particular': 'Internet Expense', 'debit': 0.0, 'credit': 15000.0, 'type': 'Standard'},
+
+    {'id': 27, 'date': '2025-01-27', 'account_name': 'Delivery Expense', 'particular': 'Delivery Expense', 'debit': 26000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 27, 'date': '2025-01-27', 'account_name': 'Cash', 'particular': 'Delivery Expense', 'debit': 0.0, 'credit': 26000.0, 'type': 'Standard'},
+
+    {'id': 28, 'date': '2025-01-28', 'account_name': 'Maintenance Expense', 'particular': 'Maintenance Expense', 'debit': 33000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 28, 'date': '2025-01-28', 'account_name': 'Cash', 'particular': 'Maintenance Expense', 'debit': 0.0, 'credit': 33000.0, 'type': 'Standard'},
+
+    {'id': 29, 'date': '2025-01-29', 'account_name': 'Training Expense', 'particular': 'Training Expense', 'debit': 55000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 29, 'date': '2025-01-29', 'account_name': 'Cash', 'particular': 'Training Expense', 'debit': 0.0, 'credit': 55000.0, 'type': 'Standard'},
+
+    {'id': 30, 'date': '2025-01-30', 'account_name': 'Miscellaneous Expense', 'particular': 'Miscellaneous Expense', 'debit': 17000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 30, 'date': '2025-01-30', 'account_name': 'Cash', 'particular': 'Miscellaneous Expense', 'debit': 0.0, 'credit': 17000.0, 'type': 'Standard'},
+
+    # REVENUE JOURNALS (15)
+    {'id': 31, 'date': '2025-02-01', 'account_name': 'Accounts Receivable', 'particular': 'Credit Sales', 'debit': 380000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 31, 'date': '2025-02-01', 'account_name': 'Sales Revenue', 'particular': 'Credit Sales', 'debit': 0.0, 'credit': 380000.0, 'type': 'Standard'},
+
+    {'id': 32, 'date': '2025-02-02', 'account_name': 'Cash', 'particular': 'Cash Sales', 'debit': 300000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 32, 'date': '2025-02-02', 'account_name': 'Sales Revenue', 'particular': 'Cash Sales', 'debit': 0.0, 'credit': 300000.0, 'type': 'Standard'},
+
+    {'id': 33, 'date': '2025-02-03', 'account_name': 'Accounts Receivable', 'particular': 'Service Revenue (Credit)', 'debit': 240000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 33, 'date': '2025-02-03', 'account_name': 'Service Revenue', 'particular': 'Service Revenue (Credit)', 'debit': 0.0, 'credit': 240000.0, 'type': 'Standard'},
+
+    {'id': 34, 'date': '2025-02-04', 'account_name': 'Cash', 'particular': 'Commission Revenue', 'debit': 70000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 34, 'date': '2025-02-04', 'account_name': 'Commission Revenue', 'particular': 'Commission Revenue', 'debit': 0.0, 'credit': 70000.0, 'type': 'Standard'},
+
+    {'id': 35, 'date': '2025-02-05', 'account_name': 'Bank', 'particular': 'Interest Revenue', 'debit': 35000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 35, 'date': '2025-02-05', 'account_name': 'Interest Revenue', 'particular': 'Interest Revenue', 'debit': 0.0, 'credit': 35000.0, 'type': 'Standard'},
+
+    {'id': 36, 'date': '2025-02-06', 'account_name': 'Cash', 'particular': 'Rental Revenue', 'debit': 95000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 36, 'date': '2025-02-06', 'account_name': 'Rental Revenue', 'particular': 'Rental Revenue', 'debit': 0.0, 'credit': 95000.0, 'type': 'Standard'},
+
+    {'id': 37, 'date': '2025-02-07', 'account_name': 'Accounts Receivable', 'particular': 'Consulting Revenue', 'debit': 260000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 37, 'date': '2025-02-07', 'account_name': 'Consulting Revenue', 'particular': 'Consulting Revenue', 'debit': 0.0, 'credit': 260000.0, 'type': 'Standard'},
+
+    {'id': 38, 'date': '2025-02-08', 'account_name': 'Cash', 'particular': 'Delivery Revenue', 'debit': 55000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 38, 'date': '2025-02-08', 'account_name': 'Delivery Revenue', 'particular': 'Delivery Revenue', 'debit': 0.0, 'credit': 55000.0, 'type': 'Standard'},
+
+    {'id': 39, 'date': '2025-02-09', 'account_name': 'Accounts Receivable', 'particular': 'Software Revenue', 'debit': 410000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 39, 'date': '2025-02-09', 'account_name': 'Software Revenue', 'particular': 'Software Revenue', 'debit': 0.0, 'credit': 410000.0, 'type': 'Standard'},
+
+    {'id': 40, 'date': '2025-02-10', 'account_name': 'Cash', 'particular': 'Repair Service Revenue', 'debit': 68000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 40, 'date': '2025-02-10', 'account_name': 'Repair Revenue', 'particular': 'Repair Service Revenue', 'debit': 0.0, 'credit': 68000.0, 'type': 'Standard'},
+
+    {'id': 41, 'date': '2025-02-11', 'account_name': 'Cash', 'particular': 'Subscription Revenue', 'debit': 150000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 41, 'date': '2025-02-11', 'account_name': 'Subscription Revenue', 'particular': 'Subscription Revenue', 'debit': 0.0, 'credit': 150000.0, 'type': 'Standard'},
+
+    {'id': 42, 'date': '2025-02-12', 'account_name': 'Accounts Receivable', 'particular': 'Installation Revenue', 'debit': 210000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 42, 'date': '2025-02-12', 'account_name': 'Installation Revenue', 'particular': 'Installation Revenue', 'debit': 0.0, 'credit': 210000.0, 'type': 'Standard'},
+
+    {'id': 43, 'date': '2025-02-13', 'account_name': 'Cash', 'particular': 'Training Revenue', 'debit': 160000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 43, 'date': '2025-02-13', 'account_name': 'Training Revenue', 'particular': 'Training Revenue', 'debit': 0.0, 'credit': 160000.0, 'type': 'Standard'},
+
+    {'id': 44, 'date': '2025-02-14', 'account_name': 'Accounts Receivable', 'particular': 'Internet Service Revenue', 'debit': 230000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 44, 'date': '2025-02-14', 'account_name': 'Internet Service Revenue', 'particular': 'Internet Service Revenue', 'debit': 0.0, 'credit': 230000.0, 'type': 'Standard'},
+
+    {'id': 45, 'date': '2025-02-15', 'account_name': 'Cash', 'particular': 'Maintenance Revenue', 'debit': 120000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 45, 'date': '2025-02-15', 'account_name': 'Maintenance Revenue', 'particular': 'Maintenance Revenue', 'debit': 0.0, 'credit': 120000.0, 'type': 'Standard'},
+
+    # LIABILITY JOURNALS (13)
+    {'id': 46, 'date': '2025-02-16', 'account_name': 'Inventory', 'particular': 'Purchase on Credit (Vendor Payable)', 'debit': 300000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 46, 'date': '2025-02-16', 'account_name': 'Accounts Payable', 'particular': 'Purchase on Credit (Vendor Payable)', 'debit': 0.0, 'credit': 300000.0, 'type': 'Standard'},
+
+    {'id': 47, 'date': '2025-02-17', 'account_name': 'Tax Expense', 'particular': 'Tax Payable Recorded', 'debit': 40000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 47, 'date': '2025-02-17', 'account_name': 'Tax Payable', 'particular': 'Tax Payable Recorded', 'debit': 0.0, 'credit': 40000.0, 'type': 'Standard'},
+
+    {'id': 48, 'date': '2025-02-18', 'account_name': 'Cash', 'particular': 'Unearned Revenue Received', 'debit': 180000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 48, 'date': '2025-02-18', 'account_name': 'Unearned Revenue', 'particular': 'Unearned Revenue Received', 'debit': 0.0, 'credit': 180000.0, 'type': 'Standard'},
+
+    {'id': 49, 'date': '2025-02-19', 'account_name': 'Cash', 'particular': 'Notes Payable Issued', 'debit': 500000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 49, 'date': '2025-02-19', 'account_name': 'Notes Payable', 'particular': 'Notes Payable Issued', 'debit': 0.0, 'credit': 500000.0, 'type': 'Standard'},
+
+    {'id': 50, 'date': '2025-02-20', 'account_name': 'Interest Expense', 'particular': 'Interest Payable Created', 'debit': 20000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 50, 'date': '2025-02-20', 'account_name': 'Interest Payable', 'particular': 'Interest Payable Created', 'debit': 0.0, 'credit': 20000.0, 'type': 'Standard'},
+
+    {'id': 51, 'date': '2025-02-21', 'account_name': 'Salaries Expense', 'particular': 'Salaries Payable Created', 'debit': 70000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 51, 'date': '2025-02-21', 'account_name': 'Salaries Payable', 'particular': 'Salaries Payable Created', 'debit': 0.0, 'credit': 70000.0, 'type': 'Standard'},
+
+    {'id': 52, 'date': '2025-02-22', 'account_name': 'Utilities Expense', 'particular': 'Utilities Payable Created', 'debit': 30000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 52, 'date': '2025-02-22', 'account_name': 'Utilities Payable', 'particular': 'Utilities Payable Created', 'debit': 0.0, 'credit': 30000.0, 'type': 'Standard'},
+
+    {'id': 53, 'date': '2025-02-23', 'account_name': 'Rent Expense', 'particular': 'Rent Payable Created', 'debit': 25000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 53, 'date': '2025-02-23', 'account_name': 'Rent Payable', 'particular': 'Rent Payable Created', 'debit': 0.0, 'credit': 25000.0, 'type': 'Standard'},
+
+    {'id': 54, 'date': '2025-02-24', 'account_name': 'Services Expense', 'particular': 'Service Payable Created', 'debit': 45000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 54, 'date': '2025-02-24', 'account_name': 'Service Payable', 'particular': 'Service Payable Created', 'debit': 0.0, 'credit': 45000.0, 'type': 'Standard'},
+
+    {'id': 55, 'date': '2025-02-25', 'account_name': 'Cash', 'particular': 'Short-Term Loan Taken', 'debit': 300000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 55, 'date': '2025-02-25', 'account_name': 'Short-Term Loan', 'particular': 'Short-Term Loan Taken', 'debit': 0.0, 'credit': 300000.0, 'type': 'Standard'},
+
+    {'id': 56, 'date': '2025-02-26', 'account_name': 'Bank', 'particular': 'Long-Term Loan Taken', 'debit': 700000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 56, 'date': '2025-02-26', 'account_name': 'Long-Term Loan', 'particular': 'Long-Term Loan Taken', 'debit': 0.0, 'credit': 700000.0, 'type': 'Standard'},
+
+    {'id': 57, 'date': '2025-02-27', 'account_name': 'Commission Expense', 'particular': 'Commission Payable Created', 'debit': 15000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 57, 'date': '2025-02-27', 'account_name': 'Commission Payable', 'particular': 'Commission Payable Created', 'debit': 0.0, 'credit': 15000.0, 'type': 'Standard'},
+
+    {'id': 58, 'date': '2025-02-28', 'account_name': 'Insurance Expense', 'particular': 'Insurance Payable Created', 'debit': 18000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 58, 'date': '2025-02-28', 'account_name': 'Insurance Payable', 'particular': 'Insurance Payable Created', 'debit': 0.0, 'credit': 18000.0, 'type': 'Standard'},
 ]
 
 # --- INITIALIZATION (Modified to load PDF data) ---
@@ -164,11 +267,6 @@ PDF_JOURNAL_ENTRIES = [
 def initialize_session():
     # Only initialize if it's a fresh session (or cleared)
     if 'journal_entries' not in session or not session['journal_entries']:
-        
-        # Combine all entries directly. Note: Initial entry (-1) is implicitly handled below.
-        # FIX: The entry ID -1 is already included in the PDF_JOURNAL_ENTRIES list above
-        # for clean insertion into the master session list.
-        
         session['journal_entries'] = PDF_JOURNAL_ENTRIES
         
     if 'chart_of_accounts' not in session or not session['chart_of_accounts']:
@@ -348,11 +446,8 @@ def chart_of_accounts():
         if name in balances and acc_info:
             acc_type = acc_info['type']
             
-            # Special handling for Accumulated Depreciation (Contra-Asset: Credit is increase)
-            if name == 'Accumulated Depreciation':
-                balances[name] += (credit - debit)
             # Normal handling for Asset/Expense/Drawings (Debit is increase)
-            elif acc_type in ['Asset', 'Expense'] or name in ['Drawings', 'Loss on Sale', 'COGS']:
+            if acc_type in ['Asset', 'Expense'] or name in ['Drawings', 'Loss on Sale', 'COGS']:
                 balances[name] += (debit - credit)
             # Normal handling for L/E/R (Credit is increase)
             else:
@@ -363,7 +458,7 @@ def chart_of_accounts():
     
     return render_template('chart_of_accounts.html', accounts=display_accounts, balances=balances)
 
-@app.route('/journal_entry/<username>', methods=['GET', 'POST'])
+@app.route('/journal_entry/<username>')
 def journal_entry(username):
     if request.method == 'POST':
         dates = request.form.getlist('date[]')
@@ -427,10 +522,9 @@ def view_journal(username):
             # Calculate Balance
             acct_type = summary[name]['type']
             
-            if name == 'Accumulated Depreciation':
-                summary[name]['balance'] += (credit - debit)
-            elif acct_type in ['Asset', 'Expense'] or name in ['Drawings', 'Loss on Sale', 'COGS']:
+            if acct_type in ['Asset', 'Expense'] or name in ['Drawings', 'Loss on Sale', 'COGS']:
                 summary[name]['balance'] += (debit - credit)
+            # Normal handling for L/E/R (Credit is increase)
             else:
                 summary[name]['balance'] += (credit - debit)
                 
@@ -506,16 +600,13 @@ def generate_financials():
         data['credit_total'] += credit
         acct_type = data['type']
         
-        # Special handling for Accumulated Depreciation (Contra-Asset)
-        if acct_name == 'Accumulated Depreciation':
-            data['balance'] += (credit - debit)
         # Normal Asset/Expense accounts (Debit balance)
-        elif acct_type in ['Asset', 'Expense'] or acct_name in ['Drawings', 'Loss on Sale', 'COGS']:
+        if acct_type in ['Asset', 'Expense'] or acct_name in ['Drawings', 'Loss on Sale', 'COGS']:
             data['balance'] += (debit - credit)
         # Normal Liability/Equity/Revenue accounts (Credit balance)
         else:
             data['balance'] += (credit - debit)
-
+            
     # 3. Calculate Financial Statements totals
     
     # Income Statement Items
@@ -523,7 +614,7 @@ def generate_financials():
     revenue_total = sum(data['balance'] for name, data in ledger.items() if data['type'] == 'Revenue')
     # Expense accounts (Debit balance, thus positive values in ledger['balance'])
     expenses_total = sum(data['balance'] for name, data in ledger.items() if data['type'] == 'Expense' or name in ['COGS', 'Loss on Sale'])
-
+        
     net_income = revenue_total - expenses_total
     
     # =======================================================
@@ -541,11 +632,7 @@ def generate_financials():
         
         # Assets have a normal debit balance (positive is debit)
         if acct_type == 'Asset':
-            # Contra-asset (Accumulated Depreciation) is a credit balance, reducing total assets.
-            if name == 'Accumulated Depreciation':
-                type_summary[acct_type] -= balance 
-            else:
-                type_summary[acct_type] += balance
+            type_summary[acct_type] += balance
             
         # Liabilities and Revenue have a normal credit balance (positive is credit)
         elif acct_type in ['Liability', 'Revenue']:
@@ -568,45 +655,46 @@ def generate_financials():
     # =======================================================
 
     
-    # Balance Sheet Items
+    # Balance Sheet Items 
     assets = 0.0
     liabilities = 0.0
     
     bank_balance = ledger.get('Bank', {'balance': 0.0})['balance']
-    accumulated_depreciation = ledger.get('Accumulated Depreciation', {'balance': 0.0})['balance']
     
-    # Calculate Total Assets based on cleaned logic (Only include positive asset balances)
+    # Calculate Total Assets
     for name, data in ledger.items():
         acct_type = data['type']
         balance = data['balance']
         
         if acct_type == 'Asset':
-            if name != 'Accumulated Depreciation':
-                # Only include assets with a positive balance (Debit balance)
-                if balance > 0.01:
-                    assets += balance
+            # Assets normally have a debit balance
+            assets += balance
             
-    # Subtract Accumulated Depreciation (Contra-Asset with Credit Balance, so balance is positive)
-    assets -= accumulated_depreciation
-
-    # Calculate Liabilities
+    # Calculate Total Liabilities
     for name, data in ledger.items():
         acct_type = data['type']
         balance = data['balance']
         
         if acct_type == 'Liability':
+            # Liabilities normally have a credit balance (positive in ledger)
             liabilities += balance
             
     # Add Bank Overdraft if Bank balance is negative
     if bank_balance < 0:
         liabilities += abs(bank_balance)
-
-    # Adjust Equity: Capital + Net Income - Drawings
+        
+    # Calculate Total Equity (Capital + Retained Earnings + Net Income - Contra-Equity)
     capital = ledger.get('Capital', {'balance': 0.0})['balance']
     drawings = ledger.get('Drawings', {'balance': 0.0})['balance']
+    retained_earnings = ledger.get('Retained Earnings', {'balance': 0.0})['balance']
+    treasury_stock = ledger.get('Treasury Stock', {'balance': 0.0})['balance'] # Contra Equity
     
-    total_equity_liab = liabilities + capital + net_income - drawings
+    # Final Equity = Starting Capital + Retained Earnings (Prior Period) + Net Income (Current Period) - Drawings - Treasury Stock
+    final_equity = (capital + retained_earnings + net_income) - drawings - treasury_stock
+
+    total_equity_liab = liabilities + final_equity
     
+    # Check balance: Assets MUST equal Liabilities + Equity
     is_balanced = abs(assets - total_equity_liab) < 0.01
 
     # =======================================================
@@ -622,10 +710,7 @@ def generate_financials():
         acct_type = data['type']
         
         # Determine the account's "normal" balance type (Debit or Credit)
-        is_debit_type = (acct_type in ['Asset', 'Expense'] or name in ['Drawings', 'COGS', 'Loss on Sale']) and name != 'Accumulated Depreciation'
-        
-        if name == 'Accumulated Depreciation':
-            is_debit_type = False # Contra-Asset's normal balance is Credit
+        is_debit_type = (acct_type in ['Asset', 'Expense'] or name in ['Drawings', 'COGS', 'Loss on Sale', 'Treasury Stock'])
         
         # Only include accounts that have a significant activity balance
         if abs(balance) > 0.005: 
@@ -659,7 +744,7 @@ def generate_financials():
     return {
         'ledger': ledger,
         'income_statement': {'revenue': revenue_total, 'expenses': expenses_total, 'net_income': net_income},
-        'balance_sheet': {'assets': assets, 'liabilities': liabilities, 'equity': total_equity_liab - liabilities, 'total_eq_liab': total_equity_liab, 'is_balanced': is_balanced},
+        'balance_sheet': {'assets': assets, 'liabilities': liabilities, 'equity': final_equity, 'total_eq_liab': total_equity_liab, 'is_balanced': is_balanced},
         'trial_balance': {'accounts': trial_balance_accounts, 'total_debits': tb_debits, 'total_credits': tb_credits, 'is_balanced': tb_balanced},
         'type_summary': type_summary # Add summary data for charts
     }
