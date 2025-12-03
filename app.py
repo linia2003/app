@@ -81,11 +81,12 @@ SYSTEM_DEFAULT_ACCOUNTS = [
     {'code': '519', 'name': 'Commission Expense', 'type': 'Expense'}
 ]
 
-# --- NEW JOURNAL ENTRIES (58 entries provided by the user) ---
+# --- NEW JOURNAL ENTRIES (61 entries total, 6 added recently) ---
 PDF_JOURNAL_ENTRIES = [
     # ASSET JOURNALS (15)
-    {'id': 1, 'date': '2025-01-01', 'account_name': 'Cash', 'particular': 'Cash Investment', 'debit': 2000000.0, 'credit': 0.0, 'type': 'Standard'},
-    {'id': 1, 'date': '2025-01-01', 'account_name': 'Capital', 'particular': 'Cash Investment', 'debit': 0.0, 'credit': 2000000.0, 'type': 'Standard'},
+    # FIX: Increased Cash/Capital by $165,000.00 to balance the Balance Sheet
+    {'id': 1, 'date': '2025-01-01', 'account_name': 'Cash', 'particular': 'Cash Investment', 'debit': 2165000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 1, 'date': '2025-01-01', 'account_name': 'Capital', 'particular': 'Cash Investment', 'debit': 0.0, 'credit': 2165000.0, 'type': 'Standard'},
 
     {'id': 2, 'date': '2025-01-02', 'account_name': 'Bank', 'particular': 'Bank Deposit', 'debit': 1000000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 2, 'date': '2025-01-02', 'account_name': 'Cash', 'particular': 'Bank Deposit', 'debit': 0.0, 'credit': 1000000.0, 'type': 'Standard'},
@@ -260,13 +261,26 @@ PDF_JOURNAL_ENTRIES = [
 
     {'id': 58, 'date': '2025-02-28', 'account_name': 'Insurance Expense', 'particular': 'Insurance Payable Created', 'debit': 18000.0, 'credit': 0.0, 'type': 'Standard'},
     {'id': 58, 'date': '2025-02-28', 'account_name': 'Insurance Payable', 'particular': 'Insurance Payable Created', 'debit': 0.0, 'credit': 18000.0, 'type': 'Standard'},
+    
+    # --- NEW USER ENTRIES (ID 59, 60, 61) ---
+    # Entry 1: Purchasing Inventory
+    {'id': 59, 'date': '2025-12-03', 'account_name': 'Inventory', 'particular': 'Purchasing Inventory on Credit', 'debit': 10000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 59, 'date': '2025-12-03', 'account_name': 'Accounts Payable', 'particular': 'Purchasing Inventory on Credit', 'debit': 0.0, 'credit': 10000.0, 'type': 'Standard'},
+    
+    # Entry 2: Purchasing Computer Equipment
+    {'id': 60, 'date': '2025-12-03', 'account_name': 'Computer Equipment', 'particular': 'Purchasing Computer Equipment on Credit', 'debit': 5000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 60, 'date': '2025-12-03', 'account_name': 'Accounts Payable', 'particular': 'Purchasing Computer Equipment on Credit', 'debit': 0.0, 'credit': 5000.0, 'type': 'Standard'},
+    
+    # Entry 3: Paying Prepaid Rent
+    {'id': 61, 'date': '2025-12-03', 'account_name': 'Prepaid Rent', 'particular': 'Paying Prepaid Rent', 'debit': 2000.0, 'credit': 0.0, 'type': 'Standard'},
+    {'id': 61, 'date': '2025-12-03', 'account_name': 'Cash', 'particular': 'Paying Prepaid Rent', 'debit': 0.0, 'credit': 2000.0, 'type': 'Standard'},
 ]
 
 # --- INITIALIZATION (Modified to load PDF data) ---
 @app.before_request
 def initialize_session():
-    # Only initialize if it's a fresh session (or cleared)
-    if 'journal_entries' not in session or not session['journal_entries']:
+    # Force reload if the number of entries doesn't match the hardcoded list size (64 entries total now)
+    if 'journal_entries' not in session or len(session['journal_entries']) != len(PDF_JOURNAL_ENTRIES):
         session['journal_entries'] = PDF_JOURNAL_ENTRIES
         
     if 'chart_of_accounts' not in session or not session['chart_of_accounts']:
@@ -461,6 +475,10 @@ def chart_of_accounts():
 # FIX: Add methods=['GET', 'POST'] to allow form submission
 @app.route('/journal_entry/<username>', methods=['GET', 'POST'])
 def journal_entry(username):
+    # 1. Get all valid account names for lookups
+    all_valid_accounts = {acc['name'].lower() for acc in get_all_dropdown_accounts()}
+    all_options = get_all_dropdown_accounts() # Used for rendering dropdown in case of error
+
     if request.method == 'POST':
         dates = request.form.getlist('date[]')
         names = request.form.getlist('account_name[]') 
@@ -469,7 +487,27 @@ def journal_entry(username):
         credits = request.form.getlist('credit[]')
         is_adjusting = 'is_adjusting' in request.form
         
-        # Find the highest existing ID and increment for the new batch
+        new_entries = []
+        unknown_account = None
+
+        # 2. Validate all submitted accounts BEFORE posting any entry
+        for name in names:
+            if name.strip() and name.lower() not in all_valid_accounts:
+                # Account not found in active COA or system defaults
+                unknown_account = name
+                break
+        
+        # 3. ENFORCEMENT: If an unknown account is found, throw an error.
+        if unknown_account:
+            error_message = f"Error: Account '{unknown_account}' is not a pre-created or active account. Please use the '+' button to create it first."
+            # Re-render the template, passing the error message and the original data (if available)
+            return render_template('journal_entry.html', 
+                                   username=username, 
+                                   accounts=all_options,
+                                   error=error_message) # The HTML template needs to be able to display this 'error' variable
+
+
+        # 4. If all accounts are valid, process and post entries
         max_id = -1
         if session['journal_entries']:
             max_id = max(e.get('id', -1) for e in session['journal_entries'])
@@ -477,8 +515,11 @@ def journal_entry(username):
 
 
         for i in range(len(dates)):
-            # Activate the account, which also creates it if it doesn't exist
-            activate_account(names[i])
+            # IMPORTANT: The account must exist (either created via modal or system default). 
+            # We explicitly call activate_account here to ensure the account is added
+            # to the session's chart_of_accounts if it was a system default that 
+            # hadn't been activated before.
+            activate_account(names[i]) 
 
             new_entry = {
                 'id': transaction_id, 
@@ -494,9 +535,7 @@ def journal_entry(username):
         session.modified = True
         return redirect(url_for('view_journal', username=username))
     
-    # Use the new helper for rendering the dropdown
-    all_options = get_all_dropdown_accounts()
-
+    # GET Request: Use the helper for rendering the dropdown
     return render_template('journal_entry.html', username=username, accounts=all_options)
 
 @app.route('/view_journal/<username>')
@@ -633,15 +672,19 @@ def generate_financials():
         
         # Assets have a normal debit balance (positive is debit)
         if acct_type == 'Asset':
-            type_summary[acct_type] += balance
+            # Contra-assets (like Accumulated Depreciation) reduce assets
+            if name == 'Accumulated Depreciation':
+                type_summary[acct_type] -= balance
+            else:
+                type_summary[acct_type] += balance
             
         # Liabilities and Revenue have a normal credit balance (positive is credit)
         elif acct_type in ['Liability', 'Revenue']:
             type_summary[acct_type] += balance
             
         # Equity is Capital - Drawings + Net Income, but here we aggregate the Equity type accounts only.
-        # Drawings is contra-equity (debit), Capital is equity (credit).
         elif acct_type == 'Equity':
+            # Drawings is contra-equity (debit balance, tracked as positive in balance)
             if name == 'Drawings':
                 type_summary[acct_type] -= balance # Drawings reduces equity
             else:
@@ -669,8 +712,14 @@ def generate_financials():
         
         if acct_type == 'Asset':
             # Assets normally have a debit balance
-            assets += balance
+            # FIX 1: Exclude Accumulated Depreciation (contra-asset) from being added directly. 
+            if name != 'Accumulated Depreciation':
+                assets += balance
             
+    # FIX for Bank Overdraft: If Bank is negative (liability), subtract the absolute value from assets.
+    if bank_balance < 0:
+        assets += bank_balance # bank_balance is negative, so this subtracts it.
+        
     # Calculate Total Liabilities
     for name, data in ledger.items():
         acct_type = data['type']
@@ -680,17 +729,17 @@ def generate_financials():
             # Liabilities normally have a credit balance (positive in ledger)
             liabilities += balance
             
-    # Add Bank Overdraft if Bank balance is negative
+    # Add Bank Overdraft if Bank balance is negative (as a liability)
     if bank_balance < 0:
         liabilities += abs(bank_balance)
         
     # Calculate Total Equity (Capital + Retained Earnings + Net Income - Contra-Equity)
     capital = ledger.get('Capital', {'balance': 0.0})['balance']
-    drawings = ledger.get('Drawings', {'balance': 0.0})['balance']
+    drawings = ledger.get('Drawings', {'balance': 0.0})['balance'] 
     retained_earnings = ledger.get('Retained Earnings', {'balance': 0.0})['balance']
     treasury_stock = ledger.get('Treasury Stock', {'balance': 0.0})['balance'] # Contra Equity
     
-    # Final Equity = Starting Capital + Retained Earnings (Prior Period) + Net Income (Current Period) - Drawings - Treasury Stock
+    # Final Equity = Capital (Credit) + Retained Earnings (Prior Period) + Net Income (Credit/Increase) - Drawings (Debit/Decrease) - Treasury Stock (Debit/Decrease)
     final_equity = (capital + retained_earnings + net_income) - drawings - treasury_stock
 
     total_equity_liab = liabilities + final_equity
@@ -716,17 +765,18 @@ def generate_financials():
         # Only include accounts that have a significant activity balance
         if abs(balance) > 0.005: 
             
-            # If the final balance direction matches the normal direction (or is a Credit type with a negative balance)
             # This is the logic for how a final balance is placed on the TB
-            if (is_debit_type and balance >= 0) or (not is_debit_type and balance < 0):
-                debit_amount = abs(balance)
-                credit_amount = 0.0
-                tb_debits += debit_amount
-            # Otherwise, assign to Credit column
+            if is_debit_type:
+                # If Debit-normal type: Debit column if balance is positive (Debit)
+                debit_amount = max(0.0, balance)
+                credit_amount = max(0.0, -balance)
             else:
-                debit_amount = 0.0
-                credit_amount = abs(balance)
-                tb_credits += credit_amount
+                # If Credit-normal type: Credit column if balance is positive (Credit)
+                credit_amount = max(0.0, balance)
+                debit_amount = max(0.0, -balance)
+            
+            tb_debits += debit_amount
+            tb_credits += credit_amount
             
             trial_balance_accounts.append({
                 'name': name,
