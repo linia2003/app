@@ -458,7 +458,8 @@ def chart_of_accounts():
     
     return render_template('chart_of_accounts.html', accounts=display_accounts, balances=balances)
 
-@app.route('/journal_entry/<username>')
+# FIX: Add methods=['GET', 'POST'] to allow form submission
+@app.route('/journal_entry/<username>', methods=['GET', 'POST'])
 def journal_entry(username):
     if request.method == 'POST':
         dates = request.form.getlist('date[]')
