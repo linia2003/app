@@ -1,1 +1,68 @@
-AccountoriaAccountoria is a sophisticated, full-cycle web application designed to manage financial records through a double-entry accounting system. Built with a "Chic & Futuristic" aesthetic, it serves as a centralized "financial intelligence" hub that automates the relationship between raw journal entries and high-level financial health indicators.✨ Core Mechanics & Features1. The Financial EngineThe heart of the project is the generate_financials() function, which acts as an automated accountant:Ledger Processing: Automatically iterates through every journal entry to identify account types (Asset, Liability, Equity, Revenue, or Expense) and calculates running balances based on standard debit/credit rules.Balance Validation: Continuously tracks the fundamental accounting equation: $Assets = Liabilities + Equity$.Real-time Trial Balance: Generates a Trial Balance to ensure total debits equal total credits before reports are finalized.Automated Reporting: Produces instant Income Statements and Balance Sheets based on the current ledger state.2. Intelligent Data VisualizationComplex accounting data is translated into a visual dashboard for rapid decision-making:Account Composition: Features a Chart.js doughnut chart showing capital allocation across Assets, Liabilities, and Expenses.Performance Snapshots: Provides high-contrast "neon" indicators for Net Income (YTD) and total Asset values.Interactive Ledger Flow: The landing page utilizes CSS animations of a "T-Account" visualizer to symbolize real-time data processing.3. User-Centric WorkflowDesigned to minimize manual errors while maintaining professional standards:Dynamic Journaling: Supports complex multi-line (compound) entries with an "add transaction line" feature.Account Discovery: Uses searchable datalists for account selection and a "+" modal to create new accounts without leaving the journal screen.Searchable History: The Ledger view includes real-time filters and a toggle between "Detailed" and "Summary" views.4. Technical RobustnessBackend: Built with Python and the Flask framework for robust server-side logic.Persistence: Uses Flask sessions to store the Chart of Accounts and Journal Entries, ensuring portability for local use.Clean Architecture: Strictly separates logic (app.py), futuristic styling (style.css), and frontend interactivity (app.js).
+Accountoria
+
+Accountoria is a modern, full-cycle web application built to make accounting feel intuitive, visual, and intelligent. Designed with a chic & futuristic aesthetic, it acts as a centralized financial intelligence hub that automatically transforms raw journal entries into meaningful financial insights.
+
+At its core, Accountoria removes the manual complexity of accounting while preserving the discipline of a true double-entry system—making it ideal for learners, professionals, and anyone who wants clarity in financial data.
+
+✨ What Accountoria Does
+
+Accountoria connects day-to-day transactions with high-level financial health, ensuring accuracy, balance, and instant reporting—without spreadsheets or guesswork.
+
+⚙️ Core Features
+🧠 1. The Financial Engine (Automated Accounting Brain)
+
+The heart of Accountoria is its automated accounting logic, designed to work like a real accountant behind the scenes.
+
+Ledger Processing
+Every journal entry is analyzed to identify account types—Assets, Liabilities, Equity, Revenue, and Expenses—and balances are calculated using standard debit/credit rules.
+
+Balance Validation
+The system continuously enforces the fundamental accounting equation:
+Assets = Liabilities + Equity
+
+Real-Time Trial Balance
+Before reports are generated, Accountoria ensures total debits always equal total credits—preventing accounting errors early.
+
+Automated Financial Reports
+Instantly generates:
+
+Income Statements
+
+Balance Sheets
+based on the current state of the ledger.
+
+📈 2. Intelligent Data Visualization
+
+Accountoria turns complex accounting data into a clean, visual dashboard for fast decision-making.
+
+Account Composition View
+A Chart.js doughnut chart visualizes capital distribution across Assets, Liabilities, and Expenses.
+
+Performance Snapshots
+High-contrast neon indicators highlight:
+
+Net Income (Year-to-Date)
+
+Total Asset Value
+
+Interactive Ledger Flow
+The landing page features animated T-Account visuals, symbolizing real-time financial data processing.
+
+🧑‍💼 3. User-Centric Workflow
+
+Designed for accuracy, speed, and ease of use—without sacrificing professional accounting standards.
+
+Dynamic Journaling
+Supports compound (multi-line) journal entries with an intuitive “Add Transaction Line” feature.
+
+Smart Account Discovery
+
+Searchable account selection using datalists
+
+Create new accounts instantly via a “+” modal—no page switching required
+
+Searchable Ledger History
+
+Real-time filters
+
+Toggle between Detailed and Summary views for quick reviews or deep analysis
